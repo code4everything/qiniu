@@ -100,4 +100,6 @@ public class Values {
 	public static final String DOWNLOAD_FILE_ERROR = "下载文件错误";
 
 	public static final String OPEN_LINK_ERROR = "打开链接失败";
+
+	public static final String DOWNLOAD_URL = "下载链接";
 }

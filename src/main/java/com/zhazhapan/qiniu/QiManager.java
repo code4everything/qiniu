@@ -211,10 +211,11 @@ public class QiManager {
 	public void listFileOfBucket() {
 		MainWindowController main = MainWindowController.getInstance();
 		// 列举空间文件列表
-		BucketManager.FileListIterator iterator = QiniuApplication.bucketManager
-				.createFileListIterator(main.bucketChoiceCombo.getValue(), "", Values.BUCKET_LIST_LIMIT_SIZE, "");
+		String bucket = main.bucketChoiceCombo.getValue();
+		BucketManager.FileListIterator iterator = QiniuApplication.bucketManager.createFileListIterator(bucket, "",
+				Values.BUCKET_LIST_LIMIT_SIZE, "");
 		ArrayList<FileInfo> files = new ArrayList<FileInfo>();
-		logger.info("get file list of bucket");
+		logger.info("get file list of bucket: " + bucket);
 		// 处理获取的file list结果
 		while (iterator.hasNext()) {
 			com.qiniu.storage.model.FileInfo[] items = iterator.next();

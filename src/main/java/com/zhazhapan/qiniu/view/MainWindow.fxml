@@ -193,6 +193,11 @@
                                                 <Insets top="10.0" />
                                              </VBox.margin>
                                           </Button>
+                                          <Button mnemonicParsing="false" onAction="#downloadFromURL" text="链接下载">
+                                             <VBox.margin>
+                                                <Insets top="10.0" />
+                                             </VBox.margin>
+                                          </Button>
                                        </children>
                                     </VBox>
                                  </children>
@@ -223,6 +228,14 @@
                            <children>
                               <VBox prefHeight="520.0" prefWidth="593.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.rowSpan="2">
                                  <children>
+                                    <Label text="当前版本: v1.0.1">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </Label>
                                     <HBox prefHeight="47.0" prefWidth="553.0">
                                        <children>
                                           <Label text="QQ: ">
@@ -233,7 +246,7 @@
                                                 <Insets top="10.0" />
                                              </HBox.margin>
                                           </Label>
-                                          <TextField editable="false" style="-fx-background-color: transparenttransparent;" text="735817834">
+                                          <TextField editable="false" style="-fx-background-color: transparent;" text="735817834">
                                              <HBox.margin>
                                                 <Insets top="3.0" />
                                              </HBox.margin>
@@ -279,7 +292,7 @@
                                                 <Insets top="10.0" />
                                              </HBox.margin>
                                           </Label>
-                                          <Hyperlink fx:id="toHexoBlog" text="http://zhazhapan.com" underline="true">
+                                          <Hyperlink fx:id="toHexoBlog" text="http://hexo.zhazhapan.com" underline="true">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>
@@ -351,7 +364,7 @@
                                                 <Insets top="10.0" />
                                              </HBox.margin>
                                           </Label>
-                                          <TextField editable="false" prefHeight="40.0" prefWidth="247.0" style="-fx-background-color: transparenttransparent;" text="tao@zhazhapan.com">
+                                          <TextField editable="false" prefHeight="40.0" prefWidth="247.0" style="-fx-background-color: transparent;" text="tao@zhazhapan.com">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>
@@ -359,7 +372,7 @@
                                                 <Insets top="3.0" />
                                              </HBox.margin>
                                           </TextField>
-                                          <TextField editable="false" prefHeight="40.0" prefWidth="301.0" style="-fx-background-color: transparenttransparent;" text="panther.pantao@gmail.com">
+                                          <TextField editable="false" prefHeight="40.0" prefWidth="301.0" style="-fx-background-color: transparent;" text="panther.pantao@gmail.com">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>

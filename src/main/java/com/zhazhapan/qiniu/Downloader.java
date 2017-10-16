@@ -32,6 +32,12 @@ public class Downloader {
 	 * 下载文件
 	 */
 	public void downloadFromNet(String downloadURL) {
+		if (Checker.isHyperLink(downloadURL)) {
+			logger.info(downloadURL + " is a validated url");
+		} else {
+			logger.info(downloadURL + " is an invalidated url, can't download");
+			return;
+		}
 		if (!checkDownloadPath()) {
 			QiniuApplication.downloadPath = Dialogs.showInputDialog(null, Values.CONFIG_DOWNLOAD_PATH,
 					System.getProperty("user.home"));

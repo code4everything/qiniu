@@ -30,6 +30,7 @@ public class RegexpTest {
 		System.out.println(Checker.isHyperLink("http://portal.qiniu.com/bucket/zhazhapan/resource"));
 		System.out.println(Checker.isHyperLink("portal.qiniu.com/bucket/zhazhapan/resource"));
 		System.out.println(Checker.isHyperLink("oxns0wnsc.bkt.clouddn.com"));
-		System.out.println(Checker.isHyperLink("http://portal"));
+		System.out.println(Checker.isHyperLink("hhttp://portal"));
+		System.out.println(Checker.isHyperLink("https://cn.wordpress.org/wordpress-4.8.1-zh_CN.zip"));
 	}
 }

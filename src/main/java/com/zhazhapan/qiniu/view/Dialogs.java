@@ -14,6 +14,7 @@ import com.zhazhapan.qiniu.QiManager.FileAction;
 import com.zhazhapan.qiniu.config.ConfigLoader;
 import com.zhazhapan.qiniu.controller.MainWindowController;
 import com.zhazhapan.qiniu.modules.constant.Values;
+import com.zhazhapan.qiniu.util.Checker;
 import com.zhazhapan.qiniu.util.Utils;
 
 import javafx.application.Platform;
@@ -177,7 +178,10 @@ public class Dialogs {
 
 		// 监听文本框的输入状态
 		bucket.textProperty().addListener((observable, oldValue, newValue) -> {
-			okButton.setDisable(newValue.trim().isEmpty());
+			okButton.setDisable(newValue.trim().isEmpty() || url.getText().isEmpty());
+		});
+		url.textProperty().addListener((observable, oldValue, newValue) -> {
+			okButton.setDisable(newValue.trim().isEmpty() || bucket.getText().isEmpty());
 		});
 
 		dialog.getDialogPane().setContent(grid);
@@ -186,7 +190,8 @@ public class Dialogs {
 
 		dialog.setResultConverter(dialogButton -> {
 			if (dialogButton == ok) {
-				return new String[] { bucket.getText(), zone.getValue() + " " + url.getText() };
+				return new String[] { bucket.getText(),
+						zone.getValue() + " " + (Checker.isHyperLink(url.getText()) ? url.getText() : "example.com") };
 			}
 			return null;
 		});

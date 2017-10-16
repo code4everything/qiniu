@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 
 import com.qiniu.common.QiniuException;
+import com.zhazhapan.qiniu.Downloader;
 import com.zhazhapan.qiniu.FileExecutor;
 import com.zhazhapan.qiniu.QiManager;
 import com.zhazhapan.qiniu.QiniuApplication;
@@ -189,13 +190,21 @@ public class MainWindowController {
 		});
 		// 超链接添加监听
 		toCsdnBlog.setOnAction(e -> Utils.openLink("http://csdn.zhazhapan.com"));
-		toHexoBlog.setOnAction(e -> Utils.openLink("http://zhazhapan.com"));
+		toHexoBlog.setOnAction(e -> Utils.openLink("http://hexo.zhazhapan.com"));
 		toGithubSource.setOnAction(e -> Utils.openLink("https://github.com/zhazhapan/qiniu"));
 		String introPage = "http://zhazhapan.com/2017/10/15/%E4%B8%83%E7%89%9B%E4%BA%91%E2%80"
 				+ "%94%E2%80%94%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86%E5%B7%A5"
 				+ "%E5%85%B7%E4%BB%8B%E7%BB%8D/";
 		toIntro.setOnAction(e -> Utils.openLink(introPage));
 		toIntro1.setOnAction(e -> Utils.openLink("http://blog.csdn.net/qq_26954773/article/details/78245100"));
+	}
+
+	/**
+	 * 通过链接下载其他的网络文件
+	 */
+	public void downloadFromURL() {
+		String url = Dialogs.showInputDialog(null, Values.DOWNLOAD_URL, "http://example.com");
+		new Downloader().downloadFromNet(url);
 	}
 
 	/**

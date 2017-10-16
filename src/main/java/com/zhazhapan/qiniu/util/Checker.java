@@ -12,8 +12,8 @@ import java.util.regex.Pattern;
  */
 public class Checker {
 
-	public static final Pattern HYPER_LINK_PATTERN = Pattern.compile("^(https*://)?([a-z0-9]+\\.)+[a-z0-9]+(/[^\\s])*$",
-			Pattern.CASE_INSENSITIVE);
+	public static final Pattern HYPER_LINK_PATTERN = Pattern
+			.compile("^(https*://)?([a-z0-9]+\\.)+[a-z0-9]+(/[^\\s]*)*$", Pattern.CASE_INSENSITIVE);
 
 	public static final Pattern NUMBER_PATTERN = Pattern.compile("^[0-9]+$");
 
