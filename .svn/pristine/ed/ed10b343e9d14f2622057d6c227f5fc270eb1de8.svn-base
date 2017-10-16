@@ -19,7 +19,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.zhazhapan.qiniu.QiniuApplication;
-import com.zhazhapan.qiniu.ThreadPool;
 import com.zhazhapan.qiniu.controller.MainWindowController;
 import com.zhazhapan.qiniu.model.Key;
 import com.zhazhapan.qiniu.modules.constant.Values;
@@ -145,7 +144,6 @@ public class ConfigLoader {
 	}
 
 	public static void writeKey(String accessKey, String secretKey) {
-		new QiConfig().createAuth(accessKey, secretKey);
 		QiniuApplication.key = new Key(accessKey, secretKey);
 		writeConfig();
 	}
@@ -200,16 +198,14 @@ public class ConfigLoader {
 	}
 
 	public static void writeConfig(String configJson) {
-		ThreadPool.executor.submit(() -> {
-			try {
-				BufferedWriter out = new BufferedWriter(new FileWriter(configPath, false));
-				out.write(Formatter.jsonFormat(configJson));
-				out.close();
-				logger.info("rewrite configuration success");
-			} catch (IOException e) {
-				logger.error("rewrite configuration file failed, messages: " + e.getMessage());
-				Dialogs.showFatalError(Values.LOAD_CONFIG_ERROR, e);
-			}
-		});
+		try {
+			BufferedWriter out = new BufferedWriter(new FileWriter(configPath, false));
+			out.write(Formatter.jsonFormat(configJson));
+			out.close();
+			logger.info("rewrite configuration success");
+		} catch (IOException e) {
+			logger.error("rewrite configuration file failed, messages: " + e.getMessage());
+			Dialogs.showFatalError(Values.LOAD_CONFIG_ERROR, e);
+		}
 	}
 }

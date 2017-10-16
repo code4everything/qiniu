@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ContextMenu?>
-<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Tab?>
@@ -120,7 +119,7 @@
                                           <Insets left="10.0" />
                                        </HBox.margin>
                                     </TextField>
-                                    <TextField fx:id="searchTextField" onKeyReleased="#searchFile" prefHeight="27.0" prefWidth="280.0" promptText="搜索文件, 支持正则表达式">
+                                    <TextField fx:id="searchTextField" onKeyReleased="#searchFile" prefHeight="27.0" prefWidth="280.0" promptText="搜索文件">
                                        <HBox.margin>
                                           <Insets left="10.0" />
                                        </HBox.margin>
@@ -168,32 +167,20 @@
                                                 <Insets top="10.0" />
                                              </VBox.margin>
                                           </Button>
-                                          <Button mnemonicParsing="false" onAction="#setLife" text="生存时间">
+                                          <Button mnemonicParsing="false" onAction="#moveFiles" text="批量移动">
                                              <VBox.margin>
                                                 <Insets top="10.0" />
                                              </VBox.margin>
                                           </Button>
-                                          <Button mnemonicParsing="false" onAction="#updateFile" text="更新镜像">
-                                             <VBox.margin>
-                                                <Insets top="10.0" />
-                                             </VBox.margin>
-                                          </Button>
-                                          <Button mnemonicParsing="false" onAction="#publicDownload" text="公有下载">
-                                             <VBox.margin>
-                                                <Insets top="10.0" />
-                                             </VBox.margin>
-                                          </Button>
-                                          <Button mnemonicParsing="false" onAction="#privateDownload" text="私有下载">
-                                             <VBox.margin>
-                                                <Insets top="10.0" />
-                                             </VBox.margin>
-                                          </Button>
-                                          <Button mnemonicParsing="false" onAction="#openFile" text="打开文件">
+                                          <Button mnemonicParsing="false" text="生存时间">
                                              <VBox.margin>
                                                 <Insets top="10.0" />
                                              </VBox.margin>
                                           </Button>
                                        </children>
+                                       <padding>
+                                          <Insets top="30.0" />
+                                       </padding>
                                     </VBox>
                                  </children>
                                  <GridPane.margin>
@@ -205,176 +192,9 @@
                      </children></AnchorPane>
             </content>
           </Tab>
-            <Tab text="关于作者">
+            <Tab text="CDN相关">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <GridPane layoutX="-1.0" layoutY="-1.0" prefHeight="530.0" prefWidth="700.0">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="273.0" minWidth="10.0" prefWidth="44.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="631.0" minWidth="10.0" prefWidth="631.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="0.0" prefWidth="1.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints maxHeight="173.0" minHeight="8.0" prefHeight="8.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="454.0" minHeight="10.0" prefHeight="165.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="366.0" minHeight="10.0" prefHeight="347.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                           <children>
-                              <VBox prefHeight="520.0" prefWidth="593.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.rowSpan="2">
-                                 <children>
-                                    <HBox prefHeight="47.0" prefWidth="553.0">
-                                       <children>
-                                          <Label text="QQ: ">
-                                             <font>
-                                                <Font size="20.0" />
-                                             </font>
-                                             <HBox.margin>
-                                                <Insets top="10.0" />
-                                             </HBox.margin>
-                                          </Label>
-                                          <TextField editable="false" style="-fx-background-color: transparenttransparent;" text="735817834">
-                                             <HBox.margin>
-                                                <Insets top="3.0" />
-                                             </HBox.margin>
-                                             <font>
-                                                <Font size="20.0" />
-                                             </font>
-                                          </TextField>
-                                       </children>
-                                       <VBox.margin>
-                                          <Insets bottom="-10.0" top="10.0" />
-                                       </VBox.margin>
-                                    </HBox>
-                                    <HBox prefHeight="47.0" prefWidth="553.0">
-                                       <VBox.margin>
-                                          <Insets top="10.0" />
-                                       </VBox.margin>
-                                       <children>
-                                          <Label text="CSDN博客: ">
-                                             <font>
-                                                <Font size="20.0" />
-                                             </font>
-                                             <HBox.margin>
-                                                <Insets top="10.0" />
-                                             </HBox.margin>
-                                          </Label>
-                                          <Hyperlink fx:id="toCsdnBlog" text="http://csdn.zhazhapan.com" underline="true">
-                                             <font>
-                                                <Font size="20.0" />
-                                             </font>
-                                             <HBox.margin>
-                                                <Insets top="3.0" />
-                                             </HBox.margin>
-                                          </Hyperlink>
-                                       </children>
-                                    </HBox>
-                                    <HBox prefHeight="47.0" prefWidth="553.0">
-                                       <children>
-                                          <Label text="HEXO博客: ">
-                                             <font>
-                                                <Font size="20.0" />
-                                             </font>
-                                             <HBox.margin>
-                                                <Insets top="10.0" />
-                                             </HBox.margin>
-                                          </Label>
-                                          <Hyperlink fx:id="toHexoBlog" text="http://zhazhapan.com" underline="true">
-                                             <font>
-                                                <Font size="20.0" />
-                                             </font>
-                                             <HBox.margin>
-                                                <Insets top="3.0" />
-                                             </HBox.margin>
-                                          </Hyperlink>
-                                       </children>
-                                    </HBox>
-                                    <HBox prefHeight="47.0" prefWidth="553.0">
-                                       <children>
-                                          <Label text="项目源码地址: ">
-                                             <font>
-                                                <Font size="20.0" />
-                                             </font>
-                                             <HBox.margin>
-                                                <Insets top="10.0" />
-                                             </HBox.margin>
-                                          </Label>
-                                          <Hyperlink fx:id="toGithubSource" text="https://github.com/zhazhapan/qiniu" underline="true">
-                                             <font>
-                                                <Font size="20.0" />
-                                             </font>
-                                             <HBox.margin>
-                                                <Insets top="3.0" />
-                                             </HBox.margin>
-                                          </Hyperlink>
-                                       </children>
-                                    </HBox>
-                                    <HBox prefHeight="47.0" prefWidth="553.0">
-                                       <children>
-                                          <Label text="功能介绍: ">
-                                             <font>
-                                                <Font size="20.0" />
-                                             </font>
-                                             <HBox.margin>
-                                                <Insets top="10.0" />
-                                             </HBox.margin>
-                                          </Label>
-                                          <Hyperlink fx:id="toIntro" prefHeight="36.0" prefWidth="526.0" text="http://zhazhapan.com/2017/10/15/%E4%B8%83%E7%89%9B%E4%BA%91%E2%80%94%E2%80%94%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/" underline="true">
-                                             <font>
-                                                <Font size="20.0" />
-                                             </font>
-                                             <HBox.margin>
-                                                <Insets top="3.0" />
-                                             </HBox.margin>
-                                          </Hyperlink>
-                                       </children>
-                                    </HBox>
-                                    <HBox prefHeight="47.0" prefWidth="553.0">
-                                       <children>
-                                          <Hyperlink fx:id="toIntro1" prefHeight="36.0" prefWidth="526.0" text="http://blog.csdn.net/qq_26954773/article/details/78245100" underline="true">
-                                             <font>
-                                                <Font size="20.0" />
-                                             </font>
-                                             <HBox.margin>
-                                                <Insets left="90.0" top="3.0" />
-                                             </HBox.margin>
-                                          </Hyperlink>
-                                       </children>
-                                    </HBox>
-                                    <HBox prefHeight="47.0" prefWidth="553.0">
-                                       <children>
-                                          <Label text="邮箱: ">
-                                             <font>
-                                                <Font size="20.0" />
-                                             </font>
-                                             <HBox.margin>
-                                                <Insets top="10.0" />
-                                             </HBox.margin>
-                                          </Label>
-                                          <TextField editable="false" prefHeight="40.0" prefWidth="247.0" style="-fx-background-color: transparenttransparent;" text="tao@zhazhapan.com">
-                                             <font>
-                                                <Font size="20.0" />
-                                             </font>
-                                             <HBox.margin>
-                                                <Insets top="3.0" />
-                                             </HBox.margin>
-                                          </TextField>
-                                          <TextField editable="false" prefHeight="40.0" prefWidth="301.0" style="-fx-background-color: transparenttransparent;" text="panther.pantao@gmail.com">
-                                             <font>
-                                                <Font size="20.0" />
-                                             </font>
-                                             <HBox.margin>
-                                                <Insets top="3.0" />
-                                             </HBox.margin>
-                                          </TextField>
-                                       </children>
-                                    </HBox>
-                                 </children>
-                              </VBox>
-                           </children>
-                        </GridPane>
-                     </children>
-                  </AnchorPane>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
               </content>
             </Tab>
         </tabs>
