@@ -23,6 +23,6 @@
     > 说明：勾选“保存文件副本”时表示当前操作为复制，不勾选时表示移动（会删除本存储空间的文件），默认勾选。
 
 
-- [**下载jar包**](http://oq3iwfipo.bkt.clouddn.com/tools/zhazhapan/qiniu.jar "七牛云——对象存储管理工具jar包下载地址")
+- [**历史版本**](https://github.com/zhazhapan/qiniu/releases) 或 [**直接下载**](http://oq3iwfipo.bkt.clouddn.com/tools/zhazhapan/qiniu.jar?v=1.0.1 "七牛云——对象存储管理工具jar包下载地址")
 
 - [**项目源代码**](https://github.com/zhazhapan/qiniu "七牛云——对象存储管理工具项目源码地址")
