@@ -248,7 +248,7 @@
                            <children>
                               <VBox prefHeight="520.0" prefWidth="593.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.rowSpan="2">
                                  <children>
-                                    <Label text="当前版本: v1.0.1">
+                                    <Label text="当前版本: v1.0.2">
                                        <font>
                                           <Font size="20.0" />
                                        </font>

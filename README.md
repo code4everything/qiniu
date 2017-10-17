@@ -30,7 +30,7 @@
 
 - 配置文件
 
-    Windows使用路径：`C:/Program Files/Qiniu Tool`
+    Windows使用路径：`C:/ProgramData/QiniuTool`
 
     MacOS 或 Linux 使用路径：`/tmp/qiniu/tool`
 
@@ -108,7 +108,7 @@
 
 **3. 其他**
 
-- [**下载可执行的jar包**](http://oq3iwfipo.bkt.clouddn.com/tools/zhazhapan/qiniu.jar "七牛云——对象存储管理工具jar包下载地址")
+- [**下载可执行的jar包**](http://oq3iwfipo.bkt.clouddn.com/tools/zhazhapan/qiniu.jar?v=1.0.2 "七牛云——对象存储管理工具jar包下载地址")
 
 - [**历史版本**](https://github.com/zhazhapan/qiniu/releases) 
 

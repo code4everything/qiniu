@@ -3,6 +3,8 @@
  */
 package com.zhazhapan.qiniu.modules.constant;
 
+import java.io.File;
+
 /**
  * @author pantao
  *
@@ -15,11 +17,13 @@ public class Values {
 
 	public static final String INIT_APP_ERROR_HEADER = "初始化错误，无法继续运行";
 
-	public static final String APP_PATH_OF_WINDOWS = "C:/Program Files/Qiniu Tool";
+	public static final String APP_PATH_OF_WINDOWS = "C:\\ProgramData\\QiniuTool";
 
 	public static final String APP_PATH_OF_UNIX = "/tmp/qiniu/tool";
 
-	public static final String CONFIG_PATH = "/config.json";
+	public static final String SEPARATOR = File.separator;
+
+	public static final String CONFIG_PATH = "config.json";
 
 	public static final String FORMAT_JSON_ERROR = "将字符串格式化为JSON失败";
 

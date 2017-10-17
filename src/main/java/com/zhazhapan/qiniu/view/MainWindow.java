@@ -62,14 +62,14 @@ public class MainWindow {
 			// 将上传日志写入磁盘
 			String content = MainWindowController.getInstance().uploadStatusTextArea.getText();
 			if (Checker.isNotEmpty(content)) {
-				String logPath = QiniuApplication.workDir + "/upload_"
+				String logPath = QiniuApplication.workDir + Values.SEPARATOR + "upload_"
 						+ Formatter.dateToString(new Date()).replaceAll("-", "_") + ".log";
 				new FileExecutor().saveFile(logPath, content, true);
 			}
 			// 将删除记录写入磁盘
 			String deleteContent = QiniuApplication.deleteLog.toString();
 			if (Checker.isNotEmpty(deleteContent)) {
-				String logPath = QiniuApplication.workDir + "/delete_"
+				String logPath = QiniuApplication.workDir + Values.SEPARATOR + "delete_"
 						+ Formatter.dateToString(new Date()).replaceAll("-", "_") + ".log";
 				new FileExecutor().saveFile(logPath, deleteContent, true);
 			}

@@ -89,7 +89,8 @@ public class QiniuApplication extends Application {
 		} else {
 			workDir = Values.APP_PATH_OF_UNIX;
 		}
-		ConfigLoader.configPath = workDir + Values.CONFIG_PATH;
+		ConfigLoader.configPath = workDir + Values.SEPARATOR + Values.CONFIG_PATH;
+		logger.info("current work director: " + workDir + ", config file: " + ConfigLoader.configPath);
 		mainWindow = new MainWindow();
 		launch(args);
 	}

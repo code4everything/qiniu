@@ -145,7 +145,7 @@ public class Dialogs {
 		Platform.runLater(() -> ak.requestFocus());
 
 		Optional<String[]> result = dialog.showAndWait();
-		if (result.isPresent()) {
+		if (result.isPresent() && Checker.isNotEmpty(ak.getText()) && Checker.isNotEmpty(sk.getText())) {
 			ConfigLoader.writeKey(ak.getText(), sk.getText());
 			return true;
 		}
