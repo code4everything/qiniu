@@ -35,8 +35,8 @@ public class Formatter {
 		return 0;
 	}
 
-	public static final Pattern FILE_NAME_PATTERN = Pattern
-			.compile("(([^/\\\\:*\"<>|?]+)\\.)*[^/\\\\:*\"<>|?]+(\\?.*)?$", Pattern.CASE_INSENSITIVE);
+	public static final Pattern FILE_NAME_PATTERN = Pattern.compile("([^/\\\\:*\"<>|?]+\\.)*[^/\\\\:*\"<>|?]+(\\?.*)?$",
+			Pattern.CASE_INSENSITIVE);
 
 	public static String formatSize(long size) {
 		if (size < Values.KB) {

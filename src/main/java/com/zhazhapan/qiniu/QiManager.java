@@ -7,9 +7,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.qiniu.cdn.CdnResult;
+import com.qiniu.cdn.CdnResult.LogData;
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
 import com.qiniu.storage.BucketManager;
@@ -39,27 +42,83 @@ public class QiManager {
 	}
 
 	/**
+	 * 日志下载，cdn相关
+	 */
+	public void downloadCdnLog(String logDate) {
+		if (Checker.isNotEmpty(QiniuApplication.buckets) && Checker.isDate(logDate)) {
+			String[] domains = new String[QiniuApplication.buckets.size()];
+			int i = 0;
+			for (Map.Entry<String, String> bucket : QiniuApplication.buckets.entrySet()) {
+				domains[i] = bucket.getValue().split(" ")[1];
+				i++;
+			}
+			try {
+				CdnResult.LogListResult logRes = QiniuApplication.cdnManager.getCdnLogList(domains, logDate);
+				Downloader downloader = new Downloader();
+				for (Map.Entry<String, LogData[]> logs : logRes.data.entrySet()) {
+					for (LogData log : logs.getValue()) {
+						downloader.downloadFromNet(log.url);
+					}
+				}
+			} catch (QiniuException e) {
+				logger.error("get cdn log url error, message: " + e.getMessage());
+				Dialogs.showException(e);
+			}
+		}
+	}
+
+	/**
+	 * 刷新文件，cdn相关
+	 */
+	public void refreshFile(ObservableList<FileInfo> fileInfos, String domain) {
+		if (Checker.isNotEmpty(fileInfos)) {
+			String[] files = new String[fileInfos.size()];
+			int i = 0;
+			for (FileInfo fileInfo : fileInfos) {
+				files[i] = getPublicURL(fileInfo.getName(), domain);
+				i++;
+			}
+			try {
+				// 单次方法调用刷新的链接不可以超过100个
+				QiniuApplication.cdnManager.refreshUrls(files);
+				logger.info("refresh files success");
+			} catch (QiniuException e) {
+				logger.error("refresh files error, message: " + e.getMessage());
+				Dialogs.showException(e);
+			}
+		}
+	}
+
+	public void privateDownload(String fileName, String domain) {
+		privateDownload(fileName, domain, new Downloader());
+	}
+
+	/**
 	 * 私有下载
 	 */
-	public void privateDownload(String fileName, String domain) {
+	public void privateDownload(String fileName, String domain, Downloader downloader) {
 		try {
 			String encodedFileName = URLEncoder.encode(fileName, "utf-8");
 			String publicUrl = String.format("%s/%s", domain, encodedFileName);
 			// 自定义链接过期时间（小时）
 			long expireInSeconds = 24;
-			new Downloader().downloadFromNet(QiniuApplication.auth.privateDownloadUrl(publicUrl, expireInSeconds));
+			downloader.downloadFromNet(QiniuApplication.auth.privateDownloadUrl(publicUrl, expireInSeconds));
 		} catch (UnsupportedEncodingException e) {
 			urlError(e);
 		}
 	}
 
+	public void publicDownload(String fileName, String domain) {
+		publicDownload(fileName, domain, new Downloader());
+	}
+
 	/**
 	 * 公有下载
 	 */
-	public void publicDownload(String fileName, String domain) {
+	public void publicDownload(String fileName, String domain, Downloader downloader) {
 		String url = getPublicURL(fileName, domain);
 		if (Checker.isNotEmpty(url)) {
-			new Downloader().downloadFromNet(url);
+			downloader.downloadFromNet(url);
 		}
 	}
 

@@ -9,11 +9,13 @@ package com.zhazhapan.qiniu.modules.constant;
  */
 public class Values {
 
+	public static final String QINIU_KEY_URL = "https://portal.qiniu.com/user/key";
+
 	public static final String MAIN_TITLE = "七牛云管理工具";
 
 	public static final String INIT_APP_ERROR_HEADER = "初始化错误，无法继续运行";
 
-	public static final String APP_PATH_OF_WINDOWS = "C:/program files/Qiniu Tool";
+	public static final String APP_PATH_OF_WINDOWS = "C:/Program Files/Qiniu Tool";
 
 	public static final String APP_PATH_OF_UNIX = "/tmp/qiniu/tool";
 
@@ -102,4 +104,6 @@ public class Values {
 	public static final String OPEN_LINK_ERROR = "打开链接失败";
 
 	public static final String DOWNLOAD_URL = "下载链接";
+
+	public static final String INPUT_LOG_DATE = "请输入日志的日期";
 }

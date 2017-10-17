@@ -17,6 +17,7 @@ public class RegexpTest {
 	@Test
 	public void testGetFileName() {
 		String[] files = { "http://oxns0wnsc.bkt.clouddn.com/fims/css/distpicker.css",
+				"http://oxns0wnsc.bkt.clouddn.com/fims/css/distpicker",
 				"http://oxns0wnsc.bkt.clouddn.com/fims/css/easy-responsive-tabs.css",
 				"http://oxns0wnsc.bkt.clouddn.com/zhazhapan/test/%E6%BD%98%E6%BB%94-18780459330-Java%E5%BC%80%E5%8F%91.docx" };
 		for (String file : files) {

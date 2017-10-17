@@ -104,7 +104,12 @@ public class Dialogs {
 		}
 	}
 
-	public void showInputKeyDialog() {
+	/**
+	 * 显示输入密钥的对话框
+	 * 
+	 * @return 返回用户是否点击确定按钮
+	 */
+	public boolean showInputKeyDialog() {
 		ButtonType ok = new ButtonType(Values.OK, ButtonData.OK_DONE);
 		Dialog<String[]> dialog = getDialog(ok);
 
@@ -114,8 +119,8 @@ public class Dialogs {
 		TextField sk = new TextField();
 		sk.setPromptText("Secret Key");
 
-		Hyperlink hyperlink = new Hyperlink("查看我的KEY");
-		hyperlink.setOnAction(event -> Utils.openLink("https://portal.qiniu.com/user/key"));
+		Hyperlink hyperlink = new Hyperlink("查看我的KEY：" + Values.QINIU_KEY_URL);
+		hyperlink.setOnAction(event -> Utils.openLink(Values.QINIU_KEY_URL));
 
 		GridPane grid = getGridPane();
 		grid.add(hyperlink, 0, 0, 2, 1);
@@ -139,17 +144,12 @@ public class Dialogs {
 
 		Platform.runLater(() -> ak.requestFocus());
 
-		dialog.setResultConverter(dialogButton -> {
-			if (dialogButton == ok) {
-				return new String[] { ak.getText(), sk.getText() };
-			}
-			return null;
-		});
-
 		Optional<String[]> result = dialog.showAndWait();
-		result.ifPresent(key -> {
-			ConfigLoader.writeKey(key[0], key[1]);
-		});
+		if (result.isPresent()) {
+			ConfigLoader.writeKey(ak.getText(), sk.getText());
+			return true;
+		}
+		return false;
 	}
 
 	public void showBucketAddableDialog() {

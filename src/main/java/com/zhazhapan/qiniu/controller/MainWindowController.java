@@ -190,13 +190,29 @@ public class MainWindowController {
 		});
 		// 超链接添加监听
 		toCsdnBlog.setOnAction(e -> Utils.openLink("http://csdn.zhazhapan.com"));
-		toHexoBlog.setOnAction(e -> Utils.openLink("http://hexo.zhazhapan.com"));
+		toHexoBlog.setOnAction(e -> Utils.openLink("http://zhazhapan.com"));
 		toGithubSource.setOnAction(e -> Utils.openLink("https://github.com/zhazhapan/qiniu"));
 		String introPage = "http://zhazhapan.com/2017/10/15/%E4%B8%83%E7%89%9B%E4%BA%91%E2%80"
 				+ "%94%E2%80%94%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86%E5%B7%A5"
 				+ "%E5%85%B7%E4%BB%8B%E7%BB%8D/";
 		toIntro.setOnAction(e -> Utils.openLink(introPage));
 		toIntro1.setOnAction(e -> Utils.openLink("http://blog.csdn.net/qq_26954773/article/details/78245100"));
+	}
+
+	/**
+	 * 日志下载，cdn相关
+	 */
+	public void downloadCdnLog() {
+		String date = Dialogs.showInputDialog(null, Values.INPUT_LOG_DATE, Formatter.dateToString(new Date()));
+		new QiManager().downloadCdnLog(date);
+	}
+
+	/**
+	 * 文件刷新，cdn相关
+	 */
+	public void refreshFile() {
+		new QiManager().refreshFile(resTable.getSelectionModel().getSelectedItems(),
+				"http://" + bucketDomainTextField.getText());
 	}
 
 	/**
@@ -231,15 +247,16 @@ public class MainWindowController {
 		if (Checker.isNotEmpty(selectedItems)) {
 			QiManager manager = new QiManager();
 			String domain = "http://" + bucketDomainTextField.getText();
+			Downloader downloader = new Downloader();
 			if (way == DownloadWay.PUBLIC) {
 				logger.debug("start to public download");
 				for (FileInfo fileInfo : selectedItems) {
-					manager.publicDownload(fileInfo.getName(), domain);
+					manager.publicDownload(fileInfo.getName(), domain, downloader);
 				}
 			} else {
 				logger.debug("start to private download");
 				for (FileInfo fileInfo : selectedItems) {
-					manager.privateDownload(fileInfo.getName(), domain);
+					manager.privateDownload(fileInfo.getName(), domain, downloader);
 				}
 			}
 		}
@@ -545,7 +562,10 @@ public class MainWindowController {
 	 * 重置Key
 	 */
 	public void resetKey() {
-		ConfigLoader.showInputKeyDialog();
+		boolean ok = new Dialogs().showInputKeyDialog();
+		if (ok && Checker.isNotEmpty(zoneText.getText())) {
+			new QiConfig().configUploadEnv(zoneText.getText(), bucketChoiceCombo.getValue());
+		}
 	}
 
 	/**

@@ -198,6 +198,16 @@
                                                 <Insets top="10.0" />
                                              </VBox.margin>
                                           </Button>
+                                          <Button mnemonicParsing="false" onAction="#refreshFile" text="文件刷新">
+                                             <VBox.margin>
+                                                <Insets top="10.0" />
+                                             </VBox.margin>
+                                          </Button>
+                                          <Button mnemonicParsing="false" onAction="#downloadCdnLog" text="日志下载">
+                                             <VBox.margin>
+                                                <Insets top="10.0" />
+                                             </VBox.margin>
+                                          </Button>
                                        </children>
                                     </VBox>
                                  </children>
@@ -292,7 +302,7 @@
                                                 <Insets top="10.0" />
                                              </HBox.margin>
                                           </Label>
-                                          <Hyperlink fx:id="toHexoBlog" text="http://hexo.zhazhapan.com" underline="true">
+                                          <Hyperlink fx:id="toHexoBlog" text="http://zhazhapan.com" underline="true">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>

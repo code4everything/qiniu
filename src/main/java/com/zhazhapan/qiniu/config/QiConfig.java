@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 
 import org.apache.log4j.Logger;
 
+import com.qiniu.cdn.CdnManager;
 import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.Configuration;
 import com.qiniu.storage.UploadManager;
@@ -35,6 +36,7 @@ public class QiConfig {
 	 */
 	public void createAuth(String ak, String sk) {
 		QiniuApplication.auth = Auth.create(ak, sk);
+		QiniuApplication.cdnManager = new CdnManager(QiniuApplication.auth);
 	}
 
 	/**

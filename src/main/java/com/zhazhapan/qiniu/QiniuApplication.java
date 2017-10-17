@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.qiniu.cdn.CdnManager;
 import com.qiniu.common.Zone;
 import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.Configuration;
@@ -63,6 +64,8 @@ public class QiniuApplication extends Application {
 	public static StringBuilder deleteLog = new StringBuilder();
 
 	public static String downloadPath = null;
+
+	public static CdnManager cdnManager = null;
 
 	/**
 	 * 主程序入口
