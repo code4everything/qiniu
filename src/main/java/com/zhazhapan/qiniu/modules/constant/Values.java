@@ -31,7 +31,7 @@ public class Values {
 
 	public static final String LOAD_CONFIG_ERROR = "加载配置失败，无法继续运行";
 
-	public static final String OK = "确的";
+	public static final String OK = "确定";
 
 	public static final String CANCEL = "取消";
 
