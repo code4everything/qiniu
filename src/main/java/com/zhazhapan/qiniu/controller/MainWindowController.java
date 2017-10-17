@@ -40,6 +40,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -114,7 +115,13 @@ public class MainWindowController {
 	private Hyperlink toIntro;
 
 	@FXML
-	Hyperlink toIntro1;
+	private Hyperlink toIntro1;
+
+	@FXML
+	private Label totalSizeLabel;
+
+	@FXML
+	private Label totalLengthLabel;
 
 	private static MainWindowController mainWindowController = null;
 
@@ -371,18 +378,31 @@ public class MainWindowController {
 		ArrayList<FileInfo> files = new ArrayList<FileInfo>();
 		String search = Checker.checkNull(searchTextField.getText());
 		logger.info("search file: " + search);
+		QiniuApplication.totalLength = 0;
+		QiniuApplication.totalSize = 0;
 		try {
 			// 正则匹配查询
 			Pattern pattern = Pattern.compile(search, Pattern.CASE_INSENSITIVE);
 			for (FileInfo file : QiniuApplication.data) {
 				if (pattern.matcher(file.getName()).find()) {
 					files.add(file);
+					QiniuApplication.totalLength++;
+					QiniuApplication.totalSize += Formatter.sizeToLong(file.getSize());
 				}
 			}
 		} catch (Exception e) {
 			logger.warn("pattern '" + search + "' compile error, message: " + e.getMessage());
 		}
+		setBucketCount();
 		resTable.setItems(FXCollections.observableArrayList(files));
+	}
+
+	/**
+	 * 统计空间文件的数量以及大小
+	 */
+	public void setBucketCount() {
+		totalLengthLabel.setText(Formatter.customFormatDecimal(QiniuApplication.totalLength, ",###") + " 个文件");
+		totalSizeLabel.setText(Formatter.formatSize(QiniuApplication.totalSize));
 	}
 
 	/**
@@ -403,8 +423,12 @@ public class MainWindowController {
 	public void setResTableData() {
 		ThreadPool.executor.submit(() -> {
 			new QiManager().listFileOfBucket();
-			Platform.runLater(() -> resTable.setItems(QiniuApplication.data));
+			Platform.runLater(() -> {
+				resTable.setItems(QiniuApplication.data);
+				setBucketCount();
+			});
 		});
+
 	}
 
 	/**

@@ -68,6 +68,16 @@ public class QiniuApplication extends Application {
 	public static CdnManager cdnManager = null;
 
 	/**
+	 * 空间总文件数
+	 */
+	public static int totalLength = 0;
+
+	/**
+	 * 空间使用总大小
+	 */
+	public static long totalSize = 0;
+
+	/**
 	 * 主程序入口
 	 */
 	public static void main(String[] args) {

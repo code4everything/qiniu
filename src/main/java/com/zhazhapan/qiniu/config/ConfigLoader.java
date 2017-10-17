@@ -203,7 +203,7 @@ public class ConfigLoader {
 		ThreadPool.executor.submit(() -> {
 			try {
 				BufferedWriter out = new BufferedWriter(new FileWriter(configPath, false));
-				out.write(Formatter.jsonFormat(configJson));
+				out.write(Formatter.formatJson(configJson));
 				out.close();
 				logger.info("rewrite configuration success");
 			} catch (IOException e) {

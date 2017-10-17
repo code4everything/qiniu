@@ -275,10 +275,14 @@ public class QiManager {
 				Values.BUCKET_LIST_LIMIT_SIZE, "");
 		ArrayList<FileInfo> files = new ArrayList<FileInfo>();
 		logger.info("get file list of bucket: " + bucket);
+		QiniuApplication.totalLength = 0;
+		QiniuApplication.totalSize = 0;
 		// 处理获取的file list结果
 		while (iterator.hasNext()) {
 			com.qiniu.storage.model.FileInfo[] items = iterator.next();
 			for (com.qiniu.storage.model.FileInfo item : items) {
+				QiniuApplication.totalLength++;
+				QiniuApplication.totalSize += item.fsize;
 				// 将七牛的时间单位（100纳秒）转换成毫秒，然后转换成时间
 				String time = Formatter.timeStampToString(item.putTime / 10000);
 				String size = Formatter.formatSize(item.fsize);

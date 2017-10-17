@@ -32,7 +32,7 @@ public class Formatter {
 		if (Checker.isNumber(string)) {
 			return Integer.parseInt(string);
 		}
-		return 0;
+		return -1;
 	}
 
 	public static final Pattern FILE_NAME_PATTERN = Pattern.compile("([^/\\\\:*\"<>|?]+\\.)*[^/\\\\:*\"<>|?]+(\\?.*)?$",
@@ -42,21 +42,66 @@ public class Formatter {
 		if (size < Values.KB) {
 			return size + " B";
 		} else if (size < Values.MB) {
-			return decimalFormat((double) size / Values.KB) + " KB";
+			return formatDecimal((double) size / Values.KB) + " KB";
 		} else if (size < Values.GB) {
-			return decimalFormat((double) size / Values.MB) + " MB";
+			return formatDecimal((double) size / Values.MB) + " MB";
 		} else if (size < Values.TB) {
-			return decimalFormat((double) size / Values.GB) + " GB";
+			return formatDecimal((double) size / Values.GB) + " GB";
 		} else {
-			return decimalFormat((double) size / Values.TB) + " TB";
+			return formatDecimal((double) size / Values.TB) + " TB";
 		}
 	}
 
-	public static String decimalFormat(double number) {
-		return decimalFormat(number, "#0.00");
+	/**
+	 * 将格式化后的大小转换成long型
+	 * 
+	 * @param size
+	 *            格式：34.12 MB
+	 * @return long
+	 */
+	public static long sizeToLong(String size) {
+		if (Checker.isNotEmpty(size)) {
+			String num = size.split(" ")[0];
+			double result = 0;
+			if (size.contains("TB")) {
+				result = stringToDouble(num) * Values.TB;
+			} else if (size.contains("GB")) {
+				result = stringToDouble(num) * Values.GB;
+			} else if (size.contains("MB")) {
+				result = stringToDouble(num) * Values.MB;
+			} else if (size.contains("KB")) {
+				result = stringToDouble(num) * Values.KB;
+			} else {
+				result = stringToDouble(num);
+			}
+			return (long) result;
+		}
+		return -1;
 	}
 
-	public static String decimalFormat(double number, String format) {
+	public static double stringToDouble(String s) {
+		if (Checker.isDecimal(s)) {
+			return Double.parseDouble(s);
+		}
+		return -1;
+	}
+
+	public static long stringToLong(String s) {
+		if (Checker.isNumber(s)) {
+			return Long.parseLong(s);
+		}
+		return -1;
+	}
+
+	public static String customFormatDecimal(double number, String format) {
+		return formatDecimal(number, format);
+	}
+
+	public static String formatDecimal(double number) {
+		return formatDecimal(number, "#0.00");
+	}
+
+	public static String formatDecimal(double number, String format) {
 		return new DecimalFormat(format).format(number);
 	}
 
@@ -64,7 +109,7 @@ public class Formatter {
 		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
 	}
 
-	public static String jsonFormat(String string) {
+	public static String formatJson(String string) {
 		String json;
 		try {
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();

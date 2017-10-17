@@ -36,9 +36,17 @@
 
     其中 `config.json` 为配置文件
 
+- 文件上传
+
+    除了可上传本地文件外，还可抓取网络文件到空间中，如：
+
+    ![上传网络文件](http://img.blog.csdn.net/20171017152757227?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMjY5NTQ3NzM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+
+    然后点击开始上传即可
+
 **2. 资源管理界面：**
 
-![资源管理界面](http://img.blog.csdn.net/20171017111653241?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMjY5NTQ3NzM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+![资源管理界面](http://img.blog.csdn.net/20171017153112198?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMjY5NTQ3NzM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
 
 - 刷新列表
         

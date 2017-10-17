@@ -20,8 +20,14 @@ public class Checker {
 
 	public static final Pattern NUMBER_PATTERN = Pattern.compile("^[0-9]+$");
 
+	public static final Pattern DECIMAL_PATTERN = Pattern.compile("^[0-9]+(\\.[0-9]+)?$");
+
 	public static boolean isDate(String date) {
 		return isNull(date) ? false : DATE_PATTERN.matcher(date).matches();
+	}
+
+	public static boolean isDecimal(String string) {
+		return isNull(string) ? false : DECIMAL_PATTERN.matcher(string).matches();
 	}
 
 	public static boolean isNumber(String string) {

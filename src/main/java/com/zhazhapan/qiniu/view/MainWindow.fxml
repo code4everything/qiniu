@@ -125,6 +125,11 @@
                                           <Insets left="10.0" />
                                        </HBox.margin>
                                     </TextField>
+                                    <Label fx:id="totalLengthLabel">
+                                       <HBox.margin>
+                                          <Insets left="10.0" />
+                                       </HBox.margin>
+                                    </Label>
                                  </children>
                                  <padding>
                                     <Insets left="10.0" />
@@ -208,6 +213,11 @@
                                                 <Insets top="10.0" />
                                              </VBox.margin>
                                           </Button>
+                                          <Label fx:id="totalSizeLabel">
+                                             <VBox.margin>
+                                                <Insets top="10.0" />
+                                             </VBox.margin>
+                                          </Label>
                                        </children>
                                     </VBox>
                                  </children>
