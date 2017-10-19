@@ -3,8 +3,10 @@
  */
 package com.zhazhapan.qiniu;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -32,6 +34,36 @@ public class FileExecutor {
 
 	public void saveFile(File file, String content) {
 		saveFile(file, content, false);
+	}
+
+	public String readFile(String path) {
+		return readFile(new File(path));
+	}
+
+	public String readFile(File file) {
+		StringBuilder content = new StringBuilder();
+		String line;
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(file));
+			while ((line = reader.readLine()) != null) {
+				content.append(line + "\r\n");
+			}
+			reader.close();
+		} catch (IOException e) {
+			logger.error("read file error, messages: " + e.getMessage());
+		}
+		return content.toString();
+	}
+
+	/**
+	 * 保存日志文件
+	 */
+	public void saveLogFile(String logPath, String content) {
+		File file = new File(logPath);
+		if (file.exists()) {
+			content += readFile(file);
+		}
+		saveFile(file, content);
 	}
 
 	public void saveFile(File file, String content, boolean append) {

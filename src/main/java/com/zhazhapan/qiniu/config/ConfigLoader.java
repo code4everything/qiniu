@@ -3,10 +3,8 @@
  */
 package com.zhazhapan.qiniu.config;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
@@ -18,6 +16,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.zhazhapan.qiniu.FileExecutor;
 import com.zhazhapan.qiniu.QiniuApplication;
 import com.zhazhapan.qiniu.ThreadPool;
 import com.zhazhapan.qiniu.controller.MainWindowController;
@@ -151,20 +150,15 @@ public class ConfigLoader {
 	}
 
 	public static JsonObject readConfig() {
-		StringBuilder config = new StringBuilder();
 		JsonObject jsonObject = null;
 		try {
 			logger.info("load configuration into memory");
-			BufferedReader reader = new BufferedReader(new FileReader(configPath));
-			String line;
-			while ((line = reader.readLine()) != null) {
-				config.append(line);
+			String content = new FileExecutor().readFile(configPath);
+			if (Checker.isNullOrEmpty(content)) {
+				Dialogs.showFatalError(Values.LOAD_CONFIG_ERROR, new IOException("load configuration file error"));
+			} else {
+				jsonObject = new JsonParser().parse(content).getAsJsonObject();
 			}
-			reader.close();
-			jsonObject = new JsonParser().parse(config.toString()).getAsJsonObject();
-		} catch (IOException e) {
-			logger.error("load configuration error, messages: " + e.getMessage());
-			Dialogs.showFatalError(Values.LOAD_CONFIG_ERROR, e);
 		} catch (Exception e) {
 			logger.error("convert json string to json object failed, app'll reset");
 			Dialogs.showException(Values.JSON_TO_OBJECT_ERROR, e);

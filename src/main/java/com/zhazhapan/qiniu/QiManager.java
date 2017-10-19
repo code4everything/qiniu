@@ -12,6 +12,8 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import com.qiniu.cdn.CdnResult;
+import com.qiniu.cdn.CdnResult.BandwidthData;
+import com.qiniu.cdn.CdnResult.FluxData;
 import com.qiniu.cdn.CdnResult.LogData;
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
@@ -25,8 +27,11 @@ import com.zhazhapan.qiniu.util.Checker;
 import com.zhazhapan.qiniu.util.Formatter;
 import com.zhazhapan.qiniu.view.Dialogs;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.chart.XYChart.Data;
+import javafx.scene.chart.XYChart.Series;
 
 /**
  * @author pantao
@@ -39,6 +44,88 @@ public class QiManager {
 	public enum FileAction {
 		// 复制或移动文件
 		COPY, MOVE
+	}
+
+	/**
+	 * 获取空间带宽统计
+	 * 
+	 * @return
+	 */
+	public Series<String, Long> getBucketBandwidth(String[] domains, String fromDate, String toDate) {
+		CdnResult.BandwidthResult bandwidthResult = null;
+		try {
+			bandwidthResult = QiniuApplication.cdnManager.getBandwidthData(domains, fromDate, toDate, "day");
+		} catch (QiniuException e) {
+			logger.error("get bucket bandwidth error, message: " + e.getMessage());
+			Platform.runLater(() -> Dialogs.showException(Values.BUCKET_BAND_ERROR, e));
+		}
+		Series<String, Long> bandSer = new Series<String, Long>();
+		bandSer.setName(Values.BUCKET_BANDWIDTH_COUNT);
+		// 获取带宽统计
+		if (Checker.isNotNull(bandwidthResult) && Checker.isNotEmpty(bandwidthResult.data)) {
+			for (Map.Entry<String, BandwidthData> bandwidth : bandwidthResult.data.entrySet()) {
+				String[] times = bandwidthResult.time;
+				BandwidthData bandwidthData = bandwidth.getValue();
+				int i = 0;
+				for (String time : times) {
+					long size = 0;
+					if (Checker.isNotNull(bandwidthData)) {
+						if (Checker.isNotNull(bandwidthData.china)) {
+							size += bandwidthData.china[i];
+						}
+						if (Checker.isNotNull(bandwidthData.oversea)) {
+							size += bandwidthData.oversea[i];
+						}
+					}
+					bandSer.getData().add(new Data<String, Long>(time.substring(5, 10), size / Values.KB));
+					i++;
+				}
+			}
+		} else {
+			logger.info("bandwidth is empty of this domain");
+		}
+		return bandSer;
+	}
+
+	/**
+	 * 获取空间的流量统计
+	 * 
+	 * @return
+	 */
+	public Series<String, Long> getBucketFlux(String[] domains, String fromDate, String toDate) {
+		CdnResult.FluxResult fluxResult = null;
+		try {
+			fluxResult = QiniuApplication.cdnManager.getFluxData(domains, fromDate, toDate, "day");
+		} catch (QiniuException e) {
+			logger.error("get bucket flux error, message: " + e.getMessage());
+			Platform.runLater(() -> Dialogs.showException(Values.BUCKET_FLUX_ERROR, e));
+		}
+		Series<String, Long> fluxSer = new Series<String, Long>();
+		fluxSer.setName(Values.BUCKET_FLUX_COUNT);
+		// 获取流量统计
+		if (Checker.isNotNull(fluxResult) && Checker.isNotEmpty(fluxResult.data)) {
+			for (Map.Entry<String, FluxData> flux : fluxResult.data.entrySet()) {
+				String[] times = fluxResult.time;
+				FluxData fluxData = flux.getValue();
+				int i = 0;
+				for (String time : times) {
+					long size = 0;
+					if (Checker.isNotNull(fluxData)) {
+						if (Checker.isNotNull(fluxData.china)) {
+							size += fluxData.china[i];
+						}
+						if (Checker.isNotNull(fluxData.oversea)) {
+							size += fluxData.oversea[i];
+						}
+					}
+					fluxSer.getData().add(new Data<String, Long>(time.substring(5, 10), size / Values.KB));
+					i++;
+				}
+			}
+		} else {
+			logger.info("flux is empty of this domain");
+		}
+		return fluxSer;
 	}
 
 	/**
@@ -248,6 +335,8 @@ public class QiManager {
 						logger.info("delete file '" + file + "' success");
 						deleteLog += "\tsuccess\t";
 						QiniuApplication.data.remove(seletecFileInfos.get(i));
+						QiniuApplication.totalLength--;
+						QiniuApplication.totalSize -= Formatter.sizeToLong(seletecFileInfos.get(i).getSize());
 						if (sear) {
 							currentRes.remove(seletecFileInfos.get(i));
 						}
@@ -261,6 +350,7 @@ public class QiManager {
 			} catch (QiniuException e) {
 				Dialogs.showException(Values.DELETE_ERROR, e);
 			}
+			MainWindowController.getInstance().setBucketCount();
 		}
 	}
 

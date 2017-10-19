@@ -28,6 +28,8 @@ public class Formatter {
 
 	private static Logger logger = Logger.getLogger(Formatter.class);
 
+	private static final String[] SIZE_POST = { "TB", "GB", "MB", "KB" };
+
 	public static int stringToInt(String string) {
 		if (Checker.isNumber(string)) {
 			return Integer.parseInt(string);
@@ -63,13 +65,13 @@ public class Formatter {
 		if (Checker.isNotEmpty(size)) {
 			String num = size.split(" ")[0];
 			double result = 0;
-			if (size.contains("TB")) {
+			if (size.contains(SIZE_POST[0])) {
 				result = stringToDouble(num) * Values.TB;
-			} else if (size.contains("GB")) {
+			} else if (size.contains(SIZE_POST[1])) {
 				result = stringToDouble(num) * Values.GB;
-			} else if (size.contains("MB")) {
+			} else if (size.contains(SIZE_POST[2])) {
 				result = stringToDouble(num) * Values.MB;
-			} else if (size.contains("KB")) {
+			} else if (size.contains(SIZE_POST[3])) {
 				result = stringToDouble(num) * Values.KB;
 			} else {
 				result = stringToDouble(num);
@@ -106,7 +108,7 @@ public class Formatter {
 	}
 
 	public static String timeStampToString(long time) {
-		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(time);
+		return new SimpleDateFormat(Values.DATE_TIME_FORMATTER).format(time);
 	}
 
 	public static String formatJson(String string) {
@@ -125,11 +127,11 @@ public class Formatter {
 	}
 
 	public static String dateToString(Date date) {
-		return new SimpleDateFormat("yyyy-MM-dd").format(checkDate(date));
+		return new SimpleDateFormat(Values.DATE_FORMATTER).format(checkDate(date));
 	}
 
 	public static String datetimeToString(Date date) {
-		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(checkDate(date));
+		return new SimpleDateFormat(Values.DATE_TIME_FORMATTER).format(checkDate(date));
 	}
 
 	public static String getFileName(String string) {

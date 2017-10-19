@@ -110,4 +110,18 @@ public class Values {
 	public static final String DOWNLOAD_URL = "下载链接";
 
 	public static final String INPUT_LOG_DATE = "请输入日志的日期";
+
+	public static final String DATE_FORMATTER = "yyyy-MM-dd";
+
+	public static final String DATE_TIME_FORMATTER = "yyyy-MM-dd HH:mm:ss";
+
+	public static final String BUCKET_FLUX_ERROR = "获取空间流量统计失败";
+
+	public static final String BUCKET_BAND_ERROR = "获取空间带宽统计失败";
+
+	public static final String BUCKET_FLUX_COUNT = "空间流量（KB）";
+
+	public static final String BUCKET_BANDWIDTH_COUNT = "空间带宽（KB）";
+
+	public static final long DATE_SPAN_OF_THIRTY_ONE = (long) 31 * 24 * 60 * 60 * 1000;
 }

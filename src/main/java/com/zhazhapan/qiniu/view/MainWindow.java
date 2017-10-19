@@ -59,19 +59,20 @@ public class MainWindow {
 		stage.setOnCloseRequest((e) -> {
 			ThreadPool.shutdown();
 			ConfigLoader.checkWorkPath();
+			FileExecutor executor = new FileExecutor();
 			// 将上传日志写入磁盘
 			String content = MainWindowController.getInstance().uploadStatusTextArea.getText();
 			if (Checker.isNotEmpty(content)) {
 				String logPath = QiniuApplication.workDir + Values.SEPARATOR + "upload_"
 						+ Formatter.dateToString(new Date()).replaceAll("-", "_") + ".log";
-				new FileExecutor().saveFile(logPath, content, true);
+				executor.saveLogFile(logPath, content);
 			}
 			// 将删除记录写入磁盘
 			String deleteContent = QiniuApplication.deleteLog.toString();
 			if (Checker.isNotEmpty(deleteContent)) {
 				String logPath = QiniuApplication.workDir + Values.SEPARATOR + "delete_"
 						+ Formatter.dateToString(new Date()).replaceAll("-", "_") + ".log";
-				new FileExecutor().saveFile(logPath, deleteContent, true);
+				executor.saveLogFile(logPath, deleteContent);
 			}
 			System.exit(0);
 		});

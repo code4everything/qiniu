@@ -6,6 +6,7 @@ package com.zhazhapan.qiniu.controller;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,9 +37,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.chart.AreaChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
@@ -123,6 +126,18 @@ public class MainWindowController {
 	@FXML
 	private Label totalLengthLabel;
 
+	@FXML
+	private AreaChart<String, Long> bucketFluxChart;
+
+	@FXML
+	private AreaChart<String, Long> bucketBandChart;
+
+	@FXML
+	private DatePicker startDate;
+
+	@FXML
+	private DatePicker endDate;
+
 	private static MainWindowController mainWindowController = null;
 
 	private String status = "";
@@ -143,7 +158,7 @@ public class MainWindowController {
 	private void initialize() {
 		mainWindowController = this;
 		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-		// 文件名可编辑
+		// 设置文件名可编辑
 		nameCol.setCellFactory(TextFieldTableCell.forTableColumn());
 		nameCol.setOnEditCommit(v -> {
 			String name = "";
@@ -159,7 +174,7 @@ public class MainWindowController {
 			fileInfo.setName(name);
 		});
 		typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
-		// 文件类型可编辑
+		// 设置文件类型可编辑
 		typeCol.setCellFactory(TextFieldTableCell.forTableColumn());
 		typeCol.setOnEditCommit(v -> {
 			FileInfo fileInfo = v.getTableView().getItems().get(v.getTablePosition().getRow());
@@ -177,7 +192,11 @@ public class MainWindowController {
 		sizeCol.setCellValueFactory(new PropertyValueFactory<>("size"));
 		timeCol.setCellValueFactory(new PropertyValueFactory<>("time"));
 		resTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-		// BucketChoiceComboBox改变事件，改变后并配置新的上传环境
+		// 设置默认的开始和结束日期，并调用dateChange事件刷新数据
+		endDate.setValue(LocalDate.now());
+		LocalDate endDate = Utils.dateToLocalDate(new Date(new Date().getTime() - Values.DATE_SPAN_OF_THIRTY_ONE));
+		startDate.setValue(endDate);
+		// 设置BucketChoiceComboBox改变事件，改变后并配置新的上传环境
 		bucketChoiceCombo.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
 			String[] zones = QiniuApplication.buckets.get(newValue).split(" ");
 			zoneText.setText(zones[0]);
@@ -192,10 +211,12 @@ public class MainWindowController {
 				if (new QiConfig().configUploadEnv(zones[0], newValue)) {
 					// 加载文件列表
 					setResTableData();
+					// 刷新流量带宽统计
+					dateChange();
 				}
 			});
 		});
-		// 超链接添加监听
+		// 设置超链接监听
 		toCsdnBlog.setOnAction(e -> Utils.openLink("http://csdn.zhazhapan.com"));
 		toHexoBlog.setOnAction(e -> Utils.openLink("http://zhazhapan.com"));
 		toGithubSource.setOnAction(e -> Utils.openLink("https://github.com/zhazhapan/qiniu"));
@@ -204,6 +225,34 @@ public class MainWindowController {
 				+ "%E5%85%B7%E4%BB%8B%E7%BB%8D/";
 		toIntro.setOnAction(e -> Utils.openLink(introPage));
 		toIntro1.setOnAction(e -> Utils.openLink("http://blog.csdn.net/qq_26954773/article/details/78245100"));
+	}
+
+	/**
+	 * 开始日期或结束日期改变，刷新流量、带宽统计
+	 */
+	public void dateChange() {
+		Date start = Utils.localDateToDate(startDate.getValue());
+		Date end = Utils.localDateToDate(endDate.getValue());
+		String fromDate = Formatter.dateToString(start);
+		String toDate = Formatter.dateToString(end);
+		String domain = bucketDomainTextField.getText();
+		// 获取开始日期和结束日期的时间差
+		long timeSpan = end.getTime() - start.getTime();
+		if (Checker.isNotEmpty(domain) && timeSpan >= 0 && timeSpan <= Values.DATE_SPAN_OF_THIRTY_ONE) {
+			String[] domains = { domain };
+			logger.info("start to get flux of domain: " + domain);
+			ThreadPool.executor.submit(() -> {
+				QiManager manager = new QiManager();
+				Platform.runLater(() -> {
+					bucketFluxChart.getData().clear();
+					bucketFluxChart.getData().add(manager.getBucketFlux(domains, fromDate, toDate));
+					bucketBandChart.getData().clear();
+					bucketBandChart.getData().add(manager.getBucketBandwidth(domains, fromDate, toDate));
+				});
+			});
+		} else {
+			logger.info("domain is empty or time span is invalid, can't get flux of this bucket");
+		}
 	}
 
 	/**
@@ -335,6 +384,8 @@ public class MainWindowController {
 					if (fb != tb) {
 						// 删除数据源
 						QiniuApplication.data.remove(fileInfo);
+						QiniuApplication.totalLength--;
+						QiniuApplication.totalSize -= Formatter.sizeToLong(fileInfo.getSize());
 						if (sear) {
 							resData.remove(fileInfo);
 						}
@@ -347,6 +398,7 @@ public class MainWindowController {
 					}
 				}
 			}
+			setBucketCount();
 		}
 	}
 
@@ -504,15 +556,16 @@ public class MainWindowController {
 			for (String path : paths) {
 				if (Checker.isNotEmpty(path)) {
 					Platform.runLater(() -> uploadStatusTextArea.insertText(0, Values.UPLOADING));
+					logger.info("start to upload file: " + path);
+					String filename = "undefined";
+					String url = "http://" + QiniuApplication.buckets.get(bucket).split(" ")[1] + "/";
+					File file = new File(path);
 					try {
-						logger.info("start to upload file: " + path);
-						File file = new File(path);
-						String filename = "undefined";
-						String url = "http://" + QiniuApplication.buckets.get(bucket).split(" ")[1] + "/";
 						// 判断文件是否存在
 						if (file.exists()) {
 							filename = key + file.getName();
-							QiniuApplication.uploadManager.put(path, filename, QiniuApplication.upToken);
+							String upToken = QiniuApplication.auth.uploadToken(bucket, filename);
+							QiniuApplication.uploadManager.put(path, filename, upToken);
 							status = Formatter.datetimeToString(new Date()) + "\tsuccess\t" + url + filename + "\t"
 									+ path;
 							logger.info("upload file '" + path + "' to bucket '" + bucket + "' success");

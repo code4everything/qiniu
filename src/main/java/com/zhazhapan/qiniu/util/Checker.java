@@ -54,6 +54,10 @@ public class Checker {
 		return isNull(string) ? "" : string;
 	}
 
+	public static long checkNull(long longNum) {
+		return isNull(longNum) ? 0 : longNum;
+	}
+
 	public static boolean isNotEmpty(List<?> list) {
 		return !isEmpty(list);
 	}

@@ -63,7 +63,6 @@ public class QiConfig {
 			QiniuApplication.uploadManager = new UploadManager(configuration);
 		}
 		QiniuApplication.configuration = configuration;
-		QiniuApplication.upToken = QiniuApplication.auth.uploadToken(bucket);
 		QiniuApplication.bucketManager = new BucketManager(QiniuApplication.auth, configuration);
 		return true;
 	}

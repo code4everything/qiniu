@@ -8,7 +8,7 @@
 
 **1. 主窗口界面：**
 
-![程序主界面](http://img.blog.csdn.net/20171015221834257?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMjY5NTQ3NzM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+![程序主界面](http://img.blog.csdn.net/20171019104749116?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMjY5NTQ3NzM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
 
 - 设置文件前缀
 
@@ -26,7 +26,7 @@
 
     ![重置密钥](http://img.blog.csdn.net/20171017123714044?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMjY5NTQ3NzM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
 
-    > 说明：出于安全考虑，建议您周期性地更换密钥。[密钥安全使用须知](https://developer.qiniu.com/kodo/kb/1334/the-access-key-secret-key-encryption-key-safe-use-instructions)
+    > 说明：出于安全考虑，建议您周期性地更换密钥。[查看我的密钥](https://portal.qiniu.com/user/key) [密钥安全使用须知](https://developer.qiniu.com/kodo/kb/1334/the-access-key-secret-key-encryption-key-safe-use-instructions)
 
 - 配置文件
 
@@ -38,15 +38,15 @@
 
 - 文件上传
 
-    除了可上传本地文件外，还可抓取网络文件到空间中，如：
+    除了可（支持断点和覆盖）上传本地文件外，还可抓取网络文件到空间中，如：
 
-    ![上传网络文件](http://img.blog.csdn.net/20171017152757227?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMjY5NTQ3NzM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+    ![上传网络文件](http://img.blog.csdn.net/20171019105056517?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMjY5NTQ3NzM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
 
-    然后点击开始上传即可
+    然后点击 `开始上传` 即可
 
 **2. 资源管理界面：**
 
-![资源管理界面](http://img.blog.csdn.net/20171017153112198?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMjY5NTQ3NzM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+![资源管理界面](http://img.blog.csdn.net/20171019105225191?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMjY5NTQ3NzM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
 
 - 刷新列表
         
@@ -74,11 +74,9 @@
 
 - 更新镜像
 
-    需要选中文件才能更新，但是这个功能我一直没有测试成功，不知道为什么
+    此功能首先需要你配置了镜像存储
 
     > 官方解释：对于配置了镜像存储的空间，如果镜像源站更新了文件内容，则默认情况下，七牛不会再主动从客户镜像源站同步新的副本，这个时候就需要利用这个prefetch接口来主动地将空间中的文件和更新后的源站副本进行同步。
-
-    或许是我没有配置什么镜像存储吧
 
 - 公有下载
 
@@ -104,11 +102,17 @@
 
     从七牛下载指定日期的操作日志
 
-**说明：操作文件时，需要选中文件才能操作（支持多选）。由于下载私有空间的文件需要临时授权，所以文件的下载分为私有下载（生成临时授权然后下载文件）和公有下载（直接下载文件）。**
+> 说明：操作文件时，需要选中文件才能操作（支持多选）。由于下载私有空间的文件需要临时授权，所以文件的下载分为私有下载（生成临时授权然后下载文件）和公有下载（直接下载文件）。
 
-**3. 其他**
+**3. 数据统计界面**
 
-- [**下载可执行的jar包**](http://oq3iwfipo.bkt.clouddn.com/tools/zhazhapan/qiniu.jar?v=3 "七牛云——对象存储管理工具jar包下载地址")
+![数据统计界面](http://img.blog.csdn.net/20171019105531070?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMjY5NTQ3NzM=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+
+> 说明：时间范围不超过31天，否则无法获取数据，这是七牛官方规定的。
+
+**4. 其他**
+
+- [**下载可执行的jar包**](http://oq3iwfipo.bkt.clouddn.com/tools/zhazhapan/qiniu.jar?v=4 "七牛云——对象存储管理工具jar包下载地址")
 
 - [**历史版本**](https://github.com/zhazhapan/qiniu/releases) 
 

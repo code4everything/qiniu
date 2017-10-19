@@ -53,8 +53,6 @@ public class QiniuApplication extends Application {
 
 	public static UploadManager uploadManager = null;
 
-	public static String upToken = null;
-
 	public static Configuration configuration = null;
 
 	public static BucketManager bucketManager = null;

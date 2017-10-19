@@ -7,6 +7,11 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 
 import org.apache.log4j.Logger;
 
@@ -24,6 +29,18 @@ import javafx.scene.input.ClipboardContent;
 public class Utils extends com.sun.javafx.util.Utils {
 
 	private static Logger logger = Logger.getLogger(Utils.class);
+
+	public static Date localDateToDate(LocalDate localDate) {
+		ZoneId zone = ZoneId.systemDefault();
+		Instant instant = localDate.atStartOfDay().atZone(zone).toInstant();
+		return Date.from(instant);
+	}
+
+	public static LocalDate dateToLocalDate(Date date) {
+		Instant instant = date.toInstant();
+		ZoneId zone = ZoneId.systemDefault();
+		return LocalDateTime.ofInstant(instant, zone).toLocalDate();
+	}
 
 	public static void copyToClipboard(String string) {
 		ClipboardContent content = new ClipboardContent();
