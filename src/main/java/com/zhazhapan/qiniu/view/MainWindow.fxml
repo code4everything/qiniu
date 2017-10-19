@@ -17,12 +17,8 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -32,305 +28,256 @@
         <tabs>
           <Tab text="文件上传">
             <content>
-              <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <HBox>
                      <children>
-                        <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="528.0" prefWidth="700.0">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="488.0" minWidth="10.0" prefWidth="399.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="346.0" minWidth="1.0" prefWidth="17.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="346.0" minWidth="10.0" prefWidth="283.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                           <children>
-                              <GridPane prefHeight="430.0" GridPane.columnIndex="2">
-                                <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                </columnConstraints>
-                                <rowConstraints>
-                                  <RowConstraints maxHeight="130.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                  <RowConstraints maxHeight="500.0" minHeight="10.0" prefHeight="342.0" vgrow="SOMETIMES" />
-                                  <RowConstraints maxHeight="315.0" minHeight="10.0" prefHeight="36.0" vgrow="SOMETIMES" />
-                                </rowConstraints>
-                                 <children>
-                                    <GridPane prefHeight="430.0" GridPane.rowIndex="2">
-                                      <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                      </columnConstraints>
-                                      <rowConstraints>
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      </rowConstraints>
-                                       <padding>
-                                          <Insets top="10.0" />
-                                       </padding>
-                                       <children>
-                                          <Button mnemonicParsing="false" onAction="#selectFile" prefHeight="27.0" prefWidth="130.0" text="选择文件" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER" />
-                                          <Button mnemonicParsing="false" onAction="#uploadFile" prefHeight="27.0" prefWidth="130.0" text="开始上传" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.hgrow="ALWAYS" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER" />
-                                       </children>
-                                    </GridPane>
-                                    <TextArea fx:id="selectedFileTextArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="324.0" prefWidth="277.0" promptText="文件路径, 一个文件一行" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
-                                       <GridPane.margin>
-                                          <Insets top="10.0" />
-                                       </GridPane.margin>
-                                    </TextArea>
-                                    <ComboBox fx:id="filePrefixCombo" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="277.0" promptText="文件前缀, 不设置则为空" GridPane.hgrow="ALWAYS" GridPane.vgrow="NEVER" />
-                                 </children>
-                              </GridPane>
-                              <TextArea fx:id="uploadStatusTextArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="430.0" prefWidth="343.0" promptText="文件上传状态" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
-                                 <contextMenu>
-                                    <ContextMenu>
-                                      <items>
-                                        <MenuItem mnemonicParsing="false" onAction="#clearUploadStatus" text="清空" />
-                                          <MenuItem mnemonicParsing="false" onAction="#saveUploadStatus" text="另存为" />
-                                          <MenuItem mnemonicParsing="false" onAction="#copyUploadStatus" text="复制" />
-                                      </items>
-                                    </ContextMenu>
-                                 </contextMenu>
-                              </TextArea>
-                           </children>
-                           <padding>
+                        <TextArea fx:id="uploadStatusTextArea" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="430.0" prefWidth="343.0" promptText="文件上传状态" HBox.hgrow="ALWAYS">
+                           <contextMenu>
+                              <ContextMenu>
+                                <items>
+                                  <MenuItem mnemonicParsing="false" onAction="#clearUploadStatus" text="清空" />
+                                    <MenuItem mnemonicParsing="false" onAction="#saveUploadStatus" text="另存为" />
+                                    <MenuItem mnemonicParsing="false" onAction="#copyUploadStatus" text="复制" />
+                                </items>
+                              </ContextMenu>
+                           </contextMenu>
+                           <HBox.margin>
+                              <Insets bottom="10.0" left="10.0" top="10.0" />
+                           </HBox.margin>
+                        </TextArea>
+                        <VBox prefHeight="500.0" prefWidth="171.0" HBox.hgrow="ALWAYS">
+                           <HBox.margin>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                           </padding>
-                        </GridPane>
+                           </HBox.margin>
+                           <children>
+                              <ComboBox fx:id="filePrefixCombo" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="277.0" promptText="文件前缀, 不设置则为空" VBox.vgrow="NEVER" />
+                              <TextArea fx:id="selectedFileTextArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onDragDropped="#dragFileDropped" onDragOver="#dragFileOver" prefHeight="800.0" prefWidth="332.0" promptText="文件路径, 一个文件一行, 支持拖曳文件, 支持抓取网络文件" VBox.vgrow="ALWAYS">
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin>
+                              </TextArea>
+                              <HBox alignment="TOP_CENTER" VBox.vgrow="NEVER">
+                                 <children>
+                                    <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#selectFile" prefHeight="27.0" prefWidth="156.0" text="选择文件" HBox.hgrow="ALWAYS">
+                                       <HBox.margin>
+                                          <Insets right="10.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#uploadFile" prefHeight="27.0" prefWidth="156.0" text="开始上传" HBox.hgrow="ALWAYS">
+                                       <HBox.margin>
+                                          <Insets left="10.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin>
+                              </HBox>
+                           </children>
+                        </VBox>
                      </children>
-                  </AnchorPane>
+                  </HBox>
             </content>
           </Tab>
           <Tab text="资源管理">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <VBox>
                      <children>
-                        <GridPane prefHeight="528.0" prefWidth="700.0">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="700.0" minWidth="10.0" prefWidth="492.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints maxHeight="251.0" minHeight="30.0" prefHeight="42.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="487.0" minHeight="10.0" prefHeight="464.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="487.0" minHeight="6.0" prefHeight="6.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
+                        <HBox alignment="CENTER_LEFT" prefHeight="52.0" prefWidth="700.0" VBox.vgrow="NEVER">
                            <children>
-                              <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                              <Label alignment="CENTER" text="空间域名" HBox.hgrow="NEVER">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="bucketDomainTextField" editable="false" prefHeight="27.0" prefWidth="245.0" promptText="空间域名" HBox.hgrow="NEVER">
+                                 <HBox.margin>
+                                    <Insets left="10.0" />
+                                 </HBox.margin>
+                              </TextField>
+                              <TextField fx:id="searchTextField" onKeyReleased="#searchFile" prefHeight="27.0" prefWidth="275.0" promptText="搜索文件, 支持正则表达式" HBox.hgrow="NEVER">
+                                 <HBox.margin>
+                                    <Insets left="10.0" />
+                                 </HBox.margin>
+                              </TextField>
+                              <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
                                  <children>
-                                    <Label alignment="CENTER" text="空间域名" HBox.hgrow="NEVER">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <TextField fx:id="bucketDomainTextField" editable="false" prefHeight="27.0" prefWidth="245.0" promptText="空间域名">
-                                       <HBox.margin>
-                                          <Insets left="10.0" />
-                                       </HBox.margin>
-                                    </TextField>
-                                    <TextField fx:id="searchTextField" onKeyReleased="#searchFile" prefHeight="27.0" prefWidth="280.0" promptText="搜索文件, 支持正则表达式">
-                                       <HBox.margin>
-                                          <Insets left="10.0" />
-                                       </HBox.margin>
-                                    </TextField>
-                                    <Label fx:id="totalLengthLabel">
-                                       <HBox.margin>
-                                          <Insets left="10.0" />
-                                       </HBox.margin>
-                                    </Label>
+                                    <Label fx:id="totalLengthLabel" />
                                  </children>
                                  <padding>
-                                    <Insets left="10.0" />
+                                    <Insets right="15.0" />
                                  </padding>
-                                 <GridPane.margin>
-                                    <Insets bottom="10.0" top="10.0" />
-                                 </GridPane.margin>
                               </HBox>
-                              <GridPane prefHeight="480.0" prefWidth="690.0" GridPane.rowIndex="1">
-                                 <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="637.0" minWidth="10.0" prefWidth="602.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="156.0" minWidth="10.0" prefWidth="88.0" />
-                                 </columnConstraints>
-                                 <rowConstraints>
-                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                                 </rowConstraints>
+                           </children>
+                           <padding>
+                              <Insets left="10.0" />
+                           </padding>
+                        </HBox>
+                        <HBox VBox.vgrow="ALWAYS">
+                           <children>
+                              <TableView fx:id="resTable" editable="true" prefHeight="479.0" prefWidth="602.0" HBox.hgrow="ALWAYS">
+                                <columns>
+                                  <TableColumn fx:id="nameCol" prefWidth="278.0" text="文件名" />
+                                  <TableColumn fx:id="typeCol" minWidth="5.0" prefWidth="81.0" text="文件类型" />
+                                    <TableColumn fx:id="sizeCol" prefWidth="90.0" text="文件大小" />
+                                    <TableColumn fx:id="timeCol" prefWidth="152.0" text="最后更新时间" />
+                                </columns>
+                                 <HBox.margin>
+                                    <Insets bottom="10.0" left="10.0" />
+                                 </HBox.margin>
+                              </TableView>
+                              <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="NEVER">
                                  <children>
-                                    <TableView fx:id="resTable" editable="true" prefHeight="479.0" prefWidth="602.0">
-                                      <columns>
-                                        <TableColumn fx:id="nameCol" prefWidth="278.0" text="文件名" />
-                                        <TableColumn fx:id="typeCol" minWidth="5.0" prefWidth="81.0" text="文件类型" />
-                                          <TableColumn fx:id="sizeCol" prefWidth="90.0" text="文件大小" />
-                                          <TableColumn fx:id="timeCol" prefWidth="152.0" text="最后更新时间" />
-                                      </columns>
-                                    </TableView>
-                                    <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.valignment="TOP">
+                                    <Button mnemonicParsing="false" onAction="#refreshResTable" text="刷新列表" VBox.vgrow="NEVER" />
+                                    <Button mnemonicParsing="false" onAction="#copyLink" text="复制链接" VBox.vgrow="NEVER">
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </Button>
+                                    <Button mnemonicParsing="false" onAction="#deleteFiles" text="删除文件" VBox.vgrow="NEVER">
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </Button>
+                                    <Button mnemonicParsing="false" onAction="#showFileMovableDialog" text="移动到..." VBox.vgrow="NEVER">
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </Button>
+                                    <Button mnemonicParsing="false" onAction="#setLife" text="生存时间" VBox.vgrow="NEVER">
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </Button>
+                                    <Button mnemonicParsing="false" onAction="#updateFile" text="更新镜像" VBox.vgrow="NEVER">
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </Button>
+                                    <Button mnemonicParsing="false" onAction="#publicDownload" text="公有下载" VBox.vgrow="NEVER">
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </Button>
+                                    <Button mnemonicParsing="false" onAction="#privateDownload" text="私有下载" VBox.vgrow="NEVER">
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </Button>
+                                    <Button mnemonicParsing="false" onAction="#openFile" text="打开文件" VBox.vgrow="NEVER">
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </Button>
+                                    <Button mnemonicParsing="false" onAction="#downloadFromURL" text="链接下载" VBox.vgrow="NEVER">
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </Button>
+                                    <Button mnemonicParsing="false" onAction="#refreshFile" text="文件刷新" VBox.vgrow="NEVER">
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </Button>
+                                    <Button mnemonicParsing="false" onAction="#downloadCdnLog" text="日志下载" VBox.vgrow="NEVER">
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
+                                    </Button>
+                                    <VBox alignment="BOTTOM_CENTER" VBox.vgrow="ALWAYS">
+                                       <VBox.margin>
+                                          <Insets top="10.0" />
+                                       </VBox.margin>
                                        <children>
-                                          <Button mnemonicParsing="false" onAction="#refreshResTable" text="刷新列表" />
-                                          <Button mnemonicParsing="false" onAction="#copyLink" text="复制链接">
-                                             <VBox.margin>
-                                                <Insets top="10.0" />
-                                             </VBox.margin>
-                                          </Button>
-                                          <Button mnemonicParsing="false" onAction="#deleteFiles" text="删除文件">
-                                             <VBox.margin>
-                                                <Insets top="10.0" />
-                                             </VBox.margin>
-                                          </Button>
-                                          <Button mnemonicParsing="false" onAction="#showFileMovableDialog" text="移动到...">
-                                             <VBox.margin>
-                                                <Insets top="10.0" />
-                                             </VBox.margin>
-                                          </Button>
-                                          <Button mnemonicParsing="false" onAction="#setLife" text="生存时间">
-                                             <VBox.margin>
-                                                <Insets top="10.0" />
-                                             </VBox.margin>
-                                          </Button>
-                                          <Button mnemonicParsing="false" onAction="#updateFile" text="更新镜像">
-                                             <VBox.margin>
-                                                <Insets top="10.0" />
-                                             </VBox.margin>
-                                          </Button>
-                                          <Button mnemonicParsing="false" onAction="#publicDownload" text="公有下载">
-                                             <VBox.margin>
-                                                <Insets top="10.0" />
-                                             </VBox.margin>
-                                          </Button>
-                                          <Button mnemonicParsing="false" onAction="#privateDownload" text="私有下载">
-                                             <VBox.margin>
-                                                <Insets top="10.0" />
-                                             </VBox.margin>
-                                          </Button>
-                                          <Button mnemonicParsing="false" onAction="#openFile" text="打开文件">
-                                             <VBox.margin>
-                                                <Insets top="10.0" />
-                                             </VBox.margin>
-                                          </Button>
-                                          <Button mnemonicParsing="false" onAction="#downloadFromURL" text="链接下载">
-                                             <VBox.margin>
-                                                <Insets top="10.0" />
-                                             </VBox.margin>
-                                          </Button>
-                                          <Button mnemonicParsing="false" onAction="#refreshFile" text="文件刷新">
-                                             <VBox.margin>
-                                                <Insets top="10.0" />
-                                             </VBox.margin>
-                                          </Button>
-                                          <Button mnemonicParsing="false" onAction="#downloadCdnLog" text="日志下载">
-                                             <VBox.margin>
-                                                <Insets top="10.0" />
-                                             </VBox.margin>
-                                          </Button>
-                                          <Label fx:id="totalSizeLabel">
-                                             <VBox.margin>
-                                                <Insets top="10.0" />
-                                             </VBox.margin>
-                                          </Label>
+                                          <Label fx:id="totalSizeLabel" />
                                        </children>
+                                       <padding>
+                                          <Insets bottom="10.0" />
+                                       </padding>
                                     </VBox>
                                  </children>
-                                 <GridPane.margin>
-                                    <Insets left="10.0" />
-                                 </GridPane.margin>
-                              </GridPane>
+                              </VBox>
                            </children>
-                        </GridPane>
-                     </children></AnchorPane>
+                        </HBox>
+                     </children>
+                  </VBox>
             </content>
           </Tab>
             <Tab text="数据统计">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <VBox>
                      <children>
-                        <GridPane layoutX="-1.0" layoutY="-1.0" prefHeight="528.0" prefWidth="700.0">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints maxHeight="172.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="495.0" minHeight="10.0" prefHeight="225.0" vgrow="SOMETIMES" />
-                              <RowConstraints maxHeight="495.0" minHeight="10.0" prefHeight="225.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
+                        <HBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="700.0" VBox.vgrow="NEVER">
                            <children>
-                              <HBox alignment="CENTER_LEFT" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="700.0" GridPane.columnSpan="2">
-                                 <children>
-                                    <Label text="开始日期">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <HBox.margin>
-                                          <Insets left="10.0" />
-                                       </HBox.margin>
-                                    </Label>
-                                    <DatePicker fx:id="startDate" onAction="#dateChange" promptText="开始日期">
-                                       <HBox.margin>
-                                          <Insets left="10.0" />
-                                       </HBox.margin>
-                                    </DatePicker>
-                                    <Label text="结束日期">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <HBox.margin>
-                                          <Insets left="10.0" />
-                                       </HBox.margin>
-                                    </Label>
-                                    <DatePicker fx:id="endDate" onAction="#dateChange" promptText="结束日期">
-                                       <HBox.margin>
-                                          <Insets left="10.0" />
-                                       </HBox.margin>
-                                    </DatePicker>
-                                    <Label text="时间跨度不超过31天">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <HBox.margin>
-                                          <Insets left="10.0" />
-                                       </HBox.margin>
-                                    </Label>
-                                 </children>
-                                 <GridPane.margin>
+                              <Label text="开始日期" HBox.hgrow="NEVER">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <HBox.margin>
                                     <Insets />
-                                 </GridPane.margin>
-                              </HBox>
-                              <AreaChart fx:id="bucketFluxChart" GridPane.columnSpan="2" GridPane.rowIndex="1">
-                                <xAxis>
-                                  <CategoryAxis side="BOTTOM" />
-                                </xAxis>
-                                <yAxis>
-                                  <NumberAxis side="LEFT" />
-                                </yAxis>
-                              </AreaChart>
-                              <AreaChart fx:id="bucketBandChart" GridPane.columnSpan="2" GridPane.rowIndex="2">
-                                <xAxis>
-                                  <CategoryAxis side="BOTTOM" />
-                                </xAxis>
-                                <yAxis>
-                                  <NumberAxis side="LEFT" />
-                                </yAxis>
-                              </AreaChart>
+                                 </HBox.margin>
+                              </Label>
+                              <DatePicker fx:id="startDate" onAction="#dateChange" promptText="开始日期" HBox.hgrow="NEVER">
+                                 <HBox.margin>
+                                    <Insets left="10.0" />
+                                 </HBox.margin>
+                              </DatePicker>
+                              <Label text="结束日期">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets left="10.0" />
+                                 </HBox.margin>
+                              </Label>
+                              <DatePicker fx:id="endDate" onAction="#dateChange" promptText="结束日期" HBox.hgrow="NEVER">
+                                 <HBox.margin>
+                                    <Insets left="10.0" />
+                                 </HBox.margin>
+                              </DatePicker>
+                              <Label text="时间跨度不超过31天" HBox.hgrow="NEVER">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets left="10.0" />
+                                 </HBox.margin>
+                              </Label>
                            </children>
-                        </GridPane>
+                        </HBox>
+                        <AreaChart fx:id="bucketFluxChart" VBox.vgrow="ALWAYS">
+                          <xAxis>
+                            <CategoryAxis side="BOTTOM" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis side="LEFT" />
+                          </yAxis>
+                        </AreaChart>
+                        <AreaChart fx:id="bucketBandChart" VBox.vgrow="ALWAYS">
+                          <xAxis>
+                            <CategoryAxis side="BOTTOM" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis side="LEFT" />
+                          </yAxis>
+                        </AreaChart>
                      </children>
-                  </AnchorPane>
+                  </VBox>
               </content>
             </Tab>
             <Tab text="关于作者">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <HBox>
                      <children>
-                        <GridPane layoutX="-1.0" layoutY="-1.0" prefHeight="530.0" prefWidth="700.0">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="273.0" minWidth="10.0" prefWidth="44.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="631.0" minWidth="10.0" prefWidth="631.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="0.0" prefWidth="1.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints maxHeight="173.0" minHeight="8.0" prefHeight="8.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="454.0" minHeight="10.0" prefHeight="165.0" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="366.0" minHeight="10.0" prefHeight="347.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
+                        <VBox prefHeight="520.0" prefWidth="14.0" HBox.hgrow="ALWAYS" />
+                        <VBox HBox.hgrow="ALWAYS">
                            <children>
-                              <VBox prefHeight="520.0" prefWidth="593.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.rowSpan="2">
+                              <VBox prefHeight="58.0" prefWidth="600.0" VBox.vgrow="ALWAYS" />
+                              <VBox prefHeight="548.0" prefWidth="643.0">
                                  <children>
-                                    <Label text="当前版本: v1.0.3">
+                                    <Label text="当前版本: v1.0.4">
                                        <font>
                                           <Font size="20.0" />
                                        </font>
@@ -426,7 +373,7 @@
                                     </HBox>
                                     <HBox prefHeight="47.0" prefWidth="553.0">
                                        <children>
-                                          <Label text="功能介绍: ">
+                                          <Label text="功能介绍: " HBox.hgrow="NEVER">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>
@@ -458,7 +405,7 @@
                                     </HBox>
                                     <HBox prefHeight="47.0" prefWidth="553.0">
                                        <children>
-                                          <Label text="邮箱: ">
+                                          <Label text="邮箱: " HBox.hgrow="NEVER">
                                              <font>
                                                 <Font size="20.0" />
                                              </font>
@@ -487,45 +434,49 @@
                                  </children>
                               </VBox>
                            </children>
-                        </GridPane>
+                        </VBox>
                      </children>
-                  </AnchorPane>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </HBox>
               </content>
             </Tab>
         </tabs>
       </TabPane>
    </center>
    <top>
-      <GridPane minWidth="700.0" prefHeight="39.0" prefWidth="600.0" BorderPane.alignment="CENTER">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="258.0" minWidth="10.0" prefWidth="258.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="132.0" minWidth="8.0" prefWidth="132.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="123.0" minWidth="10.0" prefWidth="114.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="123.0" minWidth="10.0" prefWidth="63.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="123.0" minWidth="10.0" prefWidth="100.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
+      <HBox BorderPane.alignment="CENTER">
          <children>
-            <ComboBox fx:id="bucketChoiceCombo" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="205.0" promptText="还没有选择存储空间" GridPane.hgrow="ALWAYS">
-               <GridPane.margin>
-                  <Insets left="20.0" />
-               </GridPane.margin>
+            <ComboBox fx:id="bucketChoiceCombo" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="205.0" promptText="还没有选择存储空间" HBox.hgrow="NEVER">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
             </ComboBox>
-            <TextField fx:id="zoneText" editable="false" promptText="存储区域" GridPane.columnIndex="1">
-               <GridPane.margin>
-                  <Insets right="20.0" />
-               </GridPane.margin>
+            <TextField fx:id="zoneText" editable="false" promptText="存储区域" HBox.hgrow="NEVER">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
             </TextField>
-            <Button fx:id="bucketAddableButton" mnemonicParsing="false" onAction="#showBucketAddableDialog" text="添加存储空间" GridPane.columnIndex="2" />
-            <Button fx:id="resetKeyButton" mnemonicParsing="false" onAction="#resetKey" text="重置密钥" GridPane.columnIndex="3" />
-            <Button mnemonicParsing="false" onAction="#openConfigFile" text="打开配置文件" GridPane.columnIndex="4" GridPane.halignment="CENTER">
-               <GridPane.margin>
-                  <Insets />
-               </GridPane.margin>
+            <Button fx:id="bucketAddableButton" mnemonicParsing="false" onAction="#showBucketAddableDialog" text="添加存储空间" HBox.hgrow="NEVER">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </Button>
+            <Button fx:id="resetKeyButton" mnemonicParsing="false" onAction="#resetKey" text="重置密钥" HBox.hgrow="NEVER">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#openConfigFile" text="打开配置文件" HBox.hgrow="NEVER">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
             </Button>
          </children>
-      </GridPane>
+         <BorderPane.margin>
+            <Insets bottom="10.0" top="10.0" />
+         </BorderPane.margin>
+      </HBox>
    </top>
 </BorderPane>

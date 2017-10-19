@@ -53,7 +53,7 @@ public class Values {
 
 	public static final String UPLOAD_SUCCESS = "上传文件成功";
 
-	public static final String UPLOADING = "文件上传中。。。。。。\r\n";
+	public static final String UPLOADING = "文件上传中，请耐心等待。。。。。。\r\n";
 
 	public static final String NEED_SCHOOSE_BUCKET_OR_FILE = "请先选择一个存储空间或文件";
 

@@ -24,7 +24,7 @@ import com.zhazhapan.qiniu.QiniuApplication;
 import com.zhazhapan.qiniu.ThreadPool;
 import com.zhazhapan.qiniu.QiManager.FileAction;
 import com.zhazhapan.qiniu.config.ConfigLoader;
-import com.zhazhapan.qiniu.config.QiConfig;
+import com.zhazhapan.qiniu.config.QiConfiger;
 import com.zhazhapan.qiniu.model.FileInfo;
 import com.zhazhapan.qiniu.modules.constant.Values;
 import com.zhazhapan.qiniu.util.Checker;
@@ -51,7 +51,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.TransferMode;
 import javafx.stage.FileChooser;
 import javafx.util.Pair;
 
@@ -208,7 +210,7 @@ public class MainWindowController {
 				bucketDomainTextField.setText(Values.DOMAIN_CONFIG_ERROR);
 			}
 			ThreadPool.executor.submit(() -> {
-				if (new QiConfig().configUploadEnv(zones[0], newValue)) {
+				if (new QiConfiger().configUploadEnv(zones[0], newValue)) {
 					// 加载文件列表
 					setResTableData();
 					// 刷新流量带宽统计
@@ -225,6 +227,22 @@ public class MainWindowController {
 				+ "%E5%85%B7%E4%BB%8B%E7%BB%8D/";
 		toIntro.setOnAction(e -> Utils.openLink(introPage));
 		toIntro1.setOnAction(e -> Utils.openLink("http://blog.csdn.net/qq_26954773/article/details/78245100"));
+	}
+
+	/**
+	 * 拖曳文件至TextArea
+	 */
+	public void dragFileOver(DragEvent event) {
+		logger.info("drog file in textarea");
+		event.acceptTransferModes(TransferMode.ANY);
+	}
+
+	/**
+	 * 拖曳文件松开鼠标
+	 */
+	public void dragFileDropped(DragEvent event) {
+		logger.info("drag file dropped");
+		setFiles(event.getDragboard().getFiles());
 	}
 
 	/**
@@ -461,7 +479,7 @@ public class MainWindowController {
 	 * 刷新资源列表
 	 */
 	public void refreshResTable() {
-		if (!new QiConfig().checkNet()) {
+		if (!new QiConfiger().checkNet()) {
 			Dialogs.showWarning(Values.NET_ERROR);
 			return;
 		}
@@ -525,10 +543,15 @@ public class MainWindowController {
 		FileChooser chooser = new FileChooser();
 		chooser.setTitle(Values.FILE_CHOOSER_TITLE);
 		chooser.setInitialDirectory(new File(System.getProperty("user.home")));
-		List<File> files = chooser.showOpenMultipleDialog(QiniuApplication.stage);
+		setFiles(chooser.showOpenMultipleDialog(QiniuApplication.stage));
+	}
+
+	public void setFiles(List<File> files) {
 		if (Checker.isNotEmpty(files)) {
 			for (File file : files) {
-				selectedFileTextArea.insertText(0, file.getAbsolutePath() + "\r\n");
+				if (!selectedFileTextArea.getText().contains(file.getAbsolutePath())) {
+					selectedFileTextArea.insertText(0, file.getAbsolutePath() + "\r\n");
+				}
 			}
 		}
 	}
@@ -641,7 +664,7 @@ public class MainWindowController {
 	public void resetKey() {
 		boolean ok = new Dialogs().showInputKeyDialog();
 		if (ok && Checker.isNotEmpty(zoneText.getText())) {
-			new QiConfig().configUploadEnv(zoneText.getText(), bucketChoiceCombo.getValue());
+			new QiConfiger().configUploadEnv(zoneText.getText(), bucketChoiceCombo.getValue());
 		}
 	}
 

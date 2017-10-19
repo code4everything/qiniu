@@ -27,9 +27,9 @@ import javafx.application.Platform;
  *
  */
 
-public class QiConfig {
+public class QiConfiger {
 
-	private Logger logger = Logger.getLogger(QiConfig.class);
+	private Logger logger = Logger.getLogger(QiConfiger.class);
 
 	/**
 	 * 创建上传需要的Auth

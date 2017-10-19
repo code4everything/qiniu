@@ -55,7 +55,7 @@ public class MainWindow {
 			Dialogs.showFatalError(Values.INIT_APP_ERROR_HEADER, e);
 		}
 		stage.setTitle(Values.MAIN_TITLE);
-		stage.setResizable(false);
+		// stage.setResizable(false);
 		stage.setOnCloseRequest((e) -> {
 			ThreadPool.shutdown();
 			ConfigLoader.checkWorkPath();

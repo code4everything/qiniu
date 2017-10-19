@@ -56,7 +56,7 @@ public class ConfigLoader {
 					String ak = json.get("accesskey").getAsString();
 					String sk = json.get("secretkey").getAsString();
 					QiniuApplication.key = new Key(ak, sk);
-					new QiConfig().createAuth(ak, sk);
+					new QiConfiger().createAuth(ak, sk);
 				} catch (Exception e) {
 					logger.error("read key from configuration failed, message: " + e.getMessage());
 					Dialogs.showException(Values.LOAD_CONFIG_ERROR, e);
@@ -144,7 +144,7 @@ public class ConfigLoader {
 	}
 
 	public static void writeKey(String accessKey, String secretKey) {
-		new QiConfig().createAuth(accessKey, secretKey);
+		new QiConfiger().createAuth(accessKey, secretKey);
 		QiniuApplication.key = new Key(accessKey, secretKey);
 		writeConfig();
 	}

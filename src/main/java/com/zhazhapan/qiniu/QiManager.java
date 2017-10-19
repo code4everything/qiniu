@@ -19,7 +19,7 @@ import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
 import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.model.BatchStatus;
-import com.zhazhapan.qiniu.config.QiConfig;
+import com.zhazhapan.qiniu.config.QiConfiger;
 import com.zhazhapan.qiniu.controller.MainWindowController;
 import com.zhazhapan.qiniu.model.FileInfo;
 import com.zhazhapan.qiniu.modules.constant.Values;
@@ -265,7 +265,7 @@ public class QiManager {
 	 * 移动或复制文件
 	 */
 	public boolean moveOrCopyFile(String fromBucket, String fromKey, String toBucket, String toKey, FileAction action) {
-		if (new QiConfig().checkNet()) {
+		if (new QiConfiger().checkNet()) {
 			String log = "move file '" + fromKey + "' from bucket '" + fromBucket + "' to bucket '" + toBucket
 					+ "', and rename file '" + toKey + "'";
 			try {
@@ -290,7 +290,7 @@ public class QiManager {
 	 * 修改文件类型
 	 */
 	public boolean changeType(String fileName, String newType, String bucket) {
-		if (new QiConfig().checkNet()) {
+		if (new QiConfiger().checkNet()) {
 			String log = "change file '" + fileName + "' type '" + newType + "' on bucket '" + bucket;
 			try {
 				QiniuApplication.bucketManager.changeMime(bucket, fileName, newType);
@@ -309,7 +309,7 @@ public class QiManager {
 	 * 批量删除文件，单次批量请求的文件数量不得超过1000
 	 */
 	public void deleteFiles(ObservableList<FileInfo> fileInfos, String bucket) {
-		if (Checker.isNotEmpty(fileInfos) && new QiConfig().checkNet()) {
+		if (Checker.isNotEmpty(fileInfos) && new QiConfiger().checkNet()) {
 			// 生成待删除的文件列表
 			String[] files = new String[fileInfos.size()];
 			ArrayList<FileInfo> seletecFileInfos = new ArrayList<FileInfo>();
