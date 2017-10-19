@@ -28,7 +28,13 @@ public class Formatter {
 
 	private static Logger logger = Logger.getLogger(Formatter.class);
 
-	private static final String[] SIZE_POST = { "TB", "GB", "MB", "KB" };
+	private static final String SIZE_KB = "KB";
+
+	private static final String SIZE_MB = "MB";
+
+	private static final String SIZE_GB = "GB";
+
+	private static final String SIZE_TB = "TB";
 
 	public static int stringToInt(String string) {
 		if (Checker.isNumber(string)) {
@@ -65,13 +71,13 @@ public class Formatter {
 		if (Checker.isNotEmpty(size)) {
 			String num = size.split(" ")[0];
 			double result = 0;
-			if (size.contains(SIZE_POST[0])) {
+			if (size.contains(SIZE_TB)) {
 				result = stringToDouble(num) * Values.TB;
-			} else if (size.contains(SIZE_POST[1])) {
+			} else if (size.contains(SIZE_GB)) {
 				result = stringToDouble(num) * Values.GB;
-			} else if (size.contains(SIZE_POST[2])) {
+			} else if (size.contains(SIZE_MB)) {
 				result = stringToDouble(num) * Values.MB;
-			} else if (size.contains(SIZE_POST[3])) {
+			} else if (size.contains(SIZE_KB)) {
 				result = stringToDouble(num) * Values.KB;
 			} else {
 				result = stringToDouble(num);

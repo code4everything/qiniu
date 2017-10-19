@@ -196,7 +196,8 @@ public class MainWindowController {
 		resTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 		// 设置默认的开始和结束日期，并调用dateChange事件刷新数据
 		endDate.setValue(LocalDate.now());
-		LocalDate endDate = Utils.dateToLocalDate(new Date(new Date().getTime() - Values.DATE_SPAN_OF_THIRTY_ONE));
+		long startTime = System.currentTimeMillis() - Values.DATE_SPAN_OF_THIRTY_ONE;
+		LocalDate endDate = Utils.dateToLocalDate(new Date(startTime));
 		startDate.setValue(endDate);
 		// 设置BucketChoiceComboBox改变事件，改变后并配置新的上传环境
 		bucketChoiceCombo.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {

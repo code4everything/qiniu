@@ -11,7 +11,7 @@ import com.zhazhapan.qiniu.util.Formatter;
  * @author pantao
  *
  */
-public class TestFormatter {
+public class FormatterTest {
 
 	@Test
 	public void testSizeToLong() {
