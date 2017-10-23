@@ -40,7 +40,7 @@ public class Downloader {
 		}
 		if (!checkDownloadPath()) {
 			QiniuApplication.downloadPath = Dialogs.showInputDialog(null, Values.CONFIG_DOWNLOAD_PATH,
-					System.getProperty("user.home"));
+					Values.USER_HOME);
 			if (!checkDownloadPath()) {
 				return;
 			}

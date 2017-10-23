@@ -120,6 +120,7 @@ public class ConfigLoader {
 		}
 		// 如果Key是Null则退出程序
 		if (Checker.isNull(QiniuApplication.key)) {
+			logger.info("stop running");
 			System.exit(0);
 		}
 	}
@@ -155,7 +156,7 @@ public class ConfigLoader {
 			logger.info("load configuration into memory");
 			String content = new FileExecutor().readFile(configPath);
 			if (Checker.isNullOrEmpty(content)) {
-				Dialogs.showFatalError(Values.LOAD_CONFIG_ERROR, new IOException("load configuration file error"));
+				Dialogs.showException(Values.LOAD_CONFIG_ERROR, new IOException("load configuration file error"));
 			} else {
 				jsonObject = new JsonParser().parse(content).getAsJsonObject();
 			}

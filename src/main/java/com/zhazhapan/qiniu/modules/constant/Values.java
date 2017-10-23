@@ -13,13 +13,15 @@ public class Values {
 
 	public static final String QINIU_KEY_URL = "https://portal.qiniu.com/user/key";
 
+	public static final String USER_HOME = System.getProperty("user.home");
+
 	public static final String MAIN_TITLE = "七牛云管理工具";
 
 	public static final String INIT_APP_ERROR_HEADER = "初始化错误，无法继续运行";
 
 	public static final String APP_PATH_OF_WINDOWS = "C:\\ProgramData\\QiniuTool";
 
-	public static final String APP_PATH_OF_UNIX = "/tmp/qiniu/tool";
+	public static final String APP_PATH_OF_UNIX = USER_HOME + "/qntool";
 
 	public static final String SEPARATOR = File.separator;
 

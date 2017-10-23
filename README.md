@@ -32,7 +32,7 @@
 
     Windows使用路径：`C:/ProgramData/QiniuTool`
 
-    MacOS 或 Linux 使用路径：`/tmp/qiniu/tool`
+    MacOS 或 Linux 使用路径：`$user.home/qntool`
 
     其中 `config.json` 为配置文件
 
