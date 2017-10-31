@@ -13,6 +13,7 @@ import java.net.URLConnection;
 import org.apache.log4j.Logger;
 
 import com.zhazhapan.qiniu.config.ConfigLoader;
+import com.zhazhapan.qiniu.controller.MainWindowController;
 import com.zhazhapan.qiniu.modules.constant.Values;
 import com.zhazhapan.qiniu.util.Checker;
 import com.zhazhapan.qiniu.util.Formatter;
@@ -27,6 +28,8 @@ import javafx.application.Platform;
 public class Downloader {
 
 	private Logger logger = Logger.getLogger(Downloader.class);
+
+	private double progress = 0;
 
 	/**
 	 * 下载文件
@@ -46,6 +49,11 @@ public class Downloader {
 			}
 			ConfigLoader.writeConfig();
 		}
+		MainWindowController main = MainWindowController.getInstance();
+		Platform.runLater(() -> {
+			main.downloadProgress.setVisible(true);
+			main.downloadProgress.setProgress(0);
+		});
 		ThreadPool.executor.submit(() -> {
 			checkDownloadPath();
 			logger.info("start to download url: " + downloadURL);
@@ -59,10 +67,16 @@ public class Downloader {
 				URL url = new URL(downloadURL);
 				URLConnection conn = url.openConnection();
 				InputStream inStream = conn.getInputStream();
+				double size = conn.getContentLength();
+				progress = 0;
 				FileOutputStream fs = new FileOutputStream(file);
 				byte[] buffer = new byte[1024];
 				while ((byteread = inStream.read(buffer)) != -1) {
 					fs.write(buffer, 0, byteread);
+					Platform.runLater(() -> {
+						progress += 1024;
+						main.downloadProgress.setProgress(progress / size);
+					});
 				}
 				inStream.close();
 				fs.close();
@@ -72,6 +86,7 @@ public class Downloader {
 				logger.error(log);
 				Platform.runLater(() -> Dialogs.showException(Values.DOWNLOAD_FILE_ERROR, e));
 			}
+			Platform.runLater(() -> main.downloadProgress.setVisible(false));
 		});
 	}
 

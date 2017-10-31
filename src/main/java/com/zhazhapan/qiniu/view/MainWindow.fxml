@@ -11,6 +11,7 @@
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -57,7 +58,7 @@
                               </TextArea>
                               <HBox alignment="TOP_CENTER" VBox.vgrow="NEVER">
                                  <children>
-                                    <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#selectFile" prefHeight="27.0" prefWidth="156.0" text="选择文件" HBox.hgrow="ALWAYS">
+                                    <Button contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#selectFile" prefHeight="27.0" prefWidth="156.0" text="选择文件" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets right="10.0" />
                                        </HBox.margin>
@@ -277,7 +278,7 @@
                               <VBox prefHeight="58.0" prefWidth="600.0" VBox.vgrow="ALWAYS" />
                               <VBox prefHeight="548.0" prefWidth="643.0">
                                  <children>
-                                    <Label text="当前版本: v1.0.4">
+                                    <Label text="当前版本: v1.0.5">
                                        <font>
                                           <Font size="20.0" />
                                        </font>
@@ -446,37 +447,43 @@
       </TabPane>
    </center>
    <top>
-      <HBox BorderPane.alignment="CENTER">
-         <children>
-            <ComboBox fx:id="bucketChoiceCombo" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="205.0" promptText="还没有选择存储空间" HBox.hgrow="NEVER">
-               <HBox.margin>
-                  <Insets left="10.0" />
-               </HBox.margin>
-            </ComboBox>
-            <TextField fx:id="zoneText" editable="false" promptText="存储区域" HBox.hgrow="NEVER">
-               <HBox.margin>
-                  <Insets left="10.0" />
-               </HBox.margin>
-            </TextField>
-            <Button fx:id="bucketAddableButton" mnemonicParsing="false" onAction="#showBucketAddableDialog" text="添加存储空间" HBox.hgrow="NEVER">
-               <HBox.margin>
-                  <Insets left="10.0" />
-               </HBox.margin>
-            </Button>
-            <Button fx:id="resetKeyButton" mnemonicParsing="false" onAction="#resetKey" text="重置密钥" HBox.hgrow="NEVER">
-               <HBox.margin>
-                  <Insets left="10.0" />
-               </HBox.margin>
-            </Button>
-            <Button mnemonicParsing="false" onAction="#openConfigFile" text="打开配置文件" HBox.hgrow="NEVER">
-               <HBox.margin>
-                  <Insets left="10.0" />
-               </HBox.margin>
-            </Button>
-         </children>
+      <VBox BorderPane.alignment="CENTER">
          <BorderPane.margin>
-            <Insets bottom="10.0" top="10.0" />
+            <Insets />
          </BorderPane.margin>
-      </HBox>
+         <children>
+            <ProgressBar fx:id="uploadProgress" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="10.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="10.0" prefWidth="500.0" progress="0.0" style="-fx-border-color: transparent;" visible="false" VBox.vgrow="NEVER" />
+            <HBox VBox.vgrow="NEVER">
+               <children>
+                  <ComboBox fx:id="bucketChoiceCombo" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="205.0" promptText="还没有选择存储空间" HBox.hgrow="NEVER">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </ComboBox>
+                  <TextField fx:id="zoneText" editable="false" promptText="存储区域" HBox.hgrow="NEVER">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </TextField>
+                  <Button fx:id="bucketAddableButton" mnemonicParsing="false" onAction="#showBucketAddableDialog" text="添加存储空间" HBox.hgrow="NEVER">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="resetKeyButton" mnemonicParsing="false" onAction="#resetKey" text="重置密钥" HBox.hgrow="NEVER">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#openConfigFile" text="打开配置文件" HBox.hgrow="NEVER">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+            <ProgressBar fx:id="downloadProgress" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="10.0" prefHeight="10.0" prefWidth="500.0" progress="0.0" style="-fx-border-color: transparent;" visible="false" VBox.vgrow="NEVER" />
+         </children>
+      </VBox>
    </top>
 </BorderPane>

@@ -126,4 +126,6 @@ public class Values {
 	public static final String BUCKET_BANDWIDTH_COUNT = "空间带宽（KB）";
 
 	public static final long DATE_SPAN_OF_THIRTY_ONE = (long) 31 * 24 * 60 * 60 * 1000;
+
+	public static final String UPLOADING_OR_DOWNLOADING = "有文件正在上传或下载中，是否确认退出？";
 }

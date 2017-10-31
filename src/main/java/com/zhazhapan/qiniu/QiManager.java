@@ -184,15 +184,10 @@ public class QiManager {
 	 * 私有下载
 	 */
 	public void privateDownload(String fileName, String domain, Downloader downloader) {
-		try {
-			String encodedFileName = URLEncoder.encode(fileName, "utf-8");
-			String publicUrl = String.format("%s/%s", domain, encodedFileName);
-			// 自定义链接过期时间（小时）
-			long expireInSeconds = 24;
-			downloader.downloadFromNet(QiniuApplication.auth.privateDownloadUrl(publicUrl, expireInSeconds));
-		} catch (UnsupportedEncodingException e) {
-			urlError(e);
-		}
+		// 自定义链接过期时间（小时）
+		long expireInSeconds = 24;
+		String publicURL = getPublicURL(fileName, domain);
+		downloader.downloadFromNet(QiniuApplication.auth.privateDownloadUrl(publicURL, expireInSeconds));
 	}
 
 	public void publicDownload(String fileName, String domain) {
@@ -211,8 +206,8 @@ public class QiManager {
 
 	public String getPublicURL(String fileName, String domain) {
 		try {
-			String encodedFileName = URLEncoder.encode(fileName, "utf-8");
-			return String.format("%s/%s", domain, encodedFileName);
+			String encodedFileName = URLEncoder.encode(fileName.replaceAll(" ", "qn_code_per_20"), "utf-8");
+			return String.format("%s/%s", domain, encodedFileName.replaceAll("qn_code_per_20", "%20"));
 		} catch (UnsupportedEncodingException e) {
 			urlError(e);
 			return null;

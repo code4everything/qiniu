@@ -44,6 +44,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -140,7 +141,15 @@ public class MainWindowController {
 	@FXML
 	private DatePicker endDate;
 
+	@FXML
+	public ProgressBar uploadProgress;
+
+	@FXML
+	public ProgressBar downloadProgress;
+
 	private static MainWindowController mainWindowController = null;
+
+	private double upProgress = 0;
 
 	private String status = "";
 
@@ -568,7 +577,11 @@ public class MainWindowController {
 		}
 		// 新建一个上传文件的线程
 		ThreadPool.executor.submit(() -> {
-			Platform.runLater(() -> uploadStatusTextArea.insertText(0, Values.CONFIGING_UPLOAD_ENVIRONMENT));
+			Platform.runLater(() -> {
+				uploadProgress.setVisible(true);
+				uploadProgress.setProgress(0);
+				uploadStatusTextArea.insertText(0, Values.CONFIGING_UPLOAD_ENVIRONMENT);
+			});
 			String bucket = bucketChoiceCombo.getValue();
 			// 默认不指定key的情况下，以文件内容的hash值作为文件名
 			String key = Checker.checkNull(filePrefixCombo.getValue());
@@ -577,6 +590,9 @@ public class MainWindowController {
 			int end = Values.UPLOADING.length() - 2;
 			Platform.runLater(
 					() -> uploadStatusTextArea.deleteText(0, Values.CONFIGING_UPLOAD_ENVIRONMENT.length() - 1));
+			// 总文件数
+			double total = paths.length;
+			upProgress = 0;
 			for (String path : paths) {
 				if (Checker.isNotEmpty(path)) {
 					Platform.runLater(() -> uploadStatusTextArea.insertText(0, Values.UPLOADING));
@@ -614,6 +630,8 @@ public class MainWindowController {
 					Platform.runLater(() -> {
 						uploadStatusTextArea.deleteText(0, end);
 						uploadStatusTextArea.insertText(0, status);
+						// 设置上传的进度
+						uploadProgress.setProgress(++upProgress / total);
 					});
 				}
 				Platform.runLater(() -> selectedFileTextArea.deleteText(0, path.length() + (paths.length > 1 ? 1 : 0)));
@@ -623,6 +641,8 @@ public class MainWindowController {
 				uploadStatusTextArea.positionCaret(0);
 				// 清空待上传的文件列表
 				selectedFileTextArea.clear();
+				// 上传完成时，设置上传进度度不可见
+				uploadProgress.setVisible(false);
 			});
 			// 添加文件前缀到配置文件
 			if (Checker.isNotEmpty(key) && !QiniuApplication.prefix.contains(key)) {

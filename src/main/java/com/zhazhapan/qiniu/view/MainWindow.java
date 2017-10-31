@@ -4,6 +4,7 @@
 package com.zhazhapan.qiniu.view;
 
 import java.util.Date;
+import java.util.Optional;
 
 import org.apache.log4j.Logger;
 
@@ -18,8 +19,10 @@ import com.zhazhapan.qiniu.util.Formatter;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  * @author pantao
@@ -55,7 +58,17 @@ public class MainWindow {
 			Dialogs.showFatalError(Values.INIT_APP_ERROR_HEADER, e);
 		}
 		stage.setTitle(Values.MAIN_TITLE);
-		stage.setOnCloseRequest((e) -> {
+		stage.setOnCloseRequest((WindowEvent event) -> {
+			// 判断是否有文件在上传下载
+			MainWindowController main = MainWindowController.getInstance();
+			if (main.downloadProgress.isVisible() || main.uploadProgress.isVisible()) {
+				Optional<ButtonType> result = Dialogs.showConfirmation(Values.UPLOADING_OR_DOWNLOADING);
+				if (result.get() != ButtonType.OK) {
+					// 取消退出事件
+					event.consume();
+					return;
+				}
+			}
 			ThreadPool.shutdown();
 			ConfigLoader.checkWorkPath();
 			FileExecutor executor = new FileExecutor();
