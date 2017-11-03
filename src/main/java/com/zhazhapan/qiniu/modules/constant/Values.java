@@ -57,7 +57,7 @@ public class Values {
 
 	public static final String UPLOADING = "文件上传中，请耐心等待。。。。。。\r\n";
 
-	public static final String NEED_SCHOOSE_BUCKET_OR_FILE = "请先选择一个存储空间或文件";
+	public static final String NEED_CHOOSE_BUCKET_OR_FILE = "请先选择一个存储空间或文件";
 
 	public static final String CONFIGING_UPLOAD_ENVIRONMENT = "正在配置文件上传环境，请耐心等待。。。。。。\r\n";
 

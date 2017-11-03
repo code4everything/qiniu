@@ -572,7 +572,7 @@ public class MainWindowController {
 	public void uploadFile() {
 		if (Checker.isNullOrEmpty(zoneText.getText()) || Checker.isNullOrEmpty(selectedFileTextArea.getText())) {
 			// 没有选择存储空间或文件，不能上传文件
-			Dialogs.showWarning(Values.NEED_SCHOOSE_BUCKET_OR_FILE);
+			Dialogs.showWarning(Values.NEED_CHOOSE_BUCKET_OR_FILE);
 			return;
 		}
 		// 新建一个上传文件的线程

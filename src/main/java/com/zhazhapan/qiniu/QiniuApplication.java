@@ -95,10 +95,10 @@ public class QiniuApplication extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
+		initZone();
 		ConfigLoader.loadConfig();
 		mainWindow.init(stage);
 		mainWindow.show();
-		initZone();
 	}
 
 	public void initZone() {
