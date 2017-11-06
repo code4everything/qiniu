@@ -27,9 +27,9 @@ import com.zhazhapan.qiniu.config.ConfigLoader;
 import com.zhazhapan.qiniu.config.QiConfiger;
 import com.zhazhapan.qiniu.model.FileInfo;
 import com.zhazhapan.qiniu.modules.constant.Values;
-import com.zhazhapan.qiniu.util.Checker;
-import com.zhazhapan.qiniu.util.Formatter;
-import com.zhazhapan.qiniu.util.Utils;
+import com.zhazhapan.util.Checker;
+import com.zhazhapan.util.Formatter;
+import com.zhazhapan.util.Utils;
 import com.zhazhapan.qiniu.view.Dialogs;
 
 import javafx.application.Platform;
@@ -206,7 +206,7 @@ public class MainWindowController {
 		// 设置默认的开始和结束日期，并调用dateChange事件刷新数据
 		endDate.setValue(LocalDate.now());
 		long startTime = System.currentTimeMillis() - Values.DATE_SPAN_OF_THIRTY_ONE;
-		LocalDate endDate = Utils.dateToLocalDate(new Date(startTime));
+		LocalDate endDate = Formatter.dateToLocalDate(new Date(startTime));
 		startDate.setValue(endDate);
 		// 设置BucketChoiceComboBox改变事件，改变后并配置新的上传环境
 		bucketChoiceCombo.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -259,8 +259,8 @@ public class MainWindowController {
 	 * 开始日期或结束日期改变，刷新流量、带宽统计
 	 */
 	public void dateChange() {
-		Date start = Utils.localDateToDate(startDate.getValue());
-		Date end = Utils.localDateToDate(endDate.getValue());
+		Date start = Formatter.localDateToDate(startDate.getValue());
+		Date end = Formatter.localDateToDate(endDate.getValue());
 		String fromDate = Formatter.dateToString(start);
 		String toDate = Formatter.dateToString(end);
 		String domain = bucketDomainTextField.getText();

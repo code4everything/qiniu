@@ -5,7 +5,7 @@ package com.zhazhapan.qiniu;
 
 import org.junit.Test;
 
-import com.zhazhapan.qiniu.util.Formatter;
+import com.zhazhapan.util.Formatter;
 
 /**
  * @author pantao

@@ -15,8 +15,8 @@ import org.apache.log4j.Logger;
 import com.zhazhapan.qiniu.config.ConfigLoader;
 import com.zhazhapan.qiniu.controller.MainWindowController;
 import com.zhazhapan.qiniu.modules.constant.Values;
-import com.zhazhapan.qiniu.util.Checker;
-import com.zhazhapan.qiniu.util.Formatter;
+import com.zhazhapan.util.Checker;
+import com.zhazhapan.util.Formatter;
 import com.zhazhapan.qiniu.view.Dialogs;
 
 import javafx.application.Platform;

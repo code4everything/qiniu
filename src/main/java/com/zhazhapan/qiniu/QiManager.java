@@ -23,8 +23,8 @@ import com.zhazhapan.qiniu.config.QiConfiger;
 import com.zhazhapan.qiniu.controller.MainWindowController;
 import com.zhazhapan.qiniu.model.FileInfo;
 import com.zhazhapan.qiniu.modules.constant.Values;
-import com.zhazhapan.qiniu.util.Checker;
-import com.zhazhapan.qiniu.util.Formatter;
+import com.zhazhapan.util.Checker;
+import com.zhazhapan.util.Formatter;
 import com.zhazhapan.qiniu.view.Dialogs;
 
 import javafx.application.Platform;

@@ -14,8 +14,8 @@ import com.zhazhapan.qiniu.QiManager.FileAction;
 import com.zhazhapan.qiniu.config.ConfigLoader;
 import com.zhazhapan.qiniu.controller.MainWindowController;
 import com.zhazhapan.qiniu.modules.constant.Values;
-import com.zhazhapan.qiniu.util.Checker;
-import com.zhazhapan.qiniu.util.Utils;
+import com.zhazhapan.util.Checker;
+import com.zhazhapan.util.Utils;
 
 import javafx.application.Platform;
 import javafx.geometry.Insets;
