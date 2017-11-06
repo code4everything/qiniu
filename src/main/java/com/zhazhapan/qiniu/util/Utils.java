@@ -25,8 +25,7 @@ import javafx.scene.input.ClipboardContent;
  * @author pantao
  *
  */
-@SuppressWarnings("restriction")
-public class Utils extends com.sun.javafx.util.Utils {
+public class Utils {
 
 	private static Logger logger = Logger.getLogger(Utils.class);
 

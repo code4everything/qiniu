@@ -162,7 +162,7 @@ public class MainWindowController {
 		PRIVATE, PUBLIC
 	}
 
-	/*
+	/**
 	 * 初始化
 	 */
 	@FXML
@@ -409,7 +409,7 @@ public class MainWindowController {
 				boolean move = manager.moveOrCopyFile(fb, fileInfo.getName(), tb, name, pair.getKey());
 				if (pair.getKey() == FileAction.MOVE && move) {
 					boolean sear = Checker.isNotEmpty(searchTextField.getText());
-					if (fb != tb) {
+					if (fb.equals(tb)) {
 						// 删除数据源
 						QiniuApplication.data.remove(fileInfo);
 						QiniuApplication.totalLength--;
