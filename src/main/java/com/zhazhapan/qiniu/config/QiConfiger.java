@@ -77,7 +77,7 @@ public class QiConfiger {
 			in.close();
 			return true;
 		} catch (IOException e) {
-			logger.error("doesn't connect internate");
+			logger.error("there is no connection to the network");
 			return false;
 		}
 	}
