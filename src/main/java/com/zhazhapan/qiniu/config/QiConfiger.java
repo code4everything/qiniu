@@ -27,6 +27,7 @@ import javafx.application.Platform;
  *
  */
 
+@SuppressWarnings("restriction")
 public class QiConfiger {
 
 	private Logger logger = Logger.getLogger(QiConfiger.class);

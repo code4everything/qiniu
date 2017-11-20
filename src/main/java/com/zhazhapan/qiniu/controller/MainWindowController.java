@@ -62,6 +62,7 @@ import javafx.util.Pair;
  * @author pantao
  *
  */
+@SuppressWarnings("restriction")
 public class MainWindowController {
 
 	private Logger logger = Logger.getLogger(MainWindowController.class);

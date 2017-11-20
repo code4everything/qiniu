@@ -25,6 +25,7 @@ import javafx.application.Platform;
  * @author pantao
  *
  */
+@SuppressWarnings("restriction")
 public class Downloader {
 
 	private Logger logger = Logger.getLogger(Downloader.class);
