@@ -112,7 +112,7 @@
 
 **4. 其他**
 
-- [**下载可执行的jar包**](http://oq3iwfipo.bkt.clouddn.com/tools/zhazhapan/qiniu.jar?v=5 "七牛云——对象存储管理工具jar包下载地址")
+- [**下载可执行的jar包**](http://oq3iwfipo.bkt.clouddn.com/tools/zhazhapan/qiniu.jar "七牛云——对象存储管理工具jar包下载地址")
 
 - [**历史版本**](https://github.com/zhazhapan/qiniu/releases) 
 
