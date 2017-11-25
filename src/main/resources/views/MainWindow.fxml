@@ -220,7 +220,7 @@
                                     <Insets />
                                  </HBox.margin>
                               </Label>
-                              <DatePicker fx:id="startDate" onAction="#dateChange" promptText="开始日期" HBox.hgrow="NEVER">
+                              <DatePicker fx:id="startDate" onAction="#dateChange" prefWidth="125.0" promptText="开始日期" HBox.hgrow="NEVER">
                                  <HBox.margin>
                                     <Insets left="10.0" />
                                  </HBox.margin>
@@ -233,11 +233,21 @@
                                     <Insets left="10.0" />
                                  </HBox.margin>
                               </Label>
-                              <DatePicker fx:id="endDate" onAction="#dateChange" promptText="结束日期" HBox.hgrow="NEVER">
+                              <DatePicker fx:id="endDate" onAction="#dateChange" prefWidth="125.0" promptText="结束日期" HBox.hgrow="NEVER">
                                  <HBox.margin>
                                     <Insets left="10.0" />
                                  </HBox.margin>
                               </DatePicker>
+                              <ComboBox fx:id="fluxCountUnit" prefWidth="70.0" promptText="统计单位" HBox.hgrow="NEVER">
+                                 <HBox.margin>
+                                    <Insets left="10.0" />
+                                 </HBox.margin>
+                              </ComboBox>
+                              <ComboBox fx:id="bandCountUnit" prefWidth="70.0" promptText="统计单位">
+                                 <HBox.margin>
+                                    <Insets left="10.0" />
+                                 </HBox.margin>
+                              </ComboBox>
                               <Label text="时间跨度不超过31天" HBox.hgrow="NEVER">
                                  <font>
                                     <Font size="14.0" />

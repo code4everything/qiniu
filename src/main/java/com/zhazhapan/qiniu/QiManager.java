@@ -48,11 +48,27 @@ public class QiManager {
 	}
 
 	/**
-	 * 获取空间带宽统计
+	 * 获取空间带宽统计，使用默认的KB单位
 	 * 
+	 * @param domains
+	 * @param fromDate
+	 * @param toDate
 	 * @return
 	 */
 	public Series<String, Long> getBucketBandwidth(String[] domains, String fromDate, String toDate) {
+		return getBucketBandwidth(domains, fromDate, toDate, "KB");
+	}
+
+	/**
+	 * 获取空间带宽统计，使用自定义单位
+	 * 
+	 * @param domains
+	 * @param fromDate
+	 * @param toDate
+	 * @param countUnit
+	 * @return
+	 */
+	public Series<String, Long> getBucketBandwidth(String[] domains, String fromDate, String toDate, String countUnit) {
 		CdnResult.BandwidthResult bandwidthResult = null;
 		try {
 			bandwidthResult = QiniuApplication.cdnManager.getBandwidthData(domains, fromDate, toDate, "day");
@@ -61,7 +77,7 @@ public class QiManager {
 			Platform.runLater(() -> Dialogs.showException(Values.BUCKET_BAND_ERROR, e));
 		}
 		Series<String, Long> bandSer = new Series<String, Long>();
-		bandSer.setName(Values.BUCKET_BANDWIDTH_COUNT);
+		bandSer.setName(Values.BUCKET_BANDWIDTH_COUNT.replaceAll("[A-Z]+", countUnit));
 		// 获取带宽统计
 		if (Checker.isNotNull(bandwidthResult) && Checker.isNotEmpty(bandwidthResult.data)) {
 			for (Map.Entry<String, BandwidthData> bandwidth : bandwidthResult.data.entrySet()) {
@@ -78,7 +94,8 @@ public class QiManager {
 							size += bandwidthData.oversea[i];
 						}
 					}
-					bandSer.getData().add(new Data<String, Long>(time.substring(5, 10), size / Values.KB));
+					long unit = Formatter.sizeToLong("1 " + countUnit);
+					bandSer.getData().add(new Data<String, Long>(time.substring(5, 10), size / unit));
 					i++;
 				}
 			}
@@ -89,11 +106,27 @@ public class QiManager {
 	}
 
 	/**
-	 * 获取空间的流量统计
+	 * 获取空间的流量统计，使用默认的KB单位
 	 * 
+	 * @param domains
+	 * @param fromDate
+	 * @param toDate
 	 * @return
 	 */
 	public Series<String, Long> getBucketFlux(String[] domains, String fromDate, String toDate) {
+		return getBucketFlux(domains, fromDate, toDate, "KB");
+	}
+
+	/**
+	 * 获取空间的流量统计，自定义统计单位
+	 * 
+	 * @param domains
+	 * @param fromDate
+	 * @param toDate
+	 * @param countUnit
+	 * @return
+	 */
+	public Series<String, Long> getBucketFlux(String[] domains, String fromDate, String toDate, String countUnit) {
 		CdnResult.FluxResult fluxResult = null;
 		try {
 			fluxResult = QiniuApplication.cdnManager.getFluxData(domains, fromDate, toDate, "day");
@@ -102,7 +135,7 @@ public class QiManager {
 			Platform.runLater(() -> Dialogs.showException(Values.BUCKET_FLUX_ERROR, e));
 		}
 		Series<String, Long> fluxSer = new Series<String, Long>();
-		fluxSer.setName(Values.BUCKET_FLUX_COUNT);
+		fluxSer.setName(Values.BUCKET_FLUX_COUNT.replaceAll("[A-Z]+", countUnit));
 		// 获取流量统计
 		if (Checker.isNotNull(fluxResult) && Checker.isNotEmpty(fluxResult.data)) {
 			for (Map.Entry<String, FluxData> flux : fluxResult.data.entrySet()) {
@@ -119,7 +152,8 @@ public class QiManager {
 							size += fluxData.oversea[i];
 						}
 					}
-					fluxSer.getData().add(new Data<String, Long>(time.substring(5, 10), size / Values.KB));
+					long unit = Formatter.sizeToLong("1 " + countUnit);
+					fluxSer.getData().add(new Data<String, Long>(time.substring(5, 10), size / unit));
 					i++;
 				}
 			}

@@ -148,6 +148,12 @@ public class MainWindowController {
 	@FXML
 	public ProgressBar downloadProgress;
 
+	@FXML
+	private ComboBox<String> fluxCountUnit;
+
+	@FXML
+	private ComboBox<String> bandCountUnit;
+
 	private static MainWindowController mainWindowController = null;
 
 	private double upProgress = 0;
@@ -238,6 +244,14 @@ public class MainWindowController {
 				+ "%E5%85%B7%E4%BB%8B%E7%BB%8D/";
 		toIntro.setOnAction(e -> Utils.openLink(introPage));
 		toIntro1.setOnAction(e -> Utils.openLink("http://blog.csdn.net/qq_26954773/article/details/78245100"));
+
+		// 统计单位选择框添加源数据
+		fluxCountUnit.getItems().addAll("KB", "MB", "GB", "TB");
+		fluxCountUnit.setValue("KB");
+		fluxCountUnit.getSelectionModel().selectedItemProperty().addListener((obs, o, n) -> drawChart(true, false));
+		bandCountUnit.getItems().addAll(fluxCountUnit.getItems());
+		bandCountUnit.setValue("KB");
+		bandCountUnit.getSelectionModel().selectedItemProperty().addListener((obs, o, n) -> drawChart(false, true));
 	}
 
 	/**
@@ -260,6 +274,16 @@ public class MainWindowController {
 	 * 开始日期或结束日期改变，刷新流量、带宽统计
 	 */
 	public void dateChange() {
+		drawChart(true, true);
+	}
+
+	/**
+	 * 绘制数据统计图表
+	 * 
+	 * @param fluxUnitChange
+	 * @param bandUnitChange
+	 */
+	private void drawChart(boolean fluxUnitChange, boolean bandUnitChange) {
 		Date start = Formatter.localDateToDate(startDate.getValue());
 		Date end = Formatter.localDateToDate(endDate.getValue());
 		String fromDate = Formatter.dateToString(start);
@@ -273,10 +297,16 @@ public class MainWindowController {
 			ThreadPool.executor.submit(() -> {
 				QiManager manager = new QiManager();
 				Platform.runLater(() -> {
-					bucketFluxChart.getData().clear();
-					bucketFluxChart.getData().add(manager.getBucketFlux(domains, fromDate, toDate));
-					bucketBandChart.getData().clear();
-					bucketBandChart.getData().add(manager.getBucketBandwidth(domains, fromDate, toDate));
+					if (fluxUnitChange) {
+						String fluxUnit = fluxCountUnit.getValue();
+						bucketFluxChart.getData().clear();
+						bucketFluxChart.getData().add(manager.getBucketFlux(domains, fromDate, toDate, fluxUnit));
+					}
+					if (bandUnitChange) {
+						String bandUnit = bandCountUnit.getValue();
+						bucketBandChart.getData().clear();
+						bucketBandChart.getData().add(manager.getBucketBandwidth(domains, fromDate, toDate, bandUnit));
+					}
 				});
 			});
 		} else {
