@@ -254,6 +254,66 @@ public class MainWindowController {
 	}
 
 	/**
+	 * 生成a标签
+	 */
+	public void generateLinkTag() {
+		generateTag("a");
+	}
+
+	/**
+	 * 生成video标签
+	 */
+	public void generateVideoTag() {
+		generateTag("video");
+	}
+
+	/**
+	 * 生成audio标签
+	 */
+	public void generateAutdioTag() {
+		generateTag("audio");
+	}
+
+	/**
+	 * 通过前缀生成image标签
+	 */
+	public void generateImageTag() {
+		generateTag("img");
+	}
+
+	/**
+	 * 生成HTML标签
+	 * 
+	 * @param tag
+	 */
+	private void generateTag(String tag) {
+		StringBuilder html = new StringBuilder();
+		String tagContent;
+		if ("img".equals(tag)) {
+			tagContent = "<tag src=\"content\" />";
+		} else if ("a".equals(tag)) {
+			tagContent = "<tag href=\"content\">content</tag>";
+		} else {
+			tagContent = "<tag src=\"content\">您的浏览器不支持tag标签</tag>";
+		}
+		tagContent = tagContent.replaceAll("tag", tag) + "&nbsp;\r\n";
+		String prefix = Checker.checkNull(filePrefixCombo.getValue());
+		savePrefix(prefix);
+		if (!prefix.startsWith("http")) {
+			prefix = "http://" + prefix;
+		}
+		if (!prefix.endsWith("/")) {
+			prefix += "/";
+		}
+		tagContent = tagContent.replaceAll("content", prefix + "content");
+		String[] paths = selectedFileTextArea.getText().split("\n");
+		for (String path : paths) {
+			html.append(tagContent.replaceAll("content", Formatter.getFileName(path)));
+		}
+		uploadStatusTextArea.setText(html.toString());
+	}
+
+	/**
 	 * 拖曳文件至TextArea
 	 */
 	public void dragFileOver(DragEvent event) {
@@ -674,14 +734,23 @@ public class MainWindowController {
 				// 上传完成时，设置上传进度度不可见
 				uploadProgress.setVisible(false);
 			});
-			// 添加文件前缀到配置文件
-			if (Checker.isNotEmpty(key) && !QiniuApplication.prefix.contains(key)) {
-				Platform.runLater(() -> filePrefixCombo.getItems().add(key));
-				QiniuApplication.prefix.add(key);
-				ConfigLoader.writeConfig();
-			}
 			setResTableData();
+			// 添加文件前缀到配置文件
+			savePrefix(key);
 		});
+	}
+
+	/**
+	 * 保存前缀
+	 * 
+	 * @param key
+	 */
+	private void savePrefix(String key) {
+		if (Checker.isNotEmpty(key) && !QiniuApplication.prefix.contains(key)) {
+			Platform.runLater(() -> filePrefixCombo.getItems().add(key));
+			QiniuApplication.prefix.add(key);
+			ConfigLoader.writeConfig();
+		}
 	}
 
 	/**

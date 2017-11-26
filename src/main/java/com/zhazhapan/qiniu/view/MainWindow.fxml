@@ -55,6 +55,16 @@
                                  <VBox.margin>
                                     <Insets top="10.0" />
                                  </VBox.margin>
+                                 <contextMenu>
+                                    <ContextMenu>
+                                      <items>
+                                        <MenuItem mnemonicParsing="false" onAction="#generateImageTag" text="生成img标签" />
+                                          <MenuItem mnemonicParsing="false" onAction="#generateAutdioTag" text="生成audio标签" />
+                                          <MenuItem mnemonicParsing="false" onAction="#generateVideoTag" text="生成video标签" />
+                                          <MenuItem mnemonicParsing="false" onAction="#generateLinkTag" text="生成a标签" />
+                                      </items>
+                                    </ContextMenu>
+                                 </contextMenu>
                               </TextArea>
                               <HBox alignment="TOP_CENTER" VBox.vgrow="NEVER">
                                  <children>

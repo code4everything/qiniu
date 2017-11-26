@@ -51,14 +51,14 @@ public class MainWindow {
 	public void init() {
 		logger.info("start to init main stage");
 		try {
-			BorderPane root = (BorderPane) FXMLLoader.load(getClass().getResource("/views/MainWindow.fxml"));
+			BorderPane root = (BorderPane) FXMLLoader.load(getClass().getResource("MainWindow.fxml"));
 			Scene scene = new Scene(root);
 			stage.setScene(scene);
 		} catch (Exception e) {
 			logger.error("init stage error: " + e.getMessage());
 			Dialogs.showFatalError(Values.INIT_APP_ERROR_HEADER, e);
 		}
-		stage.getIcons().add(new Image(getClass().getResourceAsStream("/assets/images/qiniu.png")));
+		stage.getIcons().add(new Image(getClass().getResourceAsStream("qiniu.png")));
 		stage.setTitle(Values.MAIN_TITLE);
 		stage.setOnCloseRequest((WindowEvent event) -> {
 			// 判断是否有文件在上传下载
