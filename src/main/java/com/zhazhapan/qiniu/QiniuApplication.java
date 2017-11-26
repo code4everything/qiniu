@@ -27,7 +27,6 @@ import javafx.stage.Stage;
  * @author pantao
  *
  */
-@SuppressWarnings("restriction")
 @SpringBootApplication
 public class QiniuApplication extends Application {
 

@@ -33,7 +33,6 @@ import javafx.event.ActionEvent;
  * @author pantao
  *
  */
-@SuppressWarnings("restriction")
 public class ConfigLoader {
 
 	private static Logger logger = Logger.getLogger(ConfigLoader.class);

@@ -42,7 +42,6 @@ import javafx.util.Pair;
 /**
  * @author pantao 对JavaFX对话框进行封装
  */
-@SuppressWarnings("restriction")
 public class Dialogs {
 
 	private Logger logger = Logger.getLogger(Dialogs.class);

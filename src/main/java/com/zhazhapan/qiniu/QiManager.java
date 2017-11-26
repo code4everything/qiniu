@@ -37,7 +37,6 @@ import javafx.scene.chart.XYChart.Series;
  * @author pantao
  *
  */
-@SuppressWarnings("restriction")
 public class QiManager {
 
 	private Logger logger = Logger.getLogger(QiManager.class);

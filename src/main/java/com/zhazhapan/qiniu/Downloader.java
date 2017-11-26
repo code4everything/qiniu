@@ -7,8 +7,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 
 import org.apache.log4j.Logger;
 
@@ -25,7 +25,6 @@ import javafx.application.Platform;
  * @author pantao
  *
  */
-@SuppressWarnings("restriction")
 public class Downloader {
 
 	private Logger logger = Logger.getLogger(Downloader.class);
@@ -66,7 +65,14 @@ public class Downloader {
 					file.createNewFile();
 				}
 				URL url = new URL(downloadURL);
-				URLConnection conn = url.openConnection();
+				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+				conn.setConnectTimeout(1000 * 6);
+				conn.setRequestProperty("charset", "UTF-8");
+				conn.setRequestProperty("user-agent", com.zhazhapan.modules.constant.Values.USER_AGENT);
+				conn.setRequestProperty("accept", "*/*");
+				conn.setRequestProperty("connection", "Keep-Alive");
+				conn.setDoOutput(true);
+				conn.setDoInput(true);
 				InputStream inStream = conn.getInputStream();
 				double size = conn.getContentLength();
 				progress = 0;

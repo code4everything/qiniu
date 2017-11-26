@@ -29,7 +29,6 @@ import javafx.stage.WindowEvent;
  * @author pantao
  *
  */
-@SuppressWarnings("restriction")
 public class MainWindow {
 
 	private Stage stage;
