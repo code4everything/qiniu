@@ -196,8 +196,7 @@ public class QiManager {
 			String[] files = new String[fileInfos.size()];
 			int i = 0;
 			for (FileInfo fileInfo : fileInfos) {
-				files[i] = getPublicURL(fileInfo.getName(), domain);
-				i++;
+				files[i++] = getPublicURL(fileInfo.getName(), domain);
 			}
 			try {
 				// 单次方法调用刷新的链接不可以超过100个
@@ -239,9 +238,10 @@ public class QiManager {
 	}
 
 	public String getPublicURL(String fileName, String domain) {
+		fileName = fileName.replaceAll(" ", "qn_code_per_20").replaceAll("/", "qn_code_per_2F");
 		try {
-			String encodedFileName = URLEncoder.encode(fileName.replaceAll(" ", "qn_code_per_20"), "utf-8");
-			return String.format("%s/%s", domain, encodedFileName.replaceAll("qn_code_per_20", "%20"));
+			fileName = URLEncoder.encode(fileName, "utf-8").replaceAll("qn_code_per_2F", "/");
+			return String.format("%s/%s", domain, fileName.replaceAll("qn_code_per_20", "%20"));
 		} catch (UnsupportedEncodingException e) {
 			urlError(e);
 			return null;
@@ -344,9 +344,8 @@ public class QiManager {
 			ArrayList<FileInfo> seletecFileInfos = new ArrayList<FileInfo>();
 			int i = 0;
 			for (FileInfo fileInfo : fileInfos) {
-				files[i] = fileInfo.getName();
+				files[i++] = fileInfo.getName();
 				seletecFileInfos.add(fileInfo);
-				i++;
 			}
 			try {
 				BucketManager.BatchOperations batchOperations = new BucketManager.BatchOperations();
@@ -354,6 +353,7 @@ public class QiManager {
 				Response response = QiniuApplication.bucketManager.batch(batchOperations);
 				BatchStatus[] batchStatusList = response.jsonToObject(BatchStatus[].class);
 				MainWindowController main = MainWindowController.getInstance();
+				// 文件列表是否为搜索后结果
 				boolean sear = Checker.isNotEmpty(main.searchTextField.getText());
 				ObservableList<FileInfo> currentRes = main.resTable.getItems();
 				for (i = 0; i < files.length; i++) {

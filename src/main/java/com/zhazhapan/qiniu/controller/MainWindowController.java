@@ -535,7 +535,8 @@ public class MainWindowController {
 		ObservableList<FileInfo> fileInfos = resTable.getSelectionModel().getSelectedItems();
 		if (Checker.isNotEmpty(fileInfos)) {
 			// 只复制选中的第一个文件的链接
-			String link = "http://" + bucketDomainTextField.getText() + "/" + fileInfos.get(0).getName();
+			String link = "http://"
+					+ new QiManager().getPublicURL(fileInfos.get(0).getName(), bucketDomainTextField.getText());
 			Utils.copyToClipboard(link);
 			logger.info("copy link: " + link);
 		}
