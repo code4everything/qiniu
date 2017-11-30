@@ -198,14 +198,21 @@ public class QiManager {
 			for (FileInfo fileInfo : fileInfos) {
 				files[i++] = getPublicURL(fileInfo.getName(), domain);
 			}
-			try {
-				// 单次方法调用刷新的链接不可以超过100个
-				QiniuApplication.cdnManager.refreshUrls(files);
-				logger.info("refresh files success");
-			} catch (QiniuException e) {
-				logger.error("refresh files error, message: " + e.getMessage());
-				Dialogs.showException(e);
-			}
+			refreshFile(files);
+		}
+	}
+
+	/**
+	 * 刷新文件，cdn相关
+	 */
+	public void refreshFile(String[] files) {
+		try {
+			// 单次方法调用刷新的链接不可以超过100个
+			QiniuApplication.cdnManager.refreshUrls(files);
+			logger.info("refresh files success");
+		} catch (QiniuException e) {
+			logger.error("refresh files error, message: " + e.getMessage());
+			Dialogs.showException(e);
 		}
 	}
 
