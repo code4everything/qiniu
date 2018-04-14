@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<VBox xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.zhazhapan.qiniu.controller.MainWindowController">
+    <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0"
+                prefWidth="700.0" VBox.vgrow="ALWAYS">
+        <center>
+            <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="50.0"
+                     prefWidth="700.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+                <Tab text="文件上传">
+                    <HBox>
+                        <SplitPane dividerPositions="0.6" prefHeight="520.0" prefWidth="702.0" HBox.hgrow="ALWAYS">
+                            <padding>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                            </padding>
+                            <VBox>
+                                <TextArea fx:id="uploadStatusTextArea" editable="false"
+                                          maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                                          prefHeight="504.0" prefWidth="336.0" promptText="文件上传状态" VBox.vgrow="ALWAYS">
+                                    <contextMenu>
+                                        <ContextMenu>
+                                            <items>
+                                                <MenuItem mnemonicParsing="false" onAction="#clearUploadStatus"
+                                                          text="清空"/>
+                                                <MenuItem mnemonicParsing="false" onAction="#saveUploadStatus"
+                                                          text="另存为"/>
+                                                <MenuItem mnemonicParsing="false" onAction="#copyUploadStatus"
+                                                          text="复制"/>
+                                            </items>
+                                        </ContextMenu>
+                                    </contextMenu>
+                                </TextArea>
+                            </VBox>
+                            <VBox prefHeight="500.0" prefWidth="171.0">
+                                <ComboBox fx:id="filePrefixCombo" editable="true" maxHeight="1.7976931348623157E308"
+                                          maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="277.0"
+                                          promptText="文件前缀, 不设置则为空" VBox.vgrow="NEVER"/>
+                                <TextArea fx:id="selectedFileTextArea" maxHeight="1.7976931348623157E308"
+                                          maxWidth="1.7976931348623157E308" onDragDropped="#dragFileDropped"
+                                          onDragOver="#dragFileOver" prefHeight="800.0" prefWidth="332.0"
+                                          promptText="文件路径, 一个文件一行, 支持拖曳文件, 支持抓取网络文件" VBox.vgrow="ALWAYS">
+                                    <VBox.margin>
+                                        <Insets top="10.0"/>
+                                    </VBox.margin>
+                                    <contextMenu>
+                                        <ContextMenu>
+                                            <items>
+                                                <MenuItem mnemonicParsing="false" onAction="#generateImageTag"
+                                                          text="生成img标签"/>
+                                                <MenuItem mnemonicParsing="false" onAction="#generateAutdioTag"
+                                                          text="生成audio标签"/>
+                                                <MenuItem mnemonicParsing="false" onAction="#generateVideoTag"
+                                                          text="生成video标签"/>
+                                                <MenuItem mnemonicParsing="false" onAction="#generateLinkTag"
+                                                          text="生成a标签"/>
+                                            </items>
+                                        </ContextMenu>
+                                    </contextMenu>
+                                </TextArea>
+                                <HBox alignment="TOP_CENTER" VBox.vgrow="NEVER">
+                                    <VBox.margin>
+                                        <Insets top="10.0"/>
+                                    </VBox.margin>
+                                    <Button contentDisplay="CENTER" maxHeight="1.7976931348623157E308"
+                                            maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                                            onAction="#selectFile" prefHeight="27.0" prefWidth="156.0" text="选择文件"
+                                            HBox.hgrow="ALWAYS">
+                                        <HBox.margin>
+                                            <Insets right="10.0"/>
+                                        </HBox.margin>
+                                    </Button>
+                                    <Button alignment="CENTER" maxHeight="1.7976931348623157E308"
+                                            maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                                            onAction="#uploadFile" prefHeight="27.0" prefWidth="156.0" text="开始上传"
+                                            HBox.hgrow="ALWAYS">
+                                        <HBox.margin>
+                                            <Insets left="10.0"/>
+                                        </HBox.margin>
+                                    </Button>
+                                </HBox>
+                            </VBox>
+                        </SplitPane>
+                    </HBox>
+                </Tab>
+                <Tab text="资源管理">
+                    <VBox>
+                        <HBox alignment="CENTER_LEFT" prefHeight="52.0" prefWidth="700.0" VBox.vgrow="NEVER">
+                            <padding>
+                                <Insets left="10.0"/>
+                            </padding>
+                            <Label alignment="CENTER" text="空间域名" HBox.hgrow="NEVER">
+                                <font>
+                                    <Font size="14.0"/>
+                                </font>
+                            </Label>
+                            <TextField fx:id="bucketDomainTextField" editable="false" prefHeight="27.0"
+                                       prefWidth="245.0" promptText="空间域名" HBox.hgrow="NEVER">
+                                <HBox.margin>
+                                    <Insets left="10.0"/>
+                                </HBox.margin>
+                            </TextField>
+                            <TextField fx:id="searchTextField" onKeyReleased="#searchFile" prefHeight="27.0"
+                                       prefWidth="275.0" promptText="搜索文件, 支持正则表达式" HBox.hgrow="NEVER">
+                                <HBox.margin>
+                                    <Insets left="10.0"/>
+                                </HBox.margin>
+                            </TextField>
+                            <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                                <HBox.margin>
+                                    <Insets/>
+                                </HBox.margin>
+                                <padding>
+                                    <Insets right="15.0"/>
+                                </padding>
+                                <Label fx:id="totalLengthLabel"/>
+                            </HBox>
+                        </HBox>
+                        <HBox VBox.vgrow="ALWAYS">
+                            <TableView fx:id="resTable" editable="true" prefHeight="479.0" prefWidth="602.0"
+                                       HBox.hgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="nameCol" prefWidth="278.0" text="文件名"/>
+                                    <TableColumn fx:id="typeCol" minWidth="5.0" prefWidth="81.0" text="文件类型"/>
+                                    <TableColumn fx:id="sizeCol" prefWidth="90.0" text="文件大小"/>
+                                    <TableColumn fx:id="timeCol" prefWidth="152.0" text="最后更新时间"/>
+                                </columns>
+                                <HBox.margin>
+                                    <Insets bottom="10.0" left="10.0"/>
+                                </HBox.margin>
+                            </TableView>
+                            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="NEVER">
+                                <Button mnemonicParsing="false" onAction="#refreshResTable" text="刷新列表"
+                                        VBox.vgrow="NEVER"/>
+                                <Button mnemonicParsing="false" onAction="#copyLink" text="复制链接" VBox.vgrow="NEVER">
+                                    <VBox.margin>
+                                        <Insets top="10.0"/>
+                                    </VBox.margin>
+                                </Button>
+                                <Button mnemonicParsing="false" onAction="#deleteFiles" text="删除文件" VBox.vgrow="NEVER">
+                                    <VBox.margin>
+                                        <Insets top="10.0"/>
+                                    </VBox.margin>
+                                </Button>
+                                <Button mnemonicParsing="false" onAction="#showFileMovableDialog" text="移动到..."
+                                        VBox.vgrow="NEVER">
+                                    <VBox.margin>
+                                        <Insets top="10.0"/>
+                                    </VBox.margin>
+                                </Button>
+                                <Button mnemonicParsing="false" onAction="#setLife" text="生存时间" VBox.vgrow="NEVER">
+                                    <VBox.margin>
+                                        <Insets top="10.0"/>
+                                    </VBox.margin>
+                                </Button>
+                                <Button mnemonicParsing="false" onAction="#updateFile" text="更新镜像" VBox.vgrow="NEVER">
+                                    <VBox.margin>
+                                        <Insets top="10.0"/>
+                                    </VBox.margin>
+                                </Button>
+                                <Button mnemonicParsing="false" onAction="#publicDownload" text="公有下载"
+                                        VBox.vgrow="NEVER">
+                                    <VBox.margin>
+                                        <Insets top="10.0"/>
+                                    </VBox.margin>
+                                </Button>
+                                <Button mnemonicParsing="false" onAction="#privateDownload" text="私有下载"
+                                        VBox.vgrow="NEVER">
+                                    <VBox.margin>
+                                        <Insets top="10.0"/>
+                                    </VBox.margin>
+                                </Button>
+                                <Button mnemonicParsing="false" onAction="#openFile" text="打开文件" VBox.vgrow="NEVER">
+                                    <VBox.margin>
+                                        <Insets top="10.0"/>
+                                    </VBox.margin>
+                                </Button>
+                                <Button mnemonicParsing="false" onAction="#downloadFromURL" text="链接下载"
+                                        VBox.vgrow="NEVER">
+                                    <VBox.margin>
+                                        <Insets top="10.0"/>
+                                    </VBox.margin>
+                                </Button>
+                                <Button mnemonicParsing="false" onAction="#refreshFile" text="文件刷新" VBox.vgrow="NEVER">
+                                    <VBox.margin>
+                                        <Insets top="10.0"/>
+                                    </VBox.margin>
+                                </Button>
+                                <Button mnemonicParsing="false" onAction="#downloadCdnLog" text="日志下载"
+                                        VBox.vgrow="NEVER">
+                                    <VBox.margin>
+                                        <Insets top="10.0"/>
+                                    </VBox.margin>
+                                </Button>
+                                <VBox alignment="BOTTOM_CENTER" VBox.vgrow="ALWAYS">
+                                    <VBox.margin>
+                                        <Insets top="10.0"/>
+                                    </VBox.margin>
+                                    <padding>
+                                        <Insets bottom="10.0"/>
+                                    </padding>
+                                    <Label fx:id="totalSizeLabel"/>
+                                </VBox>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </Tab>
+                <Tab text="数据统计">
+                    <VBox>
+                        <HBox alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0"
+                              prefWidth="700.0" VBox.vgrow="NEVER">
+                            <Label text="开始日期" HBox.hgrow="NEVER">
+                                <font>
+                                    <Font size="14.0"/>
+                                </font>
+                                <HBox.margin>
+                                    <Insets/>
+                                </HBox.margin>
+                            </Label>
+                            <DatePicker fx:id="startDate" onAction="#dateChange" prefWidth="125.0" promptText="开始日期"
+                                        HBox.hgrow="NEVER">
+                                <HBox.margin>
+                                    <Insets left="10.0"/>
+                                </HBox.margin>
+                            </DatePicker>
+                            <Label text="结束日期">
+                                <font>
+                                    <Font size="14.0"/>
+                                </font>
+                                <HBox.margin>
+                                    <Insets left="10.0"/>
+                                </HBox.margin>
+                            </Label>
+                            <DatePicker fx:id="endDate" onAction="#dateChange" prefWidth="125.0" promptText="结束日期"
+                                        HBox.hgrow="NEVER">
+                                <HBox.margin>
+                                    <Insets left="10.0"/>
+                                </HBox.margin>
+                            </DatePicker>
+                            <ComboBox fx:id="fluxCountUnit" prefWidth="70.0" promptText="统计单位" HBox.hgrow="NEVER">
+                                <HBox.margin>
+                                    <Insets left="10.0"/>
+                                </HBox.margin>
+                            </ComboBox>
+                            <ComboBox fx:id="bandCountUnit" prefWidth="70.0" promptText="统计单位">
+                                <HBox.margin>
+                                    <Insets left="10.0"/>
+                                </HBox.margin>
+                            </ComboBox>
+                            <Label text="时间跨度不超过31天" HBox.hgrow="NEVER">
+                                <font>
+                                    <Font size="14.0"/>
+                                </font>
+                                <HBox.margin>
+                                    <Insets left="10.0"/>
+                                </HBox.margin>
+                            </Label>
+                        </HBox>
+                        <AreaChart fx:id="bucketFluxChart" VBox.vgrow="ALWAYS">
+                            <xAxis>
+                                <CategoryAxis side="BOTTOM"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis side="LEFT"/>
+                            </yAxis>
+                        </AreaChart>
+                        <AreaChart fx:id="bucketBandChart" VBox.vgrow="ALWAYS">
+                            <xAxis>
+                                <CategoryAxis side="BOTTOM"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis side="LEFT"/>
+                            </yAxis>
+                        </AreaChart>
+                    </VBox>
+                </Tab>
+                <Tab text="关于作者">
+                    <HBox>
+                        <opaqueInsets>
+                            <Insets/>
+                        </opaqueInsets>
+                        <VBox prefHeight="520.0" prefWidth="14.0" HBox.hgrow="ALWAYS"/>
+                        <VBox HBox.hgrow="ALWAYS">
+                            <VBox prefHeight="58.0" prefWidth="600.0" VBox.vgrow="ALWAYS"/>
+                            <VBox prefHeight="548.0" prefWidth="643.0">
+                                <Label text="当前版本: v1.0.7">
+                                    <font>
+                                        <Font size="20.0"/>
+                                    </font>
+                                    <VBox.margin>
+                                        <Insets top="10.0"/>
+                                    </VBox.margin>
+                                </Label>
+                                <HBox prefHeight="47.0" prefWidth="553.0">
+                                    <VBox.margin>
+                                        <Insets bottom="-10.0" top="10.0"/>
+                                    </VBox.margin>
+                                    <Label text="QQ: ">
+                                        <font>
+                                            <Font size="20.0"/>
+                                        </font>
+                                        <HBox.margin>
+                                            <Insets top="10.0"/>
+                                        </HBox.margin>
+                                    </Label>
+                                    <TextField editable="false" style="-fx-background-color: transparent;"
+                                               text="735817834">
+                                        <HBox.margin>
+                                            <Insets top="3.0"/>
+                                        </HBox.margin>
+                                        <font>
+                                            <Font size="20.0"/>
+                                        </font>
+                                    </TextField>
+                                </HBox>
+                                <HBox prefHeight="47.0" prefWidth="553.0">
+                                    <VBox.margin>
+                                        <Insets top="10.0"/>
+                                    </VBox.margin>
+                                    <Label text="CSDN博客: ">
+                                        <font>
+                                            <Font size="20.0"/>
+                                        </font>
+                                        <HBox.margin>
+                                            <Insets top="10.0"/>
+                                        </HBox.margin>
+                                    </Label>
+                                    <Hyperlink fx:id="toCsdnBlog" text="http://csdn.zhazhapan.com" underline="true">
+                                        <font>
+                                            <Font size="20.0"/>
+                                        </font>
+                                        <HBox.margin>
+                                            <Insets top="3.0"/>
+                                        </HBox.margin>
+                                    </Hyperlink>
+                                </HBox>
+                                <HBox prefHeight="47.0" prefWidth="553.0">
+                                    <Label text="HEXO博客: ">
+                                        <font>
+                                            <Font size="20.0"/>
+                                        </font>
+                                        <HBox.margin>
+                                            <Insets top="10.0"/>
+                                        </HBox.margin>
+                                    </Label>
+                                    <Hyperlink fx:id="toHexoBlog" text="http://zhazhapan.com" underline="true">
+                                        <font>
+                                            <Font size="20.0"/>
+                                        </font>
+                                        <HBox.margin>
+                                            <Insets top="3.0"/>
+                                        </HBox.margin>
+                                    </Hyperlink>
+                                </HBox>
+                                <HBox prefHeight="47.0" prefWidth="553.0">
+                                    <Label text="项目源码地址: ">
+                                        <font>
+                                            <Font size="20.0"/>
+                                        </font>
+                                        <HBox.margin>
+                                            <Insets top="10.0"/>
+                                        </HBox.margin>
+                                    </Label>
+                                    <Hyperlink fx:id="toGithubSource" text="https://github.com/zhazhapan/qiniu"
+                                               underline="true">
+                                        <font>
+                                            <Font size="20.0"/>
+                                        </font>
+                                        <HBox.margin>
+                                            <Insets top="3.0"/>
+                                        </HBox.margin>
+                                    </Hyperlink>
+                                </HBox>
+                                <HBox prefHeight="47.0" prefWidth="553.0">
+                                    <Label text="功能介绍: " HBox.hgrow="NEVER">
+                                        <font>
+                                            <Font size="20.0"/>
+                                        </font>
+                                        <HBox.margin>
+                                            <Insets top="10.0"/>
+                                        </HBox.margin>
+                                    </Label>
+                                    <Hyperlink fx:id="toIntro" prefHeight="36.0" prefWidth="526.0"
+                                               text="http://zhazhapan.com/2017/10/15/%E4%B8%83%E7%89%9B%E4%BA%91%E2%80%94%E2%80%94%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E4%BB%8B%E7%BB%8D/"
+                                               underline="true">
+                                        <font>
+                                            <Font size="20.0"/>
+                                        </font>
+                                        <HBox.margin>
+                                            <Insets top="3.0"/>
+                                        </HBox.margin>
+                                    </Hyperlink>
+                                </HBox>
+                                <HBox prefHeight="47.0" prefWidth="553.0">
+                                    <Hyperlink fx:id="toIntro1" prefHeight="36.0" prefWidth="526.0"
+                                               text="http://blog.csdn.net/qq_26954773/article/details/78245100"
+                                               underline="true">
+                                        <font>
+                                            <Font size="20.0"/>
+                                        </font>
+                                        <HBox.margin>
+                                            <Insets left="90.0" top="3.0"/>
+                                        </HBox.margin>
+                                    </Hyperlink>
+                                </HBox>
+                                <HBox prefHeight="47.0" prefWidth="553.0">
+                                    <Label text="邮箱: " HBox.hgrow="NEVER">
+                                        <font>
+                                            <Font size="20.0"/>
+                                        </font>
+                                        <HBox.margin>
+                                            <Insets top="10.0"/>
+                                        </HBox.margin>
+                                    </Label>
+                                    <TextField editable="false" prefHeight="40.0" prefWidth="247.0"
+                                               style="-fx-background-color: transparent;" text="tao@zhazhapan.com">
+                                        <font>
+                                            <Font size="20.0"/>
+                                        </font>
+                                        <HBox.margin>
+                                            <Insets top="3.0"/>
+                                        </HBox.margin>
+                                    </TextField>
+                                    <TextField editable="false" prefHeight="40.0" prefWidth="301.0"
+                                               style="-fx-background-color: transparent;"
+                                               text="panther.pantao@gmail.com">
+                                        <font>
+                                            <Font size="20.0"/>
+                                        </font>
+                                        <HBox.margin>
+                                            <Insets top="3.0"/>
+                                        </HBox.margin>
+                                    </TextField>
+                                </HBox>
+                            </VBox>
+                        </VBox>
+                    </HBox>
+                </Tab>
+            </TabPane>
+        </center>
+        <top>
+            <VBox BorderPane.alignment="CENTER">
+                <BorderPane.margin>
+                    <Insets/>
+                </BorderPane.margin>
+                <ProgressBar fx:id="uploadProgress" maxHeight="-Infinity" maxWidth="1.7976931348623157E308"
+                             minHeight="10.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="10.0" prefWidth="500.0"
+                             progress="0.0" style="-fx-border-color: transparent;" visible="false" VBox.vgrow="NEVER"/>
+                <HBox VBox.vgrow="NEVER">
+                    <ComboBox fx:id="bucketChoiceCombo" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0"
+                              prefWidth="205.0" promptText="还没有选择存储空间" HBox.hgrow="NEVER">
+                        <HBox.margin>
+                            <Insets left="10.0"/>
+                        </HBox.margin>
+                    </ComboBox>
+                    <TextField fx:id="zoneText" editable="false" promptText="存储区域" HBox.hgrow="NEVER">
+                        <HBox.margin>
+                            <Insets left="10.0"/>
+                        </HBox.margin>
+                    </TextField>
+                    <Button mnemonicParsing="false" onAction="#showBucketAddableDialog" text="添加存储空间"
+                            HBox.hgrow="NEVER">
+                        <HBox.margin>
+                            <Insets left="10.0"/>
+                        </HBox.margin>
+                    </Button>
+                    <Button mnemonicParsing="false" onAction="#resetKey" text="重置密钥" HBox.hgrow="NEVER">
+                        <HBox.margin>
+                            <Insets left="10.0"/>
+                        </HBox.margin>
+                    </Button>
+                    <Button mnemonicParsing="false" onAction="#openConfigFile" text="打开配置文件" HBox.hgrow="NEVER">
+                        <HBox.margin>
+                            <Insets left="10.0"/>
+                        </HBox.margin>
+                    </Button>
+                </HBox>
+                <ProgressBar fx:id="downloadProgress" maxHeight="-Infinity" maxWidth="1.7976931348623157E308"
+                             minHeight="10.0" prefHeight="10.0" prefWidth="500.0" progress="0.0"
+                             style="-fx-border-color: transparent;" visible="false" VBox.vgrow="NEVER"/>
+            </VBox>
+        </top>
+    </BorderPane>
+</VBox>

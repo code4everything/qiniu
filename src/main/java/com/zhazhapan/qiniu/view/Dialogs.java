@@ -1,335 +1,308 @@
-/**
- * 
- */
 package com.zhazhapan.qiniu.view;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Optional;
-
-import org.apache.log4j.Logger;
-
-import com.zhazhapan.qiniu.QiniuApplication;
 import com.zhazhapan.qiniu.QiManager.FileAction;
+import com.zhazhapan.qiniu.QiniuApplication;
+import com.zhazhapan.qiniu.QiniuUtils;
 import com.zhazhapan.qiniu.config.ConfigLoader;
 import com.zhazhapan.qiniu.controller.MainWindowController;
 import com.zhazhapan.qiniu.modules.constant.Values;
 import com.zhazhapan.util.Checker;
-import com.zhazhapan.util.Utils;
-
 import javafx.application.Platform;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import javafx.util.Pair;
+import org.apache.log4j.Logger;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Optional;
 
 /**
  * @author pantao 对JavaFX对话框进行封装
  */
 public class Dialogs {
 
-	private Logger logger = Logger.getLogger(Dialogs.class);
+    private Logger logger = Logger.getLogger(Dialogs.class);
 
-	public static String showInputDialog(String header, String content, String defaultValue) {
-		TextInputDialog dialog = new TextInputDialog(defaultValue);
-		dialog.setTitle(Values.MAIN_TITLE);
-		dialog.setHeaderText(header);
-		dialog.setContentText(content);
+    public static String showInputDialog(String header, String content, String defaultValue) {
+        TextInputDialog dialog = new TextInputDialog(defaultValue);
+        dialog.setTitle(Values.MAIN_TITLE);
+        dialog.setHeaderText(header);
+        dialog.setContentText(content);
 
-		Optional<String> result = dialog.showAndWait();
-		if (result.isPresent()) {
-			return result.get();
-		} else {
-			return null;
-		}
-	}
+        Optional<String> result = dialog.showAndWait();
+        return result.orElse(null);
+    }
 
-	public Pair<FileAction, String[]> showFileMovableDialog(String bucket, String key, boolean setKey) {
-		MainWindowController main = MainWindowController.getInstance();
-		ButtonType ok = new ButtonType(Values.OK, ButtonData.OK_DONE);
-		Dialog<String[]> dialog = getDialog(ok);
+    public static Optional<ButtonType> showInformation(String content) {
+        return showInformation(null, content);
+    }
 
-		TextField keyTextField = new TextField();
-		keyTextField.setPrefWidth(300);
-		keyTextField.setPromptText(Values.FILE_NAME);
-		keyTextField.setText(key);
-		ComboBox<String> bucketCombo = new ComboBox<String>();
-		bucketCombo.getItems().addAll(main.bucketChoiceCombo.getItems());
-		bucketCombo.setValue(bucket);
-		CheckBox copyasCheckBox = new CheckBox(Values.COPY_AS);
-		copyasCheckBox.setSelected(true);
+    public static Optional<ButtonType> showInformation(String header, String content) {
+        return alert(header, content, AlertType.INFORMATION);
+    }
 
-		GridPane grid = getGridPane();
-		grid.add(copyasCheckBox, 0, 0, 2, 1);
-		grid.add(new Label(Values.BUCKET_NAME), 0, 1);
-		grid.add(bucketCombo, 1, 1);
-		if (setKey) {
-			grid.add(new Label(Values.FILE_NAME), 0, 2);
-			grid.add(keyTextField, 1, 2);
-			Platform.runLater(() -> keyTextField.requestFocus());
-		}
+    public static Optional<ButtonType> showWarning(String content) {
+        return showWarning(null, content);
+    }
 
-		dialog.getDialogPane().setContent(grid);
-		dialog.setResultConverter(dialogButton -> {
-			if (dialogButton == ok) {
-				return new String[] { bucketCombo.getValue(), keyTextField.getText() };
-			}
-			return null;
-		});
+    public static Optional<ButtonType> showWarning(String header, String content) {
+        return alert(header, content, AlertType.WARNING);
+    }
 
-		Optional<String[]> result = dialog.showAndWait();
-		if (result.isPresent()) {
-			bucket = bucketCombo.getValue();
-			key = keyTextField.getText();
-			FileAction action = copyasCheckBox.isSelected() ? FileAction.COPY : FileAction.MOVE;
-			return new Pair<FileAction, String[]>(action, new String[] { bucket, key });
-		} else {
-			return null;
-		}
-	}
+    public static Optional<ButtonType> showError(String content) {
+        return showError(null, content);
+    }
 
-	/**
-	 * 显示输入密钥的对话框
-	 * 
-	 * @return 返回用户是否点击确定按钮
-	 */
-	public boolean showInputKeyDialog() {
-		ButtonType ok = new ButtonType(Values.OK, ButtonData.OK_DONE);
-		Dialog<String[]> dialog = getDialog(ok);
+    public static Optional<ButtonType> showError(String header, String content) {
+        return alert(header, content, AlertType.ERROR);
+    }
 
-		TextField ak = new TextField();
-		ak.setMinWidth(400);
-		ak.setPromptText("Access Key");
-		TextField sk = new TextField();
-		sk.setPromptText("Secret Key");
+    public static Optional<ButtonType> showConfirmation(String content) {
+        return showConfirmation(null, content);
+    }
 
-		Hyperlink hyperlink = new Hyperlink("查看我的KEY：" + Values.QINIU_KEY_URL);
-		hyperlink.setOnAction(event -> Utils.openLink(Values.QINIU_KEY_URL));
+    public static Optional<ButtonType> showConfirmation(String header, String content) {
+        return alert(header, content, AlertType.CONFIRMATION);
+    }
 
-		GridPane grid = getGridPane();
-		grid.add(hyperlink, 0, 0, 2, 1);
-		grid.add(new Label("Access Key:"), 0, 1);
-		grid.add(ak, 1, 1);
-		grid.add(new Label("Secret Key:"), 0, 2);
-		grid.add(sk, 1, 2);
+    public static Optional<ButtonType> showException(Exception e) {
+        return showException(null, e);
+    }
 
-		Node okButton = dialog.getDialogPane().lookupButton(ok);
-		okButton.setDisable(true);
+    public static void showFatalError(String header, Exception e) {
+        showException(header, e);
+        System.exit(0);
+    }
 
-		// 监听文本框的输入状态
-		ak.textProperty().addListener((observable, oldValue, newValue) -> {
-			okButton.setDisable(newValue.trim().isEmpty() || sk.getText().trim().isEmpty());
-		});
-		sk.textProperty().addListener((observable, oldValue, newValue) -> {
-			okButton.setDisable(newValue.trim().isEmpty() || ak.getText().trim().isEmpty());
-		});
+    public static Optional<ButtonType> showException(String header, Exception e) {
+        Alert alert = getAlert(header, "错误信息追踪：", AlertType.ERROR);
 
-		dialog.getDialogPane().setContent(grid);
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        e.printStackTrace(printWriter);
+        String exception = stringWriter.toString();
 
-		Platform.runLater(() -> ak.requestFocus());
+        TextArea textArea = new TextArea(exception);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
 
-		Optional<String[]> result = dialog.showAndWait();
-		if (result.isPresent() && Checker.isNotEmpty(ak.getText()) && Checker.isNotEmpty(sk.getText())) {
-			ConfigLoader.writeKey(ak.getText(), sk.getText());
-			return true;
-		}
-		return false;
-	}
+        textArea.setMaxWidth(Double.MAX_VALUE);
+        textArea.setMaxHeight(Double.MAX_VALUE);
+        GridPane.setVgrow(textArea, Priority.ALWAYS);
+        GridPane.setHgrow(textArea, Priority.ALWAYS);
 
-	public void showBucketAddableDialog() {
-		ButtonType ok = new ButtonType(Values.OK, ButtonData.OK_DONE);
-		Dialog<String[]> dialog = getDialog(ok);
+        GridPane gridPane = new GridPane();
+        gridPane.setMaxWidth(Double.MAX_VALUE);
+        gridPane.add(textArea, 0, 0);
 
-		TextField bucket = new TextField();
-		bucket.setPromptText(Values.BUCKET_NAME);
-		TextField url = new TextField();
-		url.setPromptText(Values.BUCKET_URL);
-		// TextField zone = new TextField();
-		ComboBox<String> zone = new ComboBox<String>();
-		zone.getItems().addAll(Values.BUCKET_NAME_ARRAY);
-		zone.setValue(Values.BUCKET_NAME_ARRAY[0]);
+        alert.getDialogPane().setExpandableContent(gridPane);
 
-		GridPane grid = getGridPane();
-		grid.add(new Label(Values.BUCKET_NAME), 0, 0);
-		grid.add(bucket, 1, 0);
-		grid.add(new Label(Values.BUCKET_URL), 0, 1);
-		grid.add(url, 1, 1);
-		grid.add(new Label(Values.BUCKET_ZONE_NAME), 0, 2);
-		grid.add(zone, 1, 2);
+        return alert.showAndWait();
+    }
 
-		Node okButton = dialog.getDialogPane().lookupButton(ok);
-		okButton.setDisable(true);
+    public static Optional<ButtonType> alert(String content) {
+        return alert(null, content);
+    }
 
-		// 监听文本框的输入状态
-		bucket.textProperty().addListener((observable, oldValue, newValue) -> {
-			okButton.setDisable(newValue.trim().isEmpty() || url.getText().isEmpty());
-		});
-		url.textProperty().addListener((observable, oldValue, newValue) -> {
-			okButton.setDisable(newValue.trim().isEmpty() || bucket.getText().isEmpty());
-		});
+    public static Optional<ButtonType> alert(String content, AlertType alertType) {
+        return alert(null, content, alertType);
+    }
 
-		dialog.getDialogPane().setContent(grid);
+    public static Optional<ButtonType> alert(String header, String content) {
+        return alert(header, content, AlertType.INFORMATION);
+    }
 
-		Platform.runLater(() -> bucket.requestFocus());
+    public static Optional<ButtonType> alert(String header, String content, AlertType alertType) {
+        return alert(header, content, alertType, Modality.NONE, null, StageStyle.DECORATED);
+    }
 
-		dialog.setResultConverter(dialogButton -> {
-			if (dialogButton == ok) {
-				return new String[] { bucket.getText(),
-						zone.getValue() + " " + (Checker.isHyperLink(url.getText()) ? url.getText() : "example.com") };
-			}
-			return null;
-		});
+    public static Optional<ButtonType> alert(String header, String content, AlertType alertType, Modality modality,
+                                             Window window, StageStyle style) {
+        return getAlert(header, content, alertType, modality, window, style).showAndWait();
+    }
 
-		Optional<String[]> result = dialog.showAndWait();
-		result.ifPresent(res -> {
-			logger.info("bucket name: " + res[0] + ", zone name: " + res[1]);
-			Platform.runLater(() -> MainWindowController.getInstance().addItem(res[0]));
-			QiniuApplication.buckets.put(res[0], res[1]);
-			ConfigLoader.writeConfig();
-		});
-	}
+    public static Alert getAlert(String header, String content, AlertType alertType) {
+        return getAlert(header, content, alertType, Modality.APPLICATION_MODAL, null, StageStyle.DECORATED);
+    }
 
-	public GridPane getGridPane() {
-		GridPane grid = new GridPane();
-		grid.setHgap(10);
-		grid.setVgap(10);
-		grid.setPadding(new Insets(10, 10, 10, 10));
-		return grid;
-	}
+    public static Alert getAlert(String header, String content, AlertType alertType, Modality modality, Window
+            window, StageStyle style) {
+        Alert alert = new Alert(alertType);
 
-	public Dialog<String[]> getDialog(ButtonType ok) {
-		Dialog<String[]> dialog = new Dialog<String[]>();
-		dialog.setTitle(Values.MAIN_TITLE);
-		dialog.setHeaderText(null);
+        alert.setTitle(Values.MAIN_TITLE);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
 
-		dialog.initModality(Modality.APPLICATION_MODAL);
+        alert.initModality(modality);
+        alert.initOwner(window);
+        alert.initStyle(style);
 
-		// 自定义确认和取消按钮
-		ButtonType cancel = new ButtonType(Values.CANCEL, ButtonData.CANCEL_CLOSE);
-		dialog.getDialogPane().getButtonTypes().addAll(ok, cancel);
-		return dialog;
-	}
+        return alert;
+    }
 
-	public static Optional<ButtonType> showInformation(String content) {
-		return showInformation(null, content);
-	}
+    public Pair<FileAction, String[]> showFileMovableDialog(String bucket, String key, boolean setKey) {
+        MainWindowController main = MainWindowController.getInstance();
+        ButtonType ok = new ButtonType(Values.OK, ButtonData.OK_DONE);
+        Dialog<String[]> dialog = getDialog(ok);
 
-	public static Optional<ButtonType> showInformation(String header, String content) {
-		return alert(header, content, AlertType.INFORMATION);
-	}
+        TextField keyTextField = new TextField();
+        keyTextField.setPrefWidth(300);
+        keyTextField.setPromptText(Values.FILE_NAME);
+        keyTextField.setText(key);
+        ComboBox<String> bucketCombo = new ComboBox<String>();
+        bucketCombo.getItems().addAll(main.bucketChoiceCombo.getItems());
+        bucketCombo.setValue(bucket);
+        CheckBox copyasCheckBox = new CheckBox(Values.COPY_AS);
+        copyasCheckBox.setSelected(true);
 
-	public static Optional<ButtonType> showWarning(String content) {
-		return showWarning(null, content);
-	}
+        GridPane grid = com.zhazhapan.util.dialog.Dialogs.getGridPane();
+        grid.add(copyasCheckBox, 0, 0, 2, 1);
+        grid.add(new Label(Values.BUCKET_NAME), 0, 1);
+        grid.add(bucketCombo, 1, 1);
+        if (setKey) {
+            grid.add(new Label(Values.FILE_NAME), 0, 2);
+            grid.add(keyTextField, 1, 2);
+            Platform.runLater(keyTextField::requestFocus);
+        }
 
-	public static Optional<ButtonType> showWarning(String header, String content) {
-		return alert(header, content, AlertType.WARNING);
-	}
+        dialog.getDialogPane().setContent(grid);
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == ok) {
+                return new String[]{bucketCombo.getValue(), keyTextField.getText()};
+            }
+            return null;
+        });
 
-	public static Optional<ButtonType> showError(String content) {
-		return showError(null, content);
-	}
+        Optional<String[]> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            bucket = bucketCombo.getValue();
+            key = keyTextField.getText();
+            FileAction action = copyasCheckBox.isSelected() ? FileAction.COPY : FileAction.MOVE;
+            return new Pair<>(action, new String[]{bucket, key});
+        } else {
+            return null;
+        }
+    }
 
-	public static Optional<ButtonType> showError(String header, String content) {
-		return alert(header, content, AlertType.ERROR);
-	}
+    /**
+     * 显示输入密钥的对话框
+     *
+     * @return 返回用户是否点击确定按钮
+     */
+    public boolean showInputKeyDialog() {
+        ButtonType ok = new ButtonType(Values.OK, ButtonData.OK_DONE);
+        Dialog<String[]> dialog = getDialog(ok);
 
-	public static Optional<ButtonType> showConfirmation(String content) {
-		return showConfirmation(null, content);
-	}
+        TextField ak = new TextField();
+        ak.setMinWidth(400);
+        ak.setPromptText("Access Key");
+        TextField sk = new TextField();
+        sk.setPromptText("Secret Key");
 
-	public static Optional<ButtonType> showConfirmation(String header, String content) {
-		return alert(header, content, AlertType.CONFIRMATION);
-	}
+        Hyperlink hyperlink = new Hyperlink("查看我的KEY：" + Values.QINIU_KEY_URL);
+        hyperlink.setOnAction(event -> QiniuUtils.openLink(Values.QINIU_KEY_URL));
 
-	public static Optional<ButtonType> showException(Exception e) {
-		return showException(null, e);
-	}
+        GridPane grid = com.zhazhapan.util.dialog.Dialogs.getGridPane();
+        grid.add(hyperlink, 0, 0, 2, 1);
+        grid.add(new Label("Access Key:"), 0, 1);
+        grid.add(ak, 1, 1);
+        grid.add(new Label("Secret Key:"), 0, 2);
+        grid.add(sk, 1, 2);
 
-	public static void showFatalError(String header, Exception e) {
-		showException(header, e);
-		System.exit(0);
-	}
+        Node okButton = dialog.getDialogPane().lookupButton(ok);
+        okButton.setDisable(true);
 
-	public static Optional<ButtonType> showException(String header, Exception e) {
-		Alert alert = getAlert(header, "错误信息追踪：", AlertType.ERROR);
+        // 监听文本框的输入状态
+        ak.textProperty().addListener((observable, oldValue, newValue) -> {
+            okButton.setDisable(newValue.trim().isEmpty() || sk.getText().trim().isEmpty());
+        });
+        sk.textProperty().addListener((observable, oldValue, newValue) -> {
+            okButton.setDisable(newValue.trim().isEmpty() || ak.getText().trim().isEmpty());
+        });
 
-		StringWriter stringWriter = new StringWriter();
-		PrintWriter printWriter = new PrintWriter(stringWriter);
-		e.printStackTrace(printWriter);
-		String exception = stringWriter.toString();
+        dialog.getDialogPane().setContent(grid);
 
-		TextArea textArea = new TextArea(exception);
-		textArea.setEditable(false);
-		textArea.setWrapText(true);
+        Platform.runLater(ak::requestFocus);
 
-		textArea.setMaxWidth(Double.MAX_VALUE);
-		textArea.setMaxHeight(Double.MAX_VALUE);
-		GridPane.setVgrow(textArea, Priority.ALWAYS);
-		GridPane.setHgrow(textArea, Priority.ALWAYS);
+        Optional<String[]> result = dialog.showAndWait();
+        if (result.isPresent() && Checker.isNotEmpty(ak.getText()) && Checker.isNotEmpty(sk.getText())) {
+            ConfigLoader.writeKey(ak.getText(), sk.getText());
+            return true;
+        }
+        return false;
+    }
 
-		GridPane gridPane = new GridPane();
-		gridPane.setMaxWidth(Double.MAX_VALUE);
-		gridPane.add(textArea, 0, 0);
+    public void showBucketAddableDialog() {
+        ButtonType ok = new ButtonType(Values.OK, ButtonData.OK_DONE);
+        Dialog<String[]> dialog = getDialog(ok);
 
-		alert.getDialogPane().setExpandableContent(gridPane);
+        TextField bucket = new TextField();
+        bucket.setPromptText(Values.BUCKET_NAME);
+        TextField url = new TextField();
+        url.setPromptText(Values.BUCKET_URL);
+        // TextField zone = new TextField();
+        ComboBox<String> zone = new ComboBox<String>();
+        zone.getItems().addAll(Values.BUCKET_NAME_ARRAY);
+        zone.setValue(Values.BUCKET_NAME_ARRAY[0]);
 
-		return alert.showAndWait();
-	}
+        GridPane grid = com.zhazhapan.util.dialog.Dialogs.getGridPane();
+        grid.add(new Label(Values.BUCKET_NAME), 0, 0);
+        grid.add(bucket, 1, 0);
+        grid.add(new Label(Values.BUCKET_URL), 0, 1);
+        grid.add(url, 1, 1);
+        grid.add(new Label(Values.BUCKET_ZONE_NAME), 0, 2);
+        grid.add(zone, 1, 2);
 
-	public static Optional<ButtonType> alert(String content) {
-		return alert(null, content);
-	}
+        Node okButton = dialog.getDialogPane().lookupButton(ok);
+        okButton.setDisable(true);
 
-	public static Optional<ButtonType> alert(String content, AlertType alertType) {
-		return alert(null, content, alertType);
-	}
+        // 监听文本框的输入状态
+        bucket.textProperty().addListener((observable, oldValue, newValue) -> {
+            okButton.setDisable(newValue.trim().isEmpty() || url.getText().isEmpty());
+        });
+        url.textProperty().addListener((observable, oldValue, newValue) -> {
+            okButton.setDisable(newValue.trim().isEmpty() || bucket.getText().isEmpty());
+        });
 
-	public static Optional<ButtonType> alert(String header, String content) {
-		return alert(header, content, AlertType.INFORMATION);
-	}
+        dialog.getDialogPane().setContent(grid);
 
-	public static Optional<ButtonType> alert(String header, String content, AlertType alertType) {
-		return alert(header, content, alertType, Modality.NONE, null, StageStyle.DECORATED);
-	}
+        Platform.runLater(bucket::requestFocus);
 
-	public static Optional<ButtonType> alert(String header, String content, AlertType alertType, Modality modality,
-			Window window, StageStyle style) {
-		return getAlert(header, content, alertType, modality, window, style).showAndWait();
-	}
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == ok) {
+                return new String[]{bucket.getText(), zone.getValue() + " " + (Checker.isHyperLink(url.getText()) ?
+                        url.getText() : "example.com")};
+            }
+            return null;
+        });
 
-	public static Alert getAlert(String header, String content, AlertType alertType) {
-		return getAlert(header, content, alertType, Modality.APPLICATION_MODAL, null, StageStyle.DECORATED);
-	}
+        Optional<String[]> result = dialog.showAndWait();
+        result.ifPresent(res -> {
+            logger.info("bucket name: " + res[0] + ", zone name: " + res[1]);
+            Platform.runLater(() -> MainWindowController.getInstance().addItem(res[0]));
+            QiniuApplication.buckets.put(res[0], res[1]);
+            ConfigLoader.writeConfig();
+        });
+    }
 
-	public static Alert getAlert(String header, String content, AlertType alertType, Modality modality, Window window,
-			StageStyle style) {
-		Alert alert = new Alert(alertType);
+    public Dialog<String[]> getDialog(ButtonType ok) {
+        Dialog<String[]> dialog = new Dialog<String[]>();
+        dialog.setTitle(Values.MAIN_TITLE);
+        dialog.setHeaderText(null);
 
-		alert.setTitle(Values.MAIN_TITLE);
-		alert.setHeaderText(header);
-		alert.setContentText(content);
+        dialog.initModality(Modality.APPLICATION_MODAL);
 
-		alert.initModality(modality);
-		alert.initOwner(window);
-		alert.initStyle(style);
-
-		return alert;
-	}
+        // 自定义确认和取消按钮
+        ButtonType cancel = new ButtonType(Values.CANCEL, ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(ok, cancel);
+        return dialog;
+    }
 }
