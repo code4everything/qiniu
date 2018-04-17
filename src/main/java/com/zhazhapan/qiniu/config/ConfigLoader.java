@@ -112,7 +112,7 @@ public class ConfigLoader {
             showInputKeyDialog();
         }
         // 如果Key是Null则退出程序
-        if (Checker.isNull(QiniuApplication.key) && isExternalCall) {
+        if (Checker.isNull(QiniuApplication.key) && !isExternalCall) {
             logger.info("stop running");
             System.exit(0);
         }
