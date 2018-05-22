@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.zhazhapan.qiniu.config;
 
 import com.google.gson.*;

@@ -12,7 +12,9 @@ import com.zhazhapan.qiniu.model.FileInfo;
 import com.zhazhapan.qiniu.model.Key;
 import com.zhazhapan.qiniu.modules.constant.Values;
 import com.zhazhapan.qiniu.view.MainWindow;
+import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.ThreadPool;
+import com.zhazhapan.util.Utils;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.stage.Stage;
@@ -28,31 +30,48 @@ import java.util.Map;
 public class QiniuApplication extends Application {
 
     public static Key key = null;
+
     public static Map<String, Zone> zone = new HashMap<>();
+
     /**
      * Value包括存储空间和空间域名，用英文空格分隔
      */
     public static Map<String, String> buckets = new HashMap<>();
+
     public static Stage stage = null;
+
     public static ArrayList<String> prefix = new ArrayList<>();
+
     public static String workDir = null;
+
     public static Auth auth = null;
+
     public static UploadManager uploadManager = null;
+
     public static Configuration configuration = null;
+
     public static BucketManager bucketManager = null;
+
     public static ObservableList<FileInfo> data = null;
+
     public static StringBuilder deleteLog = new StringBuilder();
+
     public static String downloadPath = null;
+
     public static CdnManager cdnManager = null;
+
     /**
      * 空间总文件数
      */
     public static int totalLength = 0;
+
     /**
      * 空间使用总大小
      */
     public static long totalSize = 0;
+
     private static MainWindow mainWindow = null;
+
     private static Logger logger = Logger.getLogger(QiniuApplication.class);
 
     /**
@@ -71,9 +90,8 @@ public class QiniuApplication extends Application {
      * @param isExternalCall {@link Boolean}
      */
     public static void initLoad(boolean isExternalCall) {
-        String osname = System.getProperties().getProperty("os.name").toLowerCase();
-        logger.info("current operation system: " + osname);
-        if (osname.contains(Values.WINDOW_OS)) {
+        logger.info("current operation system: " + Utils.getCurrentOS());
+        if (Checker.isWindows()) {
             workDir = Values.APP_PATH_OF_WINDOWS;
         } else {
             workDir = Values.APP_PATH_OF_UNIX;

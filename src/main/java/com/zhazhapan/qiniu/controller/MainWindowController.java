@@ -47,62 +47,90 @@ import java.util.regex.Pattern;
 public class MainWindowController {
 
     private static MainWindowController mainWindowController = null;
+
     @FXML
     public ComboBox<String> bucketChoiceCombo;
 
     @FXML
     public TextField zoneText;
+
     @FXML
     public TextArea uploadStatusTextArea;
+
     @FXML
     public ComboBox<String> filePrefixCombo;
+
     @FXML
     public TableView<FileInfo> resTable;
+
     @FXML
     public TextField searchTextField;
+
     @FXML
     public ProgressBar uploadProgress;
+
     @FXML
     public ProgressBar downloadProgress;
+
     private Logger logger = Logger.getLogger(MainWindowController.class);
+
     @FXML
     private TextArea selectedFileTextArea;
+
     @FXML
     private TextField bucketDomainTextField;
+
     @FXML
     private TableColumn<FileInfo, String> nameCol;
+
     @FXML
     private TableColumn<FileInfo, String> typeCol;
+
     @FXML
     private TableColumn<FileInfo, String> sizeCol;
+
     @FXML
     private TableColumn<FileInfo, String> timeCol;
+
     @FXML
     private Hyperlink toCsdnBlog;
+
     @FXML
     private Hyperlink toHexoBlog;
+
     @FXML
     private Hyperlink toGithubSource;
+
     @FXML
     private Hyperlink toIntro;
+
     @FXML
     private Hyperlink toIntro1;
+
     @FXML
     private Label totalSizeLabel;
+
     @FXML
     private Label totalLengthLabel;
+
     @FXML
     private AreaChart<String, Long> bucketFluxChart;
+
     @FXML
     private AreaChart<String, Long> bucketBandChart;
+
     @FXML
     private DatePicker startDate;
+
     @FXML
     private DatePicker endDate;
+
     @FXML
     private ComboBox<String> fluxCountUnit;
+
     @FXML
     private ComboBox<String> bandCountUnit;
+
     private double upProgress = 0;
 
     private String status = "";
