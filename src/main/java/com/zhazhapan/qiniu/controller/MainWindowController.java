@@ -72,6 +72,12 @@ public class MainWindowController {
     @FXML
     public ProgressBar downloadProgress;
 
+    @FXML
+    public CheckBox folderRecursive;
+
+    @FXML
+    public CheckBox keepPath;
+
     private Logger logger = Logger.getLogger(MainWindowController.class);
 
     @FXML
