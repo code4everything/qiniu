@@ -704,7 +704,6 @@ public class MainWindowController {
                                     if (ap.startsWith(rp)) {
                                         filename = key + rp.substring(rp.lastIndexOf(ValueConsts.SEPARATOR) + 1) + ap
                                                 .substring(rp.length());
-                                        System.out.println(filename);
                                         break;
                                     }
                                 }
