@@ -141,6 +141,11 @@ public class MainWindowController {
 
     private String status = "";
 
+    /**
+     * 父文件夹路径
+     */
+    private List<String> rootPath = new ArrayList<>();
+
     public static MainWindowController getInstance() {
         return mainWindowController;
     }
@@ -626,7 +631,28 @@ public class MainWindowController {
 
     private void setFiles(List<File> files) {
         if (Checker.isNotEmpty(files)) {
+            File[] fileArray = new File[files.size()];
+            setFiles(files.toArray(fileArray), false);
+        }
+    }
+
+    /**
+     * 支持拖曳文件夹
+     */
+    private void setFiles(File[] files, boolean checkRecursive) {
+        if (Checker.isNotNull(files)) {
             for (File file : files) {
+                if (file.isDirectory()) {
+                    if (checkRecursive) {
+                        if (folderRecursive.isSelected()) {
+                            setFiles(file.listFiles(), true);
+                        }
+                    } else {
+                        rootPath.add(file.getAbsolutePath());
+                        setFiles(file.listFiles(), true);
+                    }
+                    continue;
+                }
                 if (!selectedFileTextArea.getText().contains(file.getAbsolutePath())) {
                     selectedFileTextArea.insertText(0, file.getAbsolutePath() + "\r\n");
                 }
@@ -665,13 +691,27 @@ public class MainWindowController {
                 if (Checker.isNotEmpty(path)) {
                     Platform.runLater(() -> uploadStatusTextArea.insertText(0, Values.UPLOADING));
                     logger.info("start to upload file: " + path);
-                    String filename;
+                    String filename = null;
                     String url = "http://" + QiniuApplication.buckets.get(bucket).split(" ")[1] + "/";
                     File file = new File(path);
                     try {
                         // 判断文件是否存在
                         if (file.exists()) {
-                            filename = key + file.getName();
+                            String ap = file.getAbsolutePath();
+                            // 保持文件相对父文件夹的路径
+                            if (keepPath.isSelected() && Checker.isNotEmpty(rootPath)) {
+                                for (String rp : rootPath) {
+                                    if (ap.startsWith(rp)) {
+                                        filename = key + rp.substring(rp.lastIndexOf(ValueConsts.SEPARATOR) + 1) + ap
+                                                .substring(rp.length());
+                                        System.out.println(filename);
+                                        break;
+                                    }
+                                }
+                            }
+                            if (Checker.isEmpty(filename)) {
+                                filename = key + file.getName();
+                            }
                             String upToken = QiniuApplication.auth.uploadToken(bucket, filename);
                             QiniuApplication.uploadManager.put(path, filename, upToken);
                             status = Formatter.datetimeToString(new Date()) + "\tsuccess\t" + url + filename + "\t" +
@@ -704,6 +744,7 @@ public class MainWindowController {
                 }
                 Platform.runLater(() -> selectedFileTextArea.deleteText(0, path.length() + (paths.length > 1 ? 1 : 0)));
             }
+            rootPath.clear();
             Platform.runLater(() -> {
                 // 将光标移到最前面
                 uploadStatusTextArea.positionCaret(0);
