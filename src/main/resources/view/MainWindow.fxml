@@ -71,7 +71,7 @@
                                             <items>
                                                 <MenuItem mnemonicParsing="false" onAction="#generateImageTag"
                                                           text="生成img标签"/>
-                                                <MenuItem mnemonicParsing="false" onAction="#generateAutdioTag"
+                                                <MenuItem mnemonicParsing="false" onAction="#generateAudioTag"
                                                           text="生成audio标签"/>
                                                 <MenuItem mnemonicParsing="false" onAction="#generateVideoTag"
                                                           text="生成video标签"/>

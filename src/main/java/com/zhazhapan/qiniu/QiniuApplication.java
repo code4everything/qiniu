@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * @author pantao
@@ -79,6 +80,10 @@ public class QiniuApplication extends Application {
      */
     public static void main(String[] args) {
         logger.info("start to run application");
+        // 设置线程池大小
+        ThreadPool.setMaximumPoolSize(5);
+        // 设置排队大小
+        ThreadPool.setWorkQueue(new ArrayBlockingQueue<>(1024));
         ThreadPool.init();
         initLoad(ValueConsts.FALSE);
         launch(args);

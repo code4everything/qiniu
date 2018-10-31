@@ -252,7 +252,7 @@ public class MainWindowController {
     /**
      * 生成audio标签
      */
-    public void generateAutdioTag() {
+    public void generateAudioTag() {
         generateTag("audio");
     }
 
