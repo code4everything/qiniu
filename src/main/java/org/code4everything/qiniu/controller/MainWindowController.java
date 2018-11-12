@@ -26,7 +26,6 @@ import org.code4everything.qiniu.QiniuApplication;
 import org.code4everything.qiniu.api.QiManager;
 import org.code4everything.qiniu.api.config.SdkConfigurer;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
-import org.code4everything.qiniu.downloader.Downloader;
 import org.code4everything.qiniu.model.FileInfo;
 import org.code4everything.qiniu.util.ConfigUtils;
 import org.code4everything.qiniu.util.QiniuUtils;
@@ -377,7 +376,7 @@ public class MainWindowController {
      */
     public void downloadFromURL() {
         String url = Dialogs.showInputDialog(null, QiniuValueConsts.DOWNLOAD_URL, "http://example.com");
-        new Downloader().downloadFromNet(url);
+        QiniuUtils.download(url);
     }
 
     /**
@@ -404,16 +403,15 @@ public class MainWindowController {
         if (Checker.isNotEmpty(selectedItems)) {
             QiManager manager = new QiManager();
             String domain = "http://" + bucketDomainTextField.getText();
-            Downloader downloader = new Downloader();
             if (way == DownloadWay.PUBLIC) {
                 logger.debug("start to public download");
                 for (FileInfo fileInfo : selectedItems) {
-                    manager.publicDownload(fileInfo.getName(), domain, downloader);
+                    manager.publicDownload(fileInfo.getName(), domain);
                 }
             } else {
                 logger.debug("start to private download");
                 for (FileInfo fileInfo : selectedItems) {
-                    manager.privateDownload(fileInfo.getName(), domain, downloader);
+                    manager.privateDownload(fileInfo.getName(), domain);
                 }
             }
         }

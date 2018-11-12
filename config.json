@@ -1,27 +1,13 @@
 {
-  "accessKey": "dSVVN1U-9NJrPPpiidjjh26Iyk0g8i3S5Uh922Kf",
-  "secretKey": "Up3J2F0Ay9dH-Htc4wMu3eee4kMa1ifP9g43-ucW",
-  "buckets": [
-    {
-      "bucket": "share",
-      "zone": "华南",
-      "url": "share.qiniu.segocat.com"
-    }
-  ],
-  "prefix": [
-    "tools/zhazhapan/",
-    "zhazhapan/md/",
-    "pantao/resume/",
-    "pantao/photo/",
-    "pantao/certificate/",
-    "blogs/",
-    "zhazhapan/paper/",
-    "zhazhapan/pdf/",
-    "zhazhapan/mp4/",
-    "tutorial/vspider/",
-    "pantao/identify/",
-    "git/efo/",
-    "yunshi/document/"
-  ],
-  "download": "/Users/pantao/Desktop"
+	"accessKey":"dSVVN1U-9NJrPPpiidjjh26Iyk0g8i3S5Uh922Kf",
+	"buckets":[
+		{
+			"bucket":"share",
+			"url":"share.qiniu.segocat.com",
+			"zone":"华南"
+		}
+	],
+	"prefixes":[],
+	"secretKey":"Up3J2F0Ay9dH-Htc4wMu3eee4kMa1ifP9g43-ucW",
+	"storagePath":"/Users/pantao/Desktop"
 }

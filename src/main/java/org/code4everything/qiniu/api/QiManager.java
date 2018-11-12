@@ -20,7 +20,6 @@ import org.code4everything.qiniu.QiniuApplication;
 import org.code4everything.qiniu.api.config.SdkConfigurer;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.controller.MainWindowController;
-import org.code4everything.qiniu.downloader.Downloader;
 import org.code4everything.qiniu.model.FileInfo;
 import org.code4everything.qiniu.util.QiniuUtils;
 import org.code4everything.qiniu.view.Dialogs;
@@ -168,10 +167,9 @@ public class QiManager {
             }
             try {
                 CdnResult.LogListResult logRes = SdkConfigurer.getCdnManager().getCdnLogList(domains, logDate);
-                Downloader downloader = new Downloader();
                 for (Map.Entry<String, LogData[]> logs : logRes.data.entrySet()) {
                     for (LogData log : logs.getValue()) {
-                        downloader.downloadFromNet(log.url);
+                        QiniuUtils.download(log.url);
                     }
                 }
             } catch (QiniuException e) {
@@ -209,31 +207,23 @@ public class QiManager {
         }
     }
 
-    public void privateDownload(String fileName, String domain) {
-        privateDownload(fileName, domain, new Downloader());
-    }
-
     /**
      * 私有下载
      */
-    public void privateDownload(String fileName, String domain, Downloader downloader) {
+    public void privateDownload(String fileName, String domain) {
         // 自定义链接过期时间（小时）
         long expireInSeconds = 24;
         String publicURL = getPublicURL(fileName, domain);
-        downloader.downloadFromNet(SdkConfigurer.getAuth().privateDownloadUrl(publicURL, expireInSeconds));
-    }
-
-    public void publicDownload(String fileName, String domain) {
-        publicDownload(fileName, domain, new Downloader());
+        QiniuUtils.download(SdkConfigurer.getAuth().privateDownloadUrl(publicURL, expireInSeconds));
     }
 
     /**
      * 公有下载
      */
-    public void publicDownload(String fileName, String domain, Downloader downloader) {
+    public void publicDownload(String fileName, String domain) {
         String url = getPublicURL(fileName, domain);
         if (Checker.isNotEmpty(url)) {
-            downloader.downloadFromNet(url);
+            QiniuUtils.download(url);
         }
     }
 

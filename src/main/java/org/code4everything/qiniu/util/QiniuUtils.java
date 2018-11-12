@@ -1,12 +1,17 @@
 package org.code4everything.qiniu.util;
 
+import cn.hutool.core.lang.Validator;
+import cn.hutool.http.HttpUtil;
 import com.zhazhapan.util.FileExecutor;
 import com.zhazhapan.util.Formatter;
+import com.zhazhapan.util.ThreadPool;
 import com.zhazhapan.util.Utils;
 import com.zhazhapan.util.dialog.Alerts;
 import org.apache.log4j.Logger;
+import org.code4everything.qiniu.QiniuApplication;
 import org.code4everything.qiniu.api.config.SdkConfigurer;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
+import org.code4everything.qiniu.view.Dialogs;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +28,28 @@ public class QiniuUtils {
     private static final Logger LOGGER = Logger.getLogger(SdkConfigurer.class);
 
     private QiniuUtils() {}
+
+    /**
+     * 下载文件
+     *
+     * @param url 文件链接
+     */
+    public static void download(String url) {
+        // 验证存储路径
+        if (Validator.isEmpty(QiniuApplication.getConfigBean().getStoragePath())) {
+            // 显示存储路径输入框
+            String storagePath = Dialogs.showInputDialog(null, QiniuValueConsts.CONFIG_DOWNLOAD_PATH,
+                    Utils.getCurrentWorkDir());
+            if (Validator.isEmpty(storagePath)) {
+                return;
+            }
+            QiniuApplication.getConfigBean().setStoragePath(storagePath);
+            ConfigUtils.writeConfig();
+        }
+        final String dest = QiniuApplication.getConfigBean().getStoragePath();
+        // 下载文件
+        ThreadPool.executor.execute(() -> HttpUtil.downloadFile(url, dest));
+    }
 
     /**
      * 检查是否连接网络
