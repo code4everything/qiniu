@@ -1,7 +1,7 @@
 package org.code4everything.qiniu.view;
 
 import org.code4everything.qiniu.QiniuApplication;
-import org.code4everything.qiniu.QiniuUtils;
+import org.code4everything.qiniu.util.QiniuUtils;
 import org.code4everything.qiniu.config.ConfigLoader;
 import org.code4everything.qiniu.controller.MainWindowController;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
@@ -18,7 +18,7 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import javafx.util.Pair;
 import org.apache.log4j.Logger;
-import org.code4everything.qiniu.QiManager;
+import org.code4everything.qiniu.api.QiManager;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

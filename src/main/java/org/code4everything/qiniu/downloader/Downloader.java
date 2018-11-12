@@ -1,12 +1,14 @@
 /**
  *
  */
-package org.code4everything.qiniu;
+package org.code4everything.qiniu.downloader;
 
 import com.zhazhapan.modules.constant.ValueConsts;
+import org.code4everything.qiniu.QiniuApplication;
 import org.code4everything.qiniu.config.ConfigLoader;
 import org.code4everything.qiniu.controller.MainWindowController;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
+import org.code4everything.qiniu.util.QiniuUtils;
 import org.code4everything.qiniu.view.Dialogs;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.ThreadPool;

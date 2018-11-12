@@ -2,7 +2,7 @@ package org.code4everything.qiniu.view;
 
 import com.zhazhapan.modules.constant.ValueConsts;
 import org.code4everything.qiniu.QiniuApplication;
-import org.code4everything.qiniu.QiniuUtils;
+import org.code4everything.qiniu.util.QiniuUtils;
 import org.code4everything.qiniu.config.ConfigLoader;
 import org.code4everything.qiniu.controller.MainWindowController;
 import org.code4everything.qiniu.constant.QiniuValueConsts;

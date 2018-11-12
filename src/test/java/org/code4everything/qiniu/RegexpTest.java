@@ -4,6 +4,7 @@
 package org.code4everything.qiniu;
 
 import com.zhazhapan.util.Checker;
+import org.code4everything.qiniu.util.QiniuUtils;
 import org.junit.Test;
 
 /**

@@ -1,4 +1,4 @@
-package org.code4everything.qiniu;
+package org.code4everything.qiniu.util;
 
 import org.code4everything.qiniu.constant.QiniuValueConsts;
 import com.zhazhapan.util.FileExecutor;

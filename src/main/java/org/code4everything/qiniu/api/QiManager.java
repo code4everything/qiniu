@@ -1,4 +1,4 @@
-package org.code4everything.qiniu;
+package org.code4everything.qiniu.api;
 
 import com.qiniu.cdn.CdnResult;
 import com.qiniu.cdn.CdnResult.BandwidthData;
@@ -8,6 +8,8 @@ import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
 import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.model.BatchStatus;
+import org.code4everything.qiniu.downloader.Downloader;
+import org.code4everything.qiniu.QiniuApplication;
 import org.code4everything.qiniu.config.QiConfiger;
 import org.code4everything.qiniu.controller.MainWindowController;
 import org.code4everything.qiniu.model.FileInfo;

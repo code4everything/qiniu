@@ -2,10 +2,10 @@ package org.code4everything.qiniu.controller;
 
 import com.qiniu.common.QiniuException;
 import com.zhazhapan.modules.constant.ValueConsts;
-import org.code4everything.qiniu.Downloader;
-import org.code4everything.qiniu.QiManager;
+import org.code4everything.qiniu.downloader.Downloader;
+import org.code4everything.qiniu.api.QiManager;
 import org.code4everything.qiniu.QiniuApplication;
-import org.code4everything.qiniu.QiniuUtils;
+import org.code4everything.qiniu.util.QiniuUtils;
 import org.code4everything.qiniu.config.ConfigLoader;
 import org.code4everything.qiniu.config.QiConfiger;
 import org.code4everything.qiniu.model.FileInfo;
