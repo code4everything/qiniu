@@ -1,4 +1,4 @@
-package com.zhazhapan.qiniu.modules.constant;
+package org.code4everything.qiniu.modules.constant;
 
 import java.io.File;
 

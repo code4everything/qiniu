@@ -1,13 +1,13 @@
 /**
  *
  */
-package com.zhazhapan.qiniu;
+package org.code4everything.qiniu;
 
 import com.zhazhapan.modules.constant.ValueConsts;
-import com.zhazhapan.qiniu.config.ConfigLoader;
-import com.zhazhapan.qiniu.controller.MainWindowController;
-import com.zhazhapan.qiniu.modules.constant.Values;
-import com.zhazhapan.qiniu.view.Dialogs;
+import org.code4everything.qiniu.config.ConfigLoader;
+import org.code4everything.qiniu.controller.MainWindowController;
+import org.code4everything.qiniu.modules.constant.Values;
+import org.code4everything.qiniu.view.Dialogs;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.ThreadPool;
 import javafx.application.Platform;

@@ -1,4 +1,4 @@
-package com.zhazhapan.qiniu.config;
+package org.code4everything.qiniu.config;
 
 import com.qiniu.cdn.CdnManager;
 import com.qiniu.storage.BucketManager;
@@ -6,9 +6,9 @@ import com.qiniu.storage.Configuration;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.persistent.FileRecorder;
 import com.qiniu.util.Auth;
-import com.zhazhapan.qiniu.QiniuApplication;
-import com.zhazhapan.qiniu.modules.constant.Values;
-import com.zhazhapan.qiniu.view.Dialogs;
+import org.code4everything.qiniu.QiniuApplication;
+import org.code4everything.qiniu.modules.constant.Values;
+import org.code4everything.qiniu.view.Dialogs;
 import javafx.application.Platform;
 import org.apache.log4j.Logger;
 

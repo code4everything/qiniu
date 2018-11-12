@@ -1,17 +1,16 @@
-package com.zhazhapan.qiniu.controller;
+package org.code4everything.qiniu.controller;
 
 import com.qiniu.common.QiniuException;
 import com.zhazhapan.modules.constant.ValueConsts;
-import com.zhazhapan.qiniu.Downloader;
-import com.zhazhapan.qiniu.QiManager;
-import com.zhazhapan.qiniu.QiManager.FileAction;
-import com.zhazhapan.qiniu.QiniuApplication;
-import com.zhazhapan.qiniu.QiniuUtils;
-import com.zhazhapan.qiniu.config.ConfigLoader;
-import com.zhazhapan.qiniu.config.QiConfiger;
-import com.zhazhapan.qiniu.model.FileInfo;
-import com.zhazhapan.qiniu.modules.constant.Values;
-import com.zhazhapan.qiniu.view.Dialogs;
+import org.code4everything.qiniu.Downloader;
+import org.code4everything.qiniu.QiManager;
+import org.code4everything.qiniu.QiniuApplication;
+import org.code4everything.qiniu.QiniuUtils;
+import org.code4everything.qiniu.config.ConfigLoader;
+import org.code4everything.qiniu.config.QiConfiger;
+import org.code4everything.qiniu.model.FileInfo;
+import org.code4everything.qiniu.modules.constant.Values;
+import org.code4everything.qiniu.view.Dialogs;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.Formatter;
 import com.zhazhapan.util.ThreadPool;
@@ -460,7 +459,7 @@ public class MainWindowController {
      */
     public void showFileMovableDialog() {
         ObservableList<FileInfo> selectedItems = resTable.getSelectionModel().getSelectedItems();
-        Pair<FileAction, String[]> pair;
+        Pair<QiManager.FileAction, String[]> pair;
         String bucket = bucketChoiceCombo.getValue();
         if (Checker.isEmpty(selectedItems)) {
             // 没有选择文件，结束方法
@@ -479,7 +478,7 @@ public class MainWindowController {
                 String tb = pair.getValue()[0];
                 String name = useNewKey ? pair.getValue()[1] : fileInfo.getName();
                 boolean move = manager.moveOrCopyFile(fb, fileInfo.getName(), tb, name, pair.getKey());
-                if (pair.getKey() == FileAction.MOVE && move) {
+                if (pair.getKey() == QiManager.FileAction.MOVE && move) {
                     boolean sear = Checker.isNotEmpty(searchTextField.getText());
                     if (fb.equals(tb)) {
                         // 删除数据源

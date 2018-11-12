@@ -1,4 +1,4 @@
-package com.zhazhapan.qiniu.model;
+package org.code4everything.qiniu.model;
 
 /**
  * @author pantao

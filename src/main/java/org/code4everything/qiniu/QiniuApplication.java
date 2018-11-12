@@ -1,4 +1,4 @@
-package com.zhazhapan.qiniu;
+package org.code4everything.qiniu;
 
 import com.qiniu.cdn.CdnManager;
 import com.qiniu.common.Zone;
@@ -7,11 +7,11 @@ import com.qiniu.storage.Configuration;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.util.Auth;
 import com.zhazhapan.modules.constant.ValueConsts;
-import com.zhazhapan.qiniu.config.ConfigLoader;
-import com.zhazhapan.qiniu.model.FileInfo;
-import com.zhazhapan.qiniu.model.Key;
-import com.zhazhapan.qiniu.modules.constant.Values;
-import com.zhazhapan.qiniu.view.MainWindow;
+import org.code4everything.qiniu.config.ConfigLoader;
+import org.code4everything.qiniu.model.FileInfo;
+import org.code4everything.qiniu.model.Key;
+import org.code4everything.qiniu.modules.constant.Values;
+import org.code4everything.qiniu.view.MainWindow;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.ThreadPool;
 import com.zhazhapan.util.Utils;

@@ -1,11 +1,10 @@
-package com.zhazhapan.qiniu.view;
+package org.code4everything.qiniu.view;
 
-import com.zhazhapan.qiniu.QiManager.FileAction;
-import com.zhazhapan.qiniu.QiniuApplication;
-import com.zhazhapan.qiniu.QiniuUtils;
-import com.zhazhapan.qiniu.config.ConfigLoader;
-import com.zhazhapan.qiniu.controller.MainWindowController;
-import com.zhazhapan.qiniu.modules.constant.Values;
+import org.code4everything.qiniu.QiniuApplication;
+import org.code4everything.qiniu.QiniuUtils;
+import org.code4everything.qiniu.config.ConfigLoader;
+import org.code4everything.qiniu.controller.MainWindowController;
+import org.code4everything.qiniu.modules.constant.Values;
 import com.zhazhapan.util.Checker;
 import javafx.application.Platform;
 import javafx.scene.Node;
@@ -19,6 +18,7 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import javafx.util.Pair;
 import org.apache.log4j.Logger;
+import org.code4everything.qiniu.QiManager;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -148,7 +148,7 @@ public class Dialogs {
         return alert;
     }
 
-    public Pair<FileAction, String[]> showFileMovableDialog(String bucket, String key, boolean setKey) {
+    public Pair<QiManager.FileAction, String[]> showFileMovableDialog(String bucket, String key, boolean setKey) {
         MainWindowController main = MainWindowController.getInstance();
         ButtonType ok = new ButtonType(Values.OK, ButtonData.OK_DONE);
         Dialog<String[]> dialog = getDialog(ok);
@@ -185,7 +185,7 @@ public class Dialogs {
         if (result.isPresent()) {
             bucket = bucketCombo.getValue();
             key = keyTextField.getText();
-            FileAction action = copyasCheckBox.isSelected() ? FileAction.COPY : FileAction.MOVE;
+            QiManager.FileAction action = copyasCheckBox.isSelected() ? QiManager.FileAction.COPY : QiManager.FileAction.MOVE;
             return new Pair<>(action, new String[]{bucket, key});
         } else {
             return null;

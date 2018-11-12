@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.zhazhapan.qiniu;
+package org.code4everything.qiniu;
 
 import com.zhazhapan.util.Checker;
 import org.junit.Test;

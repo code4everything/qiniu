@@ -1,4 +1,4 @@
-package com.zhazhapan.qiniu;
+package org.code4everything.qiniu;
 
 import com.qiniu.cdn.CdnResult;
 import com.qiniu.cdn.CdnResult.BandwidthData;
@@ -8,11 +8,11 @@ import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
 import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.model.BatchStatus;
-import com.zhazhapan.qiniu.config.QiConfiger;
-import com.zhazhapan.qiniu.controller.MainWindowController;
-import com.zhazhapan.qiniu.model.FileInfo;
-import com.zhazhapan.qiniu.modules.constant.Values;
-import com.zhazhapan.qiniu.view.Dialogs;
+import org.code4everything.qiniu.config.QiConfiger;
+import org.code4everything.qiniu.controller.MainWindowController;
+import org.code4everything.qiniu.model.FileInfo;
+import org.code4everything.qiniu.modules.constant.Values;
+import org.code4everything.qiniu.view.Dialogs;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.Formatter;
 import javafx.application.Platform;

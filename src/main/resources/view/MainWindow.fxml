@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 <VBox xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.zhazhapan.qiniu.controller.MainWindowController">
+      fx:controller="org.code4everything.qiniu.controller.MainWindowController">
     <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0"
                 prefWidth="700.0" VBox.vgrow="ALWAYS">
         <center>

@@ -1,11 +1,11 @@
-package com.zhazhapan.qiniu.config;
+package org.code4everything.qiniu.config;
 
 import com.google.gson.*;
-import com.zhazhapan.qiniu.QiniuApplication;
-import com.zhazhapan.qiniu.controller.MainWindowController;
-import com.zhazhapan.qiniu.model.Key;
-import com.zhazhapan.qiniu.modules.constant.Values;
-import com.zhazhapan.qiniu.view.Dialogs;
+import org.code4everything.qiniu.QiniuApplication;
+import org.code4everything.qiniu.controller.MainWindowController;
+import org.code4everything.qiniu.model.Key;
+import org.code4everything.qiniu.modules.constant.Values;
+import org.code4everything.qiniu.view.Dialogs;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.FileExecutor;
 import com.zhazhapan.util.Formatter;

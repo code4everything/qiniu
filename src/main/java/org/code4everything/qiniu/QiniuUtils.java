@@ -1,6 +1,6 @@
-package com.zhazhapan.qiniu;
+package org.code4everything.qiniu;
 
-import com.zhazhapan.qiniu.modules.constant.Values;
+import org.code4everything.qiniu.modules.constant.Values;
 import com.zhazhapan.util.FileExecutor;
 import com.zhazhapan.util.Formatter;
 import com.zhazhapan.util.Utils;
