@@ -6,7 +6,7 @@ package org.code4everything.qiniu;
 import com.zhazhapan.modules.constant.ValueConsts;
 import org.code4everything.qiniu.config.ConfigLoader;
 import org.code4everything.qiniu.controller.MainWindowController;
-import org.code4everything.qiniu.modules.constant.Values;
+import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.view.Dialogs;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.ThreadPool;
@@ -40,8 +40,8 @@ public class Downloader {
             return;
         }
         if (!checkDownloadPath()) {
-            QiniuApplication.downloadPath = Dialogs.showInputDialog(null, Values.CONFIG_DOWNLOAD_PATH,
-                    Values.USER_HOME);
+            QiniuApplication.downloadPath = Dialogs.showInputDialog(null, QiniuValueConsts.CONFIG_DOWNLOAD_PATH,
+                    QiniuValueConsts.USER_HOME);
             if (!checkDownloadPath()) {
                 return;
             }
@@ -89,7 +89,7 @@ public class Downloader {
             } catch (IOException e) {
                 log = log.replace("success", "error") + ", message: " + e.getMessage();
                 logger.error(log);
-                Platform.runLater(() -> Dialogs.showException(Values.DOWNLOAD_FILE_ERROR, e));
+                Platform.runLater(() -> Dialogs.showException(QiniuValueConsts.DOWNLOAD_FILE_ERROR, e));
             }
             Platform.runLater(() -> main.downloadProgress.setVisible(false));
         });

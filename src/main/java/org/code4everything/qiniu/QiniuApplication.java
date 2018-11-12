@@ -10,7 +10,7 @@ import com.zhazhapan.modules.constant.ValueConsts;
 import org.code4everything.qiniu.config.ConfigLoader;
 import org.code4everything.qiniu.model.FileInfo;
 import org.code4everything.qiniu.model.Key;
-import org.code4everything.qiniu.modules.constant.Values;
+import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.view.MainWindow;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.ThreadPool;
@@ -97,11 +97,11 @@ public class QiniuApplication extends Application {
     public static void initLoad(boolean isExternalCall) {
         logger.info("current operation system: " + Utils.getCurrentOS());
         if (Checker.isWindows()) {
-            workDir = Values.APP_PATH_OF_WINDOWS;
+            workDir = QiniuValueConsts.APP_PATH_OF_WINDOWS;
         } else {
-            workDir = Values.APP_PATH_OF_UNIX;
+            workDir = QiniuValueConsts.APP_PATH_OF_UNIX;
         }
-        ConfigLoader.configPath = workDir + Values.SEPARATOR + Values.CONFIG_PATH;
+        ConfigLoader.configPath = workDir + QiniuValueConsts.SEPARATOR + QiniuValueConsts.CONFIG_PATH;
         logger.info("current work director: " + workDir + ", config file: " + ConfigLoader.configPath);
         mainWindow = new MainWindow();
         initZone();
@@ -111,10 +111,10 @@ public class QiniuApplication extends Application {
     }
 
     private static void initZone() {
-        zone.put(Values.BUCKET_NAME_ARRAY[0], Zone.zone0());
-        zone.put(Values.BUCKET_NAME_ARRAY[1], Zone.zone1());
-        zone.put(Values.BUCKET_NAME_ARRAY[2], Zone.zone2());
-        zone.put(Values.BUCKET_NAME_ARRAY[3], Zone.zoneNa0());
+        zone.put(QiniuValueConsts.BUCKET_NAME_ARRAY[0], Zone.zone0());
+        zone.put(QiniuValueConsts.BUCKET_NAME_ARRAY[1], Zone.zone1());
+        zone.put(QiniuValueConsts.BUCKET_NAME_ARRAY[2], Zone.zone2());
+        zone.put(QiniuValueConsts.BUCKET_NAME_ARRAY[3], Zone.zoneNa0());
     }
 
     @Override

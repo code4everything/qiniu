@@ -11,7 +11,7 @@ import com.qiniu.storage.model.BatchStatus;
 import org.code4everything.qiniu.config.QiConfiger;
 import org.code4everything.qiniu.controller.MainWindowController;
 import org.code4everything.qiniu.model.FileInfo;
-import org.code4everything.qiniu.modules.constant.Values;
+import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.view.Dialogs;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.Formatter;
@@ -64,10 +64,10 @@ public class QiManager {
             bandwidthResult = QiniuApplication.cdnManager.getBandwidthData(domains, fromDate, toDate, "day");
         } catch (QiniuException e) {
             logger.error("get bucket bandwidth error, message: " + e.getMessage());
-            Platform.runLater(() -> Dialogs.showException(Values.BUCKET_BAND_ERROR, e));
+            Platform.runLater(() -> Dialogs.showException(QiniuValueConsts.BUCKET_BAND_ERROR, e));
         }
         Series<String, Long> bandSer = new Series<>();
-        bandSer.setName(Values.BUCKET_BANDWIDTH_COUNT.replaceAll("[A-Z]+", countUnit));
+        bandSer.setName(QiniuValueConsts.BUCKET_BANDWIDTH_COUNT.replaceAll("[A-Z]+", countUnit));
         // 获取带宽统计
         if (Checker.isNotNull(bandwidthResult) && Checker.isNotEmpty(bandwidthResult.data)) {
             for (Map.Entry<String, BandwidthData> bandwidth : bandwidthResult.data.entrySet()) {
@@ -124,10 +124,10 @@ public class QiManager {
             fluxResult = QiniuApplication.cdnManager.getFluxData(domains, fromDate, toDate, "day");
         } catch (QiniuException e) {
             logger.error("get bucket flux error, message: " + e.getMessage());
-            Platform.runLater(() -> Dialogs.showException(Values.BUCKET_FLUX_ERROR, e));
+            Platform.runLater(() -> Dialogs.showException(QiniuValueConsts.BUCKET_FLUX_ERROR, e));
         }
         Series<String, Long> fluxSer = new Series<>();
-        fluxSer.setName(Values.BUCKET_FLUX_COUNT.replaceAll("[A-Z]+", countUnit));
+        fluxSer.setName(QiniuValueConsts.BUCKET_FLUX_COUNT.replaceAll("[A-Z]+", countUnit));
         // 获取流量统计
         if (Checker.isNotNull(fluxResult) && Checker.isNotEmpty(fluxResult.data)) {
             for (Map.Entry<String, FluxData> flux : fluxResult.data.entrySet()) {
@@ -258,7 +258,7 @@ public class QiManager {
             logger.info(log + "' success");
         } catch (QiniuException e) {
             logger.error(log + "' error, message: " + e.getMessage());
-            Dialogs.showException(Values.UPDATE_ERROR, e);
+            Dialogs.showException(QiniuValueConsts.UPDATE_ERROR, e);
         }
     }
 
@@ -272,7 +272,7 @@ public class QiManager {
             logger.info(log + "success");
         } catch (QiniuException e) {
             logger.error(log + "error, message: " + e.getMessage());
-            Dialogs.showException(Values.MOVE_OR_RENAME_ERROR, e);
+            Dialogs.showException(QiniuValueConsts.MOVE_OR_RENAME_ERROR, e);
         }
     }
 
@@ -309,7 +309,7 @@ public class QiManager {
                 return true;
             } catch (QiniuException e) {
                 logger.error(log + " failed, message: " + e.getMessage());
-                Dialogs.showException(Values.MOVE_OR_RENAME_ERROR, e);
+                Dialogs.showException(QiniuValueConsts.MOVE_OR_RENAME_ERROR, e);
                 return false;
             }
         }
@@ -328,7 +328,7 @@ public class QiManager {
                 return true;
             } catch (QiniuException e) {
                 logger.error(log + "' failed, message: " + e.getMessage());
-                Dialogs.showException(Values.CHANGE_FILE_TYPE_ERROR, e);
+                Dialogs.showException(QiniuValueConsts.CHANGE_FILE_TYPE_ERROR, e);
                 return false;
             }
         }
@@ -379,7 +379,7 @@ public class QiManager {
                             ("\r\n");
                 }
             } catch (QiniuException e) {
-                Dialogs.showException(Values.DELETE_ERROR, e);
+                Dialogs.showException(QiniuValueConsts.DELETE_ERROR, e);
             }
             MainWindowController.getInstance().setBucketCount();
         }
@@ -393,7 +393,7 @@ public class QiManager {
         // 列举空间文件列表
         String bucket = main.bucketChoiceCombo.getValue();
         BucketManager.FileListIterator iterator = QiniuApplication.bucketManager.createFileListIterator(bucket, "",
-                Values.BUCKET_LIST_LIMIT_SIZE, "");
+                QiniuValueConsts.BUCKET_LIST_LIMIT_SIZE, "");
         ArrayList<FileInfo> files = new ArrayList<>();
         logger.info("get file list of bucket: " + bucket);
         QiniuApplication.totalLength = 0;
@@ -418,7 +418,7 @@ public class QiManager {
 
     private void urlError(Exception e) {
         logger.error("generate url error: " + e.getMessage());
-        Dialogs.showException(Values.GENERATE_URL_ERROR, e);
+        Dialogs.showException(QiniuValueConsts.GENERATE_URL_ERROR, e);
     }
 
     public enum FileAction {

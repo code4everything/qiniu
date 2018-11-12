@@ -1,6 +1,6 @@
 package org.code4everything.qiniu;
 
-import org.code4everything.qiniu.modules.constant.Values;
+import org.code4everything.qiniu.constant.QiniuValueConsts;
 import com.zhazhapan.util.FileExecutor;
 import com.zhazhapan.util.Formatter;
 import com.zhazhapan.util.Utils;
@@ -22,7 +22,7 @@ public class QiniuUtils {
         try {
             FileExecutor.saveLogFile(file, content);
         } catch (IOException e) {
-            Alerts.showError(Values.MAIN_TITLE, e.getMessage());
+            Alerts.showError(QiniuValueConsts.MAIN_TITLE, e.getMessage());
         }
     }
 
@@ -30,7 +30,7 @@ public class QiniuUtils {
         try {
             FileExecutor.saveFile(file, content);
         } catch (IOException e) {
-            Alerts.showError(Values.MAIN_TITLE, e.getMessage());
+            Alerts.showError(QiniuValueConsts.MAIN_TITLE, e.getMessage());
         }
     }
 
@@ -38,7 +38,7 @@ public class QiniuUtils {
         try {
             Utils.openLink(url);
         } catch (Exception e) {
-            Alerts.showError(Values.MAIN_TITLE, e.getMessage());
+            Alerts.showError(QiniuValueConsts.MAIN_TITLE, e.getMessage());
         }
     }
 

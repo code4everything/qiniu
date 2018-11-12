@@ -1,11 +1,13 @@
-package org.code4everything.qiniu.modules.constant;
+package org.code4everything.qiniu.constant;
 
 import java.io.File;
 
 /**
+ * 常量类
+ *
  * @author pantao
  */
-public class Values {
+public class QiniuValueConsts {
 
     public static final String QINIU_KEY_URL = "https://portal.qiniu.com/user/key";
 
@@ -65,14 +67,6 @@ public class Values {
 
     public static final int BUCKET_LIST_LIMIT_SIZE = 1000;
 
-    public static final long KB = 1024;
-
-    public static final long MB = KB * 1024;
-
-    public static final long GB = MB * 1024;
-
-    public static final long TB = GB * 1024;
-
     public static final String REFRESH_SUCCESS = "刷新资源列表成功";
 
     public static final String LIST_FILE_ERROR = "获取资源列表失败";
@@ -121,7 +115,9 @@ public class Values {
 
     public static final String BUCKET_BANDWIDTH_COUNT = "空间带宽（KB）";
 
-    public static final long DATE_SPAN_OF_THIRTY_ONE = (long) 31 * 24 * 60 * 60 * 1000;
+    public static final long DATE_SPAN_OF_THIRTY_ONE = 31 * 24 * 60 * 60 * 1000L;
 
     public static final String UPLOADING_OR_DOWNLOADING = "有文件正在上传或下载中，是否确认退出？";
+
+    private QiniuValueConsts() {}
 }

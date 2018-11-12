@@ -7,7 +7,7 @@ import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.persistent.FileRecorder;
 import com.qiniu.util.Auth;
 import org.code4everything.qiniu.QiniuApplication;
-import org.code4everything.qiniu.modules.constant.Values;
+import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.view.Dialogs;
 import javafx.application.Platform;
 import org.apache.log4j.Logger;
@@ -39,7 +39,7 @@ public class QiConfiger {
     public boolean configUploadEnv(String zone, String bucket) {
         if (!checkNet()) {
             Platform.runLater(() -> {
-                Dialogs.showError(Values.NET_ERROR);
+                Dialogs.showError(QiniuValueConsts.NET_ERROR);
                 System.exit(0);
             });
             return false;

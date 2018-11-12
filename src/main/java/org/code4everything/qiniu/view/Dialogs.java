@@ -4,7 +4,7 @@ import org.code4everything.qiniu.QiniuApplication;
 import org.code4everything.qiniu.QiniuUtils;
 import org.code4everything.qiniu.config.ConfigLoader;
 import org.code4everything.qiniu.controller.MainWindowController;
-import org.code4everything.qiniu.modules.constant.Values;
+import org.code4everything.qiniu.constant.QiniuValueConsts;
 import com.zhazhapan.util.Checker;
 import javafx.application.Platform;
 import javafx.scene.Node;
@@ -33,7 +33,7 @@ public class Dialogs {
 
     public static String showInputDialog(String header, String content, String defaultValue) {
         TextInputDialog dialog = new TextInputDialog(defaultValue);
-        dialog.setTitle(Values.MAIN_TITLE);
+        dialog.setTitle(QiniuValueConsts.MAIN_TITLE);
         dialog.setHeaderText(header);
         dialog.setContentText(content);
 
@@ -137,7 +137,7 @@ public class Dialogs {
             window, StageStyle style) {
         Alert alert = new Alert(alertType);
 
-        alert.setTitle(Values.MAIN_TITLE);
+        alert.setTitle(QiniuValueConsts.MAIN_TITLE);
         alert.setHeaderText(header);
         alert.setContentText(content);
 
@@ -150,25 +150,25 @@ public class Dialogs {
 
     public Pair<QiManager.FileAction, String[]> showFileMovableDialog(String bucket, String key, boolean setKey) {
         MainWindowController main = MainWindowController.getInstance();
-        ButtonType ok = new ButtonType(Values.OK, ButtonData.OK_DONE);
+        ButtonType ok = new ButtonType(QiniuValueConsts.OK, ButtonData.OK_DONE);
         Dialog<String[]> dialog = getDialog(ok);
 
         TextField keyTextField = new TextField();
         keyTextField.setPrefWidth(300);
-        keyTextField.setPromptText(Values.FILE_NAME);
+        keyTextField.setPromptText(QiniuValueConsts.FILE_NAME);
         keyTextField.setText(key);
         ComboBox<String> bucketCombo = new ComboBox<String>();
         bucketCombo.getItems().addAll(main.bucketChoiceCombo.getItems());
         bucketCombo.setValue(bucket);
-        CheckBox copyasCheckBox = new CheckBox(Values.COPY_AS);
+        CheckBox copyasCheckBox = new CheckBox(QiniuValueConsts.COPY_AS);
         copyasCheckBox.setSelected(true);
 
         GridPane grid = com.zhazhapan.util.dialog.Dialogs.getGridPane();
         grid.add(copyasCheckBox, 0, 0, 2, 1);
-        grid.add(new Label(Values.BUCKET_NAME), 0, 1);
+        grid.add(new Label(QiniuValueConsts.BUCKET_NAME), 0, 1);
         grid.add(bucketCombo, 1, 1);
         if (setKey) {
-            grid.add(new Label(Values.FILE_NAME), 0, 2);
+            grid.add(new Label(QiniuValueConsts.FILE_NAME), 0, 2);
             grid.add(keyTextField, 1, 2);
             Platform.runLater(keyTextField::requestFocus);
         }
@@ -198,7 +198,7 @@ public class Dialogs {
      * @return 返回用户是否点击确定按钮
      */
     public boolean showInputKeyDialog() {
-        ButtonType ok = new ButtonType(Values.OK, ButtonData.OK_DONE);
+        ButtonType ok = new ButtonType(QiniuValueConsts.OK, ButtonData.OK_DONE);
         Dialog<String[]> dialog = getDialog(ok);
 
         TextField ak = new TextField();
@@ -207,8 +207,8 @@ public class Dialogs {
         TextField sk = new TextField();
         sk.setPromptText("Secret Key");
 
-        Hyperlink hyperlink = new Hyperlink("查看我的KEY：" + Values.QINIU_KEY_URL);
-        hyperlink.setOnAction(event -> QiniuUtils.openLink(Values.QINIU_KEY_URL));
+        Hyperlink hyperlink = new Hyperlink("查看我的KEY：" + QiniuValueConsts.QINIU_KEY_URL);
+        hyperlink.setOnAction(event -> QiniuUtils.openLink(QiniuValueConsts.QINIU_KEY_URL));
 
         GridPane grid = com.zhazhapan.util.dialog.Dialogs.getGridPane();
         grid.add(hyperlink, 0, 0, 2, 1);
@@ -241,24 +241,24 @@ public class Dialogs {
     }
 
     public void showBucketAddableDialog() {
-        ButtonType ok = new ButtonType(Values.OK, ButtonData.OK_DONE);
+        ButtonType ok = new ButtonType(QiniuValueConsts.OK, ButtonData.OK_DONE);
         Dialog<String[]> dialog = getDialog(ok);
 
         TextField bucket = new TextField();
-        bucket.setPromptText(Values.BUCKET_NAME);
+        bucket.setPromptText(QiniuValueConsts.BUCKET_NAME);
         TextField url = new TextField();
-        url.setPromptText(Values.BUCKET_URL);
+        url.setPromptText(QiniuValueConsts.BUCKET_URL);
         // TextField zone = new TextField();
         ComboBox<String> zone = new ComboBox<String>();
-        zone.getItems().addAll(Values.BUCKET_NAME_ARRAY);
-        zone.setValue(Values.BUCKET_NAME_ARRAY[0]);
+        zone.getItems().addAll(QiniuValueConsts.BUCKET_NAME_ARRAY);
+        zone.setValue(QiniuValueConsts.BUCKET_NAME_ARRAY[0]);
 
         GridPane grid = com.zhazhapan.util.dialog.Dialogs.getGridPane();
-        grid.add(new Label(Values.BUCKET_NAME), 0, 0);
+        grid.add(new Label(QiniuValueConsts.BUCKET_NAME), 0, 0);
         grid.add(bucket, 1, 0);
-        grid.add(new Label(Values.BUCKET_URL), 0, 1);
+        grid.add(new Label(QiniuValueConsts.BUCKET_URL), 0, 1);
         grid.add(url, 1, 1);
-        grid.add(new Label(Values.BUCKET_ZONE_NAME), 0, 2);
+        grid.add(new Label(QiniuValueConsts.BUCKET_ZONE_NAME), 0, 2);
         grid.add(zone, 1, 2);
 
         Node okButton = dialog.getDialogPane().lookupButton(ok);
@@ -295,13 +295,13 @@ public class Dialogs {
 
     public Dialog<String[]> getDialog(ButtonType ok) {
         Dialog<String[]> dialog = new Dialog<String[]>();
-        dialog.setTitle(Values.MAIN_TITLE);
+        dialog.setTitle(QiniuValueConsts.MAIN_TITLE);
         dialog.setHeaderText(null);
 
         dialog.initModality(Modality.APPLICATION_MODAL);
 
         // 自定义确认和取消按钮
-        ButtonType cancel = new ButtonType(Values.CANCEL, ButtonData.CANCEL_CLOSE);
+        ButtonType cancel = new ButtonType(QiniuValueConsts.CANCEL, ButtonData.CANCEL_CLOSE);
         dialog.getDialogPane().getButtonTypes().addAll(ok, cancel);
         return dialog;
     }

@@ -9,7 +9,7 @@ import org.code4everything.qiniu.QiniuUtils;
 import org.code4everything.qiniu.config.ConfigLoader;
 import org.code4everything.qiniu.config.QiConfiger;
 import org.code4everything.qiniu.model.FileInfo;
-import org.code4everything.qiniu.modules.constant.Values;
+import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.view.Dialogs;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.Formatter;
@@ -192,7 +192,7 @@ public class MainWindowController {
         resTable.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         // 设置默认的开始和结束日期，并调用dateChange事件刷新数据
         endDate.setValue(LocalDate.now());
-        long startTime = System.currentTimeMillis() - Values.DATE_SPAN_OF_THIRTY_ONE;
+        long startTime = System.currentTimeMillis() - QiniuValueConsts.DATE_SPAN_OF_THIRTY_ONE;
         LocalDate endDate = Formatter.dateToLocalDate(new Date(startTime));
         startDate.setValue(endDate);
         // 设置BucketChoiceComboBox改变事件，改变后并配置新的上传环境
@@ -204,7 +204,7 @@ public class MainWindowController {
                 bucketDomainTextField.setText(zones[1]);
             } else {
                 logger.warn("doesn't config the domain of bucket correctly yet");
-                bucketDomainTextField.setText(Values.DOMAIN_CONFIG_ERROR);
+                bucketDomainTextField.setText(QiniuValueConsts.DOMAIN_CONFIG_ERROR);
             }
             ThreadPool.executor.submit(() -> {
                 if (new QiConfiger().configUploadEnv(zones[0], newValue)) {
@@ -331,7 +331,7 @@ public class MainWindowController {
         String domain = bucketDomainTextField.getText();
         // 获取开始日期和结束日期的时间差
         long timeSpan = end.getTime() - start.getTime();
-        if (Checker.isNotEmpty(domain) && timeSpan >= 0 && timeSpan <= Values.DATE_SPAN_OF_THIRTY_ONE) {
+        if (Checker.isNotEmpty(domain) && timeSpan >= 0 && timeSpan <= QiniuValueConsts.DATE_SPAN_OF_THIRTY_ONE) {
             String[] domains = {domain};
             logger.info("start to get flux of domain: " + domain);
             ThreadPool.executor.submit(() -> {
@@ -358,7 +358,7 @@ public class MainWindowController {
      * 日志下载，cdn相关
      */
     public void downloadCdnLog() {
-        String date = Dialogs.showInputDialog(null, Values.INPUT_LOG_DATE, Formatter.dateToString(new Date()));
+        String date = Dialogs.showInputDialog(null, QiniuValueConsts.INPUT_LOG_DATE, Formatter.dateToString(new Date()));
         new QiManager().downloadCdnLog(date);
     }
 
@@ -374,7 +374,7 @@ public class MainWindowController {
      * 通过链接下载其他的网络文件
      */
     public void downloadFromURL() {
-        String url = Dialogs.showInputDialog(null, Values.DOWNLOAD_URL, "http://example.com");
+        String url = Dialogs.showInputDialog(null, QiniuValueConsts.DOWNLOAD_URL, "http://example.com");
         new Downloader().downloadFromNet(url);
     }
 
@@ -443,7 +443,7 @@ public class MainWindowController {
     public void setLife() {
         ObservableList<FileInfo> selectedItems = resTable.getSelectionModel().getSelectedItems();
         if (Checker.isNotEmpty(selectedItems)) {
-            String lifeStr = Dialogs.showInputDialog(null, Values.FILE_LIFE, Values.DEFAULT_FILE_LIFE);
+            String lifeStr = Dialogs.showInputDialog(null, QiniuValueConsts.FILE_LIFE, QiniuValueConsts.DEFAULT_FILE_LIFE);
             if (Checker.isNumber(lifeStr)) {
                 int life = Formatter.stringToInt(lifeStr);
                 QiManager manager = new QiManager();
@@ -562,11 +562,11 @@ public class MainWindowController {
      */
     public void refreshResTable() {
         if (!new QiConfiger().checkNet()) {
-            Dialogs.showWarning(Values.NET_ERROR);
+            Dialogs.showWarning(QiniuValueConsts.NET_ERROR);
             return;
         }
         setResTableData();
-        Dialogs.showInformation(Values.REFRESH_SUCCESS);
+        Dialogs.showInformation(QiniuValueConsts.REFRESH_SUCCESS);
     }
 
     /**
@@ -597,7 +597,7 @@ public class MainWindowController {
      */
     public void saveUploadStatus() {
         FileChooser chooser = new FileChooser();
-        chooser.setTitle(Values.FILE_CHOOSER_TITLE);
+        chooser.setTitle(QiniuValueConsts.FILE_CHOOSER_TITLE);
         chooser.setInitialDirectory(new File(System.getProperty("user.home")));
         File file = chooser.showSaveDialog(QiniuApplication.stage);
         QiniuUtils.saveFile(file, uploadStatusTextArea.getText());
@@ -623,7 +623,7 @@ public class MainWindowController {
     public void selectFile() {
         logger.info("show file chooser dialog");
         FileChooser chooser = new FileChooser();
-        chooser.setTitle(Values.FILE_CHOOSER_TITLE);
+        chooser.setTitle(QiniuValueConsts.FILE_CHOOSER_TITLE);
         chooser.setInitialDirectory(new File(System.getProperty("user.home")));
         setFiles(chooser.showOpenMultipleDialog(QiniuApplication.stage));
     }
@@ -665,7 +665,7 @@ public class MainWindowController {
     public void uploadFile() {
         if (Checker.isEmpty(zoneText.getText()) || Checker.isEmpty(selectedFileTextArea.getText())) {
             // 没有选择存储空间或文件，不能上传文件
-            Dialogs.showWarning(Values.NEED_CHOOSE_BUCKET_OR_FILE);
+            Dialogs.showWarning(QiniuValueConsts.NEED_CHOOSE_BUCKET_OR_FILE);
             return;
         }
         // 新建一个上传文件的线程
@@ -673,22 +673,22 @@ public class MainWindowController {
             Platform.runLater(() -> {
                 uploadProgress.setVisible(true);
                 uploadProgress.setProgress(0);
-                uploadStatusTextArea.insertText(0, Values.CONFIGING_UPLOAD_ENVIRONMENT);
+                uploadStatusTextArea.insertText(0, QiniuValueConsts.CONFIGING_UPLOAD_ENVIRONMENT);
             });
             String bucket = bucketChoiceCombo.getValue();
             // 默认不指定key的情况下，以文件内容的hash值作为文件名
             String key = Checker.checkNull(filePrefixCombo.getValue());
             String[] paths = selectedFileTextArea.getText().split("\n");
             // 去掉\r\n的长度
-            int end = Values.UPLOADING.length() - 2;
-            Platform.runLater(() -> uploadStatusTextArea.deleteText(0, Values.CONFIGING_UPLOAD_ENVIRONMENT.length() -
+            int end = QiniuValueConsts.UPLOADING.length() - 2;
+            Platform.runLater(() -> uploadStatusTextArea.deleteText(0, QiniuValueConsts.CONFIGING_UPLOAD_ENVIRONMENT.length() -
                     1));
             // 总文件数
             double total = paths.length;
             upProgress = 0;
             for (String path : paths) {
                 if (Checker.isNotEmpty(path)) {
-                    Platform.runLater(() -> uploadStatusTextArea.insertText(0, Values.UPLOADING));
+                    Platform.runLater(() -> uploadStatusTextArea.insertText(0, QiniuValueConsts.UPLOADING));
                     logger.info("start to upload file: " + path);
                     String filename = null;
                     String url = "http://" + QiniuApplication.buckets.get(bucket).split(" ")[1] + "/";
@@ -731,7 +731,7 @@ public class MainWindowController {
                     } catch (QiniuException e) {
                         status = Formatter.datetimeToString(new Date()) + "\terror\t" + path;
                         logger.error("upload error, message: " + e.getMessage());
-                        Platform.runLater(() -> Dialogs.showException(Values.UPLOAD_ERROR, e));
+                        Platform.runLater(() -> Dialogs.showException(QiniuValueConsts.UPLOAD_ERROR, e));
                     }
                     Platform.runLater(() -> {
                         uploadStatusTextArea.deleteText(0, end);
@@ -777,7 +777,7 @@ public class MainWindowController {
         try {
             Desktop.getDesktop().open(new File(ConfigLoader.configPath));
             logger.info("open config file");
-            Optional<ButtonType> result = Dialogs.showConfirmation(Values.RELOAD_CONFIG);
+            Optional<ButtonType> result = Dialogs.showConfirmation(QiniuValueConsts.RELOAD_CONFIG);
             if (result.get() == ButtonType.OK) {
                 // 重新载入配置文件
                 QiniuApplication.buckets = new HashMap<>(10);
@@ -788,10 +788,10 @@ public class MainWindowController {
             }
         } catch (IOException e) {
             logger.error("open config file error, message: " + e.getMessage());
-            Dialogs.showException(Values.OPEN_FILE_ERROR, e);
+            Dialogs.showException(QiniuValueConsts.OPEN_FILE_ERROR, e);
         } catch (Exception e) {
             logger.error("can't open config file, message: " + e.getMessage());
-            Dialogs.showException(Values.OPEN_FILE_ERROR, e);
+            Dialogs.showException(QiniuValueConsts.OPEN_FILE_ERROR, e);
         }
     }
 

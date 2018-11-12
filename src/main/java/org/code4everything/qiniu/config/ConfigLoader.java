@@ -4,7 +4,7 @@ import com.google.gson.*;
 import org.code4everything.qiniu.QiniuApplication;
 import org.code4everything.qiniu.controller.MainWindowController;
 import org.code4everything.qiniu.model.Key;
-import org.code4everything.qiniu.modules.constant.Values;
+import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.view.Dialogs;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.FileExecutor;
@@ -49,7 +49,7 @@ public class ConfigLoader {
                     new QiConfiger().createAuth(ak, sk);
                 } catch (Exception e) {
                     logger.error("read key from configuration failed, message: " + e.getMessage());
-                    Dialogs.showException(Values.LOAD_CONFIG_ERROR, e);
+                    Dialogs.showException(QiniuValueConsts.LOAD_CONFIG_ERROR, e);
                     showInputKeyDialog();
                 }
                 // 读取Bucket
@@ -104,7 +104,7 @@ public class ConfigLoader {
                 logger.info("create file 'qiniu.conf' success");
             } catch (IOException e) {
                 logger.error("create configuration file failed, messages: " + e.getMessage());
-                Dialogs.showFatalError(Values.LOAD_CONFIG_ERROR, e);
+                Dialogs.showFatalError(QiniuValueConsts.LOAD_CONFIG_ERROR, e);
             }
             showInputKeyDialog();
         }
@@ -146,13 +146,13 @@ public class ConfigLoader {
             logger.info("load configuration into memory");
             String content = FileExecutor.readFile(configPath);
             if (Checker.isEmpty(content)) {
-                Dialogs.showException(Values.LOAD_CONFIG_ERROR, new IOException("load configuration file error"));
+                Dialogs.showException(QiniuValueConsts.LOAD_CONFIG_ERROR, new IOException("load configuration file error"));
             } else {
                 jsonObject = new JsonParser().parse(content).getAsJsonObject();
             }
         } catch (Exception e) {
             logger.error("convert json string to json object failed, app'll reset");
-            Dialogs.showException(Values.JSON_TO_OBJECT_ERROR, e);
+            Dialogs.showException(QiniuValueConsts.JSON_TO_OBJECT_ERROR, e);
         }
         return jsonObject;
     }
@@ -193,7 +193,7 @@ public class ConfigLoader {
                 logger.info("rewrite configuration success");
             } catch (IOException e) {
                 logger.error("rewrite configuration file failed, messages: " + e.getMessage());
-                Dialogs.showFatalError(Values.LOAD_CONFIG_ERROR, e);
+                Dialogs.showFatalError(QiniuValueConsts.LOAD_CONFIG_ERROR, e);
             }
         });
     }
