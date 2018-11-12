@@ -236,8 +236,8 @@ public class Dialogs {
 
         Optional<String[]> result = dialog.showAndWait();
         if (result.isPresent() && Checker.isNotEmpty(ak.getText()) && Checker.isNotEmpty(sk.getText())) {
-            QiniuApplication.getConfigBean().setAccesskey(ak.getText());
-            QiniuApplication.getConfigBean().setSecretkey(sk.getText());
+            QiniuApplication.getConfigBean().setAccessKey(ak.getText());
+            QiniuApplication.getConfigBean().setSecretKey(sk.getText());
             ConfigUtils.writeConfig();
             return true;
         }
@@ -279,13 +279,21 @@ public class Dialogs {
 
         Platform.runLater(bucket::requestFocus);
 
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == ok) {
+                return new String[]{bucket.getText(), zone.getValue(), (Checker.isHyperLink(url.getText()) ?
+                        url.getText() : "example.com")};
+            }
+            return null;
+        });
+
         Optional<String[]> result = dialog.showAndWait();
         result.ifPresent(res -> {
-            Platform.runLater(() -> MainWindowController.getInstance().addItem(bucket.getText()));
+            Platform.runLater(() -> MainWindowController.getInstance().addItem(res[0]));
             ConfigBean.BucketBean bucketBean = new ConfigBean().new BucketBean();
-            bucketBean.setBucket(bucket.getText());
-            bucketBean.setUrl(url.getText());
-            bucketBean.setZone(zone.getValue());
+            bucketBean.setBucket(res[0]);
+            bucketBean.setUrl(res[2]);
+            bucketBean.setZone(res[1]);
             QiniuApplication.getConfigBean().getBuckets().add(bucketBean);
             ConfigUtils.writeConfig();
         });

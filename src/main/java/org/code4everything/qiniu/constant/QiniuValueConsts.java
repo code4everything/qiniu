@@ -1,11 +1,17 @@
 package org.code4everything.qiniu.constant;
 
+import com.zhazhapan.util.Utils;
+
+import java.io.File;
+
 /**
  * 常量类
  *
  * @author pantao
  */
 public class QiniuValueConsts {
+
+    public static final String CONFIG_PATH = Utils.getCurrentWorkDir() + File.separator + "config.json";
 
     public static final String QINIU_VIEW_URL = "/view/MainWindow.fxml";
 

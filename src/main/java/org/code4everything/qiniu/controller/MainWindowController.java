@@ -2,14 +2,6 @@ package org.code4everything.qiniu.controller;
 
 import com.qiniu.common.QiniuException;
 import com.zhazhapan.modules.constant.ValueConsts;
-import org.code4everything.qiniu.downloader.Downloader;
-import org.code4everything.qiniu.api.QiManager;
-import org.code4everything.qiniu.QiniuApplication;
-import org.code4everything.qiniu.util.QiniuUtils;
-import org.code4everything.qiniu.config.QiConfiger;
-import org.code4everything.qiniu.model.FileInfo;
-import org.code4everything.qiniu.constant.QiniuValueConsts;
-import org.code4everything.qiniu.view.Dialogs;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.Formatter;
 import com.zhazhapan.util.ThreadPool;
@@ -30,13 +22,24 @@ import javafx.scene.input.TransferMode;
 import javafx.stage.FileChooser;
 import javafx.util.Pair;
 import org.apache.log4j.Logger;
+import org.code4everything.qiniu.QiniuApplication;
+import org.code4everything.qiniu.api.QiManager;
+import org.code4everything.qiniu.config.QiConfiger;
+import org.code4everything.qiniu.constant.QiniuValueConsts;
+import org.code4everything.qiniu.downloader.Downloader;
+import org.code4everything.qiniu.model.FileInfo;
+import org.code4everything.qiniu.util.ConfigUtils;
+import org.code4everything.qiniu.util.QiniuUtils;
+import org.code4everything.qiniu.view.Dialogs;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
@@ -196,17 +199,17 @@ public class MainWindowController {
         startDate.setValue(endDate);
         // 设置BucketChoiceComboBox改变事件，改变后并配置新的上传环境
         bucketChoiceCombo.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            String[] zones = QiniuApplication.buckets.get(newValue).split(" ");
-            zoneText.setText(zones[0]);
+            zoneText.setText(QiniuApplication.getConfigBean().getZone(newValue));
             searchTextField.clear();
-            if (Checker.isHyperLink(zones[1])) {
-                bucketDomainTextField.setText(zones[1]);
+            String url = QiniuApplication.getConfigBean().getUrl(newValue);
+            if (Checker.isHyperLink(url)) {
+                bucketDomainTextField.setText(url);
             } else {
                 logger.warn("doesn't config the domain of bucket correctly yet");
                 bucketDomainTextField.setText(QiniuValueConsts.DOMAIN_CONFIG_ERROR);
             }
             ThreadPool.executor.submit(() -> {
-                if (new QiConfiger().configUploadEnv(zones[0], newValue)) {
+                if (new QiConfiger().configUploadEnv(QiniuApplication.getConfigBean().getZone(newValue), newValue)) {
                     // 加载文件列表
                     setResTableData();
                     // 刷新流量带宽统计
@@ -218,9 +221,8 @@ public class MainWindowController {
         toCsdnBlog.setOnAction(e -> QiniuUtils.openLink("http://csdn.zhazhapan.com"));
         toHexoBlog.setOnAction(e -> QiniuUtils.openLink("http://zhazhapan.com"));
         toGithubSource.setOnAction(e -> QiniuUtils.openLink("https://github.com/zhazhapan/qiniu"));
-        String introPage = "http://zhazhapan.com/2017/10/15/%E4%B8%83%E7%89%9B%E4%BA%91%E2%80" +
-                "%94%E2%80%94%E5%AF%B9%E8%B1%A1%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86%E5%B7%A5" +
-                "%E5%85%B7%E4%BB%8B%E7%BB%8D/";
+        String introPage =
+                "http://zhazhapan.com/2017/10/15/%E4%B8%83%E7%89%9B%E4%BA%91%E2%80" + "%94%E2%80%94%E5%AF" + "%B9%E8" + "%B1%A1%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86%E5%B7%A5" + "%E5%85%B7%E4%BB%8B%E7%BB%8D/";
         toIntro.setOnAction(e -> QiniuUtils.openLink(introPage));
         toIntro1.setOnAction(e -> QiniuUtils.openLink("http://blog.csdn.net/qq_26954773/article/details/78245100"));
 
@@ -357,7 +359,8 @@ public class MainWindowController {
      * 日志下载，cdn相关
      */
     public void downloadCdnLog() {
-        String date = Dialogs.showInputDialog(null, QiniuValueConsts.INPUT_LOG_DATE, Formatter.dateToString(new Date()));
+        String date = Dialogs.showInputDialog(null, QiniuValueConsts.INPUT_LOG_DATE,
+                Formatter.dateToString(new Date()));
         new QiManager().downloadCdnLog(date);
     }
 
@@ -365,8 +368,8 @@ public class MainWindowController {
      * 文件刷新，cdn相关
      */
     public void refreshFile() {
-        new QiManager().refreshFile(resTable.getSelectionModel().getSelectedItems(), "http://" +
-                bucketDomainTextField.getText());
+        new QiManager().refreshFile(resTable.getSelectionModel().getSelectedItems(),
+                "http://" + bucketDomainTextField.getText());
     }
 
     /**
@@ -442,7 +445,8 @@ public class MainWindowController {
     public void setLife() {
         ObservableList<FileInfo> selectedItems = resTable.getSelectionModel().getSelectedItems();
         if (Checker.isNotEmpty(selectedItems)) {
-            String lifeStr = Dialogs.showInputDialog(null, QiniuValueConsts.FILE_LIFE, QiniuValueConsts.DEFAULT_FILE_LIFE);
+            String lifeStr = Dialogs.showInputDialog(null, QiniuValueConsts.FILE_LIFE,
+                    QiniuValueConsts.DEFAULT_FILE_LIFE);
             if (Checker.isNumber(lifeStr)) {
                 int life = Formatter.stringToInt(lifeStr);
                 QiManager manager = new QiManager();
@@ -515,8 +519,8 @@ public class MainWindowController {
         ObservableList<FileInfo> fileInfos = resTable.getSelectionModel().getSelectedItems();
         if (Checker.isNotEmpty(fileInfos)) {
             // 只复制选中的第一个文件的链接
-            String link = "http://" + new QiManager().getPublicURL(fileInfos.get(0).getName(), bucketDomainTextField
-                    .getText());
+            String link = "http://" + new QiManager().getPublicURL(fileInfos.get(0).getName(),
+                    bucketDomainTextField.getText());
             Utils.copyToClipboard(link);
             logger.info("copy link: " + link);
         }
@@ -680,8 +684,8 @@ public class MainWindowController {
             String[] paths = selectedFileTextArea.getText().split("\n");
             // 去掉\r\n的长度
             int end = QiniuValueConsts.UPLOADING.length() - 2;
-            Platform.runLater(() -> uploadStatusTextArea.deleteText(0, QiniuValueConsts.CONFIGING_UPLOAD_ENVIRONMENT.length() -
-                    1));
+            Platform.runLater(() -> uploadStatusTextArea.deleteText(0,
+                    QiniuValueConsts.CONFIGING_UPLOAD_ENVIRONMENT.length() - 1));
             // 总文件数
             double total = paths.length;
             upProgress = 0;
@@ -690,7 +694,7 @@ public class MainWindowController {
                     Platform.runLater(() -> uploadStatusTextArea.insertText(0, QiniuValueConsts.UPLOADING));
                     logger.info("start to upload file: " + path);
                     String filename = null;
-                    String url = "http://" + QiniuApplication.buckets.get(bucket).split(" ")[1] + "/";
+                    String url = "http://" + QiniuApplication.getConfigBean().getUrl(bucket) + "/";
                     File file = new File(path);
                     try {
                         // 判断文件是否存在
@@ -700,8 +704,8 @@ public class MainWindowController {
                             if (keepPath.isSelected() && Checker.isNotEmpty(rootPath)) {
                                 for (String rp : rootPath) {
                                     if (ap.startsWith(rp)) {
-                                        filename = key + rp.substring(rp.lastIndexOf(ValueConsts.SEPARATOR) + 1) + ap
-                                                .substring(rp.length());
+                                        filename =
+                                                key + rp.substring(rp.lastIndexOf(ValueConsts.SEPARATOR) + 1) + ap.substring(rp.length());
                                         break;
                                     }
                                 }
@@ -711,16 +715,16 @@ public class MainWindowController {
                             }
                             String upToken = QiniuApplication.auth.uploadToken(bucket, filename);
                             QiniuApplication.uploadManager.put(path, filename, upToken);
-                            status = Formatter.datetimeToString(new Date()) + "\tsuccess\t" + url + filename + "\t" +
-                                    path;
+                            status =
+                                    Formatter.datetimeToString(new Date()) + "\tsuccess\t" + url + filename + "\t" + path;
                             logger.info("upload file '" + path + "' to bucket '" + bucket + "' success");
                         } else if (Checker.isHyperLink(path)) {
                             // 抓取网络文件到空间中
                             logger.info(path + " is a hyper link");
                             filename = key + QiniuUtils.getFileName(path);
                             QiniuApplication.bucketManager.fetch(path, bucket, filename);
-                            status = Formatter.datetimeToString(new Date()) + "\tsuccess\t" + url + filename + "\t" +
-                                    path;
+                            status =
+                                    Formatter.datetimeToString(new Date()) + "\tsuccess\t" + url + filename + "\t" + path;
                             logger.info("fetch remote file '" + path + "' to bucket '" + bucket + "' success");
                         } else {
                             // 文件不存在
@@ -762,10 +766,10 @@ public class MainWindowController {
      * @param key 前缀
      */
     private void savePrefix(String key) {
-        if (Checker.isNotEmpty(key) && !QiniuApplication.prefix.contains(key)) {
+        if (Checker.isNotEmpty(key) && !QiniuApplication.getConfigBean().getPrefixes().contains(key)) {
             Platform.runLater(() -> filePrefixCombo.getItems().add(key));
-            QiniuApplication.prefix.add(key);
-            ConfigLoader.writeConfig();
+            QiniuApplication.getConfigBean().getPrefixes().add(key);
+            ConfigUtils.writeConfig();
         }
     }
 
@@ -774,22 +778,19 @@ public class MainWindowController {
      */
     public void openConfigFile() {
         try {
-            Desktop.getDesktop().open(new File(ConfigLoader.configPath));
-            logger.info("open config file");
+            Desktop.getDesktop().open(new File(QiniuValueConsts.CONFIG_PATH));
             Optional<ButtonType> result = Dialogs.showConfirmation(QiniuValueConsts.RELOAD_CONFIG);
-            if (result.get() == ButtonType.OK) {
+            if (result.isPresent() && result.get() == ButtonType.OK) {
                 // 重新载入配置文件
-                QiniuApplication.buckets = new HashMap<>(10);
-                QiniuApplication.prefix = new ArrayList<>();
                 bucketChoiceCombo.getItems().clear();
                 filePrefixCombo.getItems().clear();
-                ConfigLoader.loadConfig(ValueConsts.FALSE);
+                ConfigUtils.loadConfig();
             }
         } catch (IOException e) {
-            logger.error("open config file error, message: " + e.getMessage());
+            logger.error("open config file error, message -> " + e.getMessage());
             Dialogs.showException(QiniuValueConsts.OPEN_FILE_ERROR, e);
         } catch (Exception e) {
-            logger.error("can't open config file, message: " + e.getMessage());
+            logger.error("can't open config file, message -> " + e.getMessage());
             Dialogs.showException(QiniuValueConsts.OPEN_FILE_ERROR, e);
         }
     }

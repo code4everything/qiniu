@@ -17,7 +17,7 @@ import com.zhazhapan.util.Checker;
  */
 public class GsonTest {
 
-	public String configJson = "{accesskey:123456,secretkey:abcdef,buckets:[{bucket:zhazhapan,zone:华东}]}";
+	public String configJson = "{accessKey:123456,secretKey:abcdef,buckets:[{bucket:zhazhapan,zone:华东}]}";
 
 	@Test
 	public void testGson() {

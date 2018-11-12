@@ -6,6 +6,7 @@ import com.qiniu.storage.Configuration;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.persistent.FileRecorder;
 import com.qiniu.util.Auth;
+import com.zhazhapan.util.Utils;
 import javafx.application.Platform;
 import org.apache.log4j.Logger;
 import org.code4everything.qiniu.QiniuApplication;
@@ -48,7 +49,7 @@ public class QiConfiger {
         // 构造一个带指定Zone对象的配置类
         Configuration configuration = new Configuration(QiniuApplication.zone.get(zone));
         // 生成上传凭证，然后准备上传
-        String localTempDir = Paths.get(QiniuApplication.workDir, bucket).toString();
+        String localTempDir = Paths.get(Utils.getCurrentWorkDir(), bucket).toString();
         try {
             FileRecorder fileRecorder = new FileRecorder(localTempDir);
             QiniuApplication.uploadManager = new UploadManager(configuration, fileRecorder);

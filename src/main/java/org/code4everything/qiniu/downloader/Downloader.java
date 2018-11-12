@@ -4,15 +4,16 @@
 package org.code4everything.qiniu.downloader;
 
 import com.zhazhapan.modules.constant.ValueConsts;
-import org.code4everything.qiniu.QiniuApplication;
-import org.code4everything.qiniu.controller.MainWindowController;
-import org.code4everything.qiniu.constant.QiniuValueConsts;
-import org.code4everything.qiniu.util.QiniuUtils;
-import org.code4everything.qiniu.view.Dialogs;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.ThreadPool;
 import javafx.application.Platform;
 import org.apache.log4j.Logger;
+import org.code4everything.qiniu.QiniuApplication;
+import org.code4everything.qiniu.constant.QiniuValueConsts;
+import org.code4everything.qiniu.controller.MainWindowController;
+import org.code4everything.qiniu.util.ConfigUtils;
+import org.code4everything.qiniu.util.QiniuUtils;
+import org.code4everything.qiniu.view.Dialogs;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -41,12 +42,13 @@ public class Downloader {
             return;
         }
         if (!checkDownloadPath()) {
-            QiniuApplication.downloadPath = Dialogs.showInputDialog(null, QiniuValueConsts.CONFIG_DOWNLOAD_PATH,
+            String storagePath = Dialogs.showInputDialog(null, QiniuValueConsts.CONFIG_DOWNLOAD_PATH,
                     QiniuValueConsts.USER_HOME);
+            QiniuApplication.getConfigBean().setStoragePath(storagePath);
             if (!checkDownloadPath()) {
                 return;
             }
-            ConfigLoader.writeConfig();
+            ConfigUtils.writeConfig();
         }
         MainWindowController main = MainWindowController.getInstance();
         Platform.runLater(() -> {
@@ -57,7 +59,8 @@ public class Downloader {
             checkDownloadPath();
             logger.info("start to download url: " + downloadURL);
             int byteRead;
-            File file = new File(QiniuApplication.downloadPath + "/" + QiniuUtils.getFileName(downloadURL));
+            File file =
+                    new File(QiniuApplication.getConfigBean().getStoragePath() + File.separator + QiniuUtils.getFileName(downloadURL));
             String log = "download success from url '" + downloadURL + "' to local '" + file.getAbsolutePath() + "'";
             try {
                 if (!file.exists()) {
@@ -97,11 +100,11 @@ public class Downloader {
     }
 
     private boolean checkDownloadPath() {
-        if (Checker.isNotEmpty(QiniuApplication.downloadPath)) {
-            File file = new File(QiniuApplication.downloadPath);
+        if (Checker.isNotEmpty(QiniuApplication.getConfigBean().getStoragePath())) {
+            File file = new File(QiniuApplication.getConfigBean().getStoragePath());
             if (!file.exists()) {
                 file.mkdirs();
-                logger.info("mkdir '" + QiniuApplication.downloadPath + "' success");
+                logger.info("mkdir '" + QiniuApplication.getConfigBean().getStoragePath() + "' success");
             }
             return true;
         }

@@ -8,13 +8,6 @@ import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
 import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.model.BatchStatus;
-import org.code4everything.qiniu.downloader.Downloader;
-import org.code4everything.qiniu.QiniuApplication;
-import org.code4everything.qiniu.config.QiConfiger;
-import org.code4everything.qiniu.controller.MainWindowController;
-import org.code4everything.qiniu.model.FileInfo;
-import org.code4everything.qiniu.constant.QiniuValueConsts;
-import org.code4everything.qiniu.view.Dialogs;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.Formatter;
 import javafx.application.Platform;
@@ -23,11 +16,17 @@ import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import org.apache.log4j.Logger;
+import org.code4everything.qiniu.QiniuApplication;
+import org.code4everything.qiniu.config.QiConfiger;
+import org.code4everything.qiniu.constant.QiniuValueConsts;
+import org.code4everything.qiniu.controller.MainWindowController;
+import org.code4everything.qiniu.downloader.Downloader;
+import org.code4everything.qiniu.model.FileInfo;
+import org.code4everything.qiniu.view.Dialogs;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Map;
 
 /**
@@ -161,12 +160,10 @@ public class QiManager {
      * 日志下载，cdn相关
      */
     public void downloadCdnLog(String logDate) {
-        if (Checker.isNotEmpty(QiniuApplication.buckets) && Checker.isDate(logDate)) {
-            String[] domains = new String[QiniuApplication.buckets.size()];
-            int i = 0;
-            for (Map.Entry<String, String> bucket : QiniuApplication.buckets.entrySet()) {
-                domains[i] = bucket.getValue().split(" ")[1];
-                i++;
+        if (Checker.isNotEmpty(QiniuApplication.getConfigBean().getBuckets()) && Checker.isDate(logDate)) {
+            String[] domains = new String[QiniuApplication.getConfigBean().getBuckets().size()];
+            for (int i = 0; i < QiniuApplication.getConfigBean().getBuckets().size(); i++) {
+                domains[i] = QiniuApplication.getConfigBean().getBuckets().get(i).getUrl();
             }
             try {
                 CdnResult.LogListResult logRes = QiniuApplication.cdnManager.getCdnLogList(domains, logDate);
@@ -297,9 +294,8 @@ public class QiManager {
      */
     public boolean moveOrCopyFile(String fromBucket, String fromKey, String toBucket, String toKey, FileAction action) {
         if (new QiConfiger().checkNet()) {
-            String log = "move file '" + fromKey + "' from bucket '" + fromBucket + "' to bucket '" + toBucket + "', " +
-                    "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "and rename file '" +
-                    toKey + "'";
+            String log = "move file '" + fromKey + "' from bucket '" + fromBucket + "' to bucket '" + toBucket + "', "
+                    + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "and rename file '" + toKey + "'";
             try {
                 if (action == FileAction.COPY) {
                     log = log.replaceAll("^move", "copy");
@@ -361,11 +357,9 @@ public class QiManager {
                 ObservableList<FileInfo> currentRes = main.resTable.getItems();
                 for (i = 0; i < files.length; i++) {
                     BatchStatus status = batchStatusList[i];
-                    String deleteLog = Formatter.datetimeToString(new Date());
                     String file = files[i];
                     if (status.code == 200) {
                         logger.info("delete file '" + file + "' success");
-                        deleteLog += "\tsuccess\t";
                         QiniuApplication.data.remove(seletecFileInfos.get(i));
                         QiniuApplication.totalLength--;
                         QiniuApplication.totalSize -= Formatter.sizeToLong(seletecFileInfos.get(i).getSize());
@@ -374,11 +368,8 @@ public class QiManager {
                         }
                     } else {
                         logger.error("delete file '" + file + "' failed, message: " + status.data.error);
-                        deleteLog += "\tfailed\t";
                         Dialogs.showError("删除文件：" + file + " 失败");
                     }
-                    QiniuApplication.deleteLog.append(deleteLog).append(bucket).append("\t").append(file).append
-                            ("\r\n");
                 }
             } catch (QiniuException e) {
                 Dialogs.showException(QiniuValueConsts.DELETE_ERROR, e);
@@ -411,8 +402,8 @@ public class QiManager {
                 String size = Formatter.formatSize(item.fsize);
                 FileInfo file = new FileInfo(item.key, item.mimeType, size, time);
                 files.add(file);
-                logger.info("file name: " + item.key + ", file type: " + item.mimeType + ", file size: " + size + ", " +
-                        "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "file time: " + time);
+                logger.info("file name: " + item.key + ", file type: " + item.mimeType + ", file size: " + size + ", "
+                        + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "file time: " + time);
             }
         }
         QiniuApplication.data = FXCollections.observableArrayList(files);

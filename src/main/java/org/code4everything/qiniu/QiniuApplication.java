@@ -16,7 +16,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import org.apache.log4j.Logger;
 import org.code4everything.qiniu.config.ConfigBean;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
@@ -82,7 +81,7 @@ public class QiniuApplication extends Application {
         // 设置线程池最大排队大小
         ThreadPool.setWorkQueue(new LinkedBlockingQueue<>(1024));
         ThreadPool.init();
-        initApplication();
+        initZone();
         // 启动 JavaFX 应用
         launch(args);
     }
@@ -90,23 +89,20 @@ public class QiniuApplication extends Application {
     /**
      * 初始化应用
      */
-    public static void initApplication() {
+    private static void initZone() {
         // 加载空间区域
         zone.put(QiniuValueConsts.BUCKET_NAME_ARRAY[0], Zone.zone0());
         zone.put(QiniuValueConsts.BUCKET_NAME_ARRAY[1], Zone.zone1());
         zone.put(QiniuValueConsts.BUCKET_NAME_ARRAY[2], Zone.zone2());
         zone.put(QiniuValueConsts.BUCKET_NAME_ARRAY[3], Zone.zoneNa0());
-        // 加载配置文件
-        ConfigUtils.loadConfig();
     }
 
     /**
      * 窗口关闭事件
      *
      * @param event 事件
-     * @param isExternalCall 是否是第三方应用调用
      */
-    public static void setOnClosed(Event event, boolean isExternalCall) {
+    private static void setOnClosed(Event event) {
         // 判断是否有文件在上传下载
         MainWindowController main = MainWindowController.getInstance();
         if (main.downloadProgress.isVisible() || main.uploadProgress.isVisible()) {
@@ -117,11 +113,9 @@ public class QiniuApplication extends Application {
                 return;
             }
         }
-        if (!isExternalCall) {
-            // 退出程序
-            ThreadPool.executor.shutdown();
-            System.exit(0);
-        }
+        // 退出程序
+        ThreadPool.executor.shutdown();
+        System.exit(0);
     }
 
     /**
@@ -142,6 +136,9 @@ public class QiniuApplication extends Application {
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/image/qiniu.png")));
         stage.setTitle(QiniuValueConsts.MAIN_TITLE);
         // 设置关闭窗口事件
-        stage.setOnCloseRequest((WindowEvent event) -> setOnClosed(event, false));
+        stage.setOnCloseRequest(QiniuApplication::setOnClosed);
+        QiniuApplication.stage = stage;
+        stage.show();
+        ConfigUtils.loadConfig();
     }
 }
