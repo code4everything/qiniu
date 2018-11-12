@@ -7,10 +7,10 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import javafx.application.Platform;
 import org.code4everything.qiniu.QiniuApplication;
-import org.code4everything.qiniu.config.ConfigBean;
-import org.code4everything.qiniu.config.QiConfiger;
+import org.code4everything.qiniu.api.config.SdkConfigurer;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.controller.MainWindowController;
+import org.code4everything.qiniu.model.ConfigBean;
 
 import java.util.ArrayList;
 
@@ -37,7 +37,7 @@ public class ConfigUtils {
                 QiniuApplication.setConfigBean(config);
                 if (StrUtil.isNotEmpty(config.getAccessKey()) && StrUtil.isNotEmpty(config.getSecretKey())) {
                     // 创建上传权限
-                    new QiConfiger().createAuth(config.getAccessKey(), config.getSecretKey());
+                    SdkConfigurer.createAuth(config.getAccessKey(), config.getSecretKey());
                 }
                 MainWindowController controller = MainWindowController.getInstance();
                 if (CollectionUtil.isEmpty(config.getBuckets())) {

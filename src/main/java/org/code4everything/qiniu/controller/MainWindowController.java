@@ -24,7 +24,7 @@ import javafx.util.Pair;
 import org.apache.log4j.Logger;
 import org.code4everything.qiniu.QiniuApplication;
 import org.code4everything.qiniu.api.QiManager;
-import org.code4everything.qiniu.config.QiConfiger;
+import org.code4everything.qiniu.api.config.SdkConfigurer;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.downloader.Downloader;
 import org.code4everything.qiniu.model.FileInfo;
@@ -209,7 +209,7 @@ public class MainWindowController {
                 bucketDomainTextField.setText(QiniuValueConsts.DOMAIN_CONFIG_ERROR);
             }
             ThreadPool.executor.submit(() -> {
-                if (new QiConfiger().configUploadEnv(QiniuApplication.getConfigBean().getZone(newValue), newValue)) {
+                if (SdkConfigurer.configUploadEnv(QiniuApplication.getConfigBean().getZone(newValue), newValue)) {
                     // 加载文件列表
                     setResTableData();
                     // 刷新流量带宽统计
@@ -564,7 +564,7 @@ public class MainWindowController {
      * 刷新资源列表
      */
     public void refreshResTable() {
-        if (!new QiConfiger().checkNet()) {
+        if (!QiniuUtils.checkNet()) {
             Dialogs.showWarning(QiniuValueConsts.NET_ERROR);
             return;
         }
@@ -602,7 +602,7 @@ public class MainWindowController {
         FileChooser chooser = new FileChooser();
         chooser.setTitle(QiniuValueConsts.FILE_CHOOSER_TITLE);
         chooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        File file = chooser.showSaveDialog(QiniuApplication.stage);
+        File file = chooser.showSaveDialog(QiniuApplication.getStage());
         QiniuUtils.saveFile(file, uploadStatusTextArea.getText());
     }
 
@@ -628,7 +628,7 @@ public class MainWindowController {
         FileChooser chooser = new FileChooser();
         chooser.setTitle(QiniuValueConsts.FILE_CHOOSER_TITLE);
         chooser.setInitialDirectory(new File(System.getProperty("user.home")));
-        setFiles(chooser.showOpenMultipleDialog(QiniuApplication.stage));
+        setFiles(chooser.showOpenMultipleDialog(QiniuApplication.getStage()));
     }
 
     private void setFiles(List<File> files) {
@@ -676,7 +676,7 @@ public class MainWindowController {
             Platform.runLater(() -> {
                 uploadProgress.setVisible(true);
                 uploadProgress.setProgress(0);
-                uploadStatusTextArea.insertText(0, QiniuValueConsts.CONFIGING_UPLOAD_ENVIRONMENT);
+                uploadStatusTextArea.insertText(0, QiniuValueConsts.CONFIG_UPLOAD_ENVIRONMENT);
             });
             String bucket = bucketChoiceCombo.getValue();
             // 默认不指定key的情况下，以文件内容的hash值作为文件名
@@ -685,7 +685,7 @@ public class MainWindowController {
             // 去掉\r\n的长度
             int end = QiniuValueConsts.UPLOADING.length() - 2;
             Platform.runLater(() -> uploadStatusTextArea.deleteText(0,
-                    QiniuValueConsts.CONFIGING_UPLOAD_ENVIRONMENT.length() - 1));
+                    QiniuValueConsts.CONFIG_UPLOAD_ENVIRONMENT.length() - 1));
             // 总文件数
             double total = paths.length;
             upProgress = 0;
@@ -713,8 +713,8 @@ public class MainWindowController {
                             if (Checker.isEmpty(filename)) {
                                 filename = key + file.getName();
                             }
-                            String upToken = QiniuApplication.auth.uploadToken(bucket, filename);
-                            QiniuApplication.uploadManager.put(path, filename, upToken);
+                            String upToken = SdkConfigurer.getAuth().uploadToken(bucket, filename);
+                            SdkConfigurer.getUploadManager().put(path, filename, upToken);
                             status =
                                     Formatter.datetimeToString(new Date()) + "\tsuccess\t" + url + filename + "\t" + path;
                             logger.info("upload file '" + path + "' to bucket '" + bucket + "' success");
@@ -722,7 +722,7 @@ public class MainWindowController {
                             // 抓取网络文件到空间中
                             logger.info(path + " is a hyper link");
                             filename = key + QiniuUtils.getFileName(path);
-                            QiniuApplication.bucketManager.fetch(path, bucket, filename);
+                            SdkConfigurer.getBucketManager().fetch(path, bucket, filename);
                             status =
                                     Formatter.datetimeToString(new Date()) + "\tsuccess\t" + url + filename + "\t" + path;
                             logger.info("fetch remote file '" + path + "' to bucket '" + bucket + "' success");
@@ -801,7 +801,7 @@ public class MainWindowController {
     public void resetKey() {
         boolean ok = new Dialogs().showInputKeyDialog();
         if (ok && Checker.isNotEmpty(zoneText.getText())) {
-            new QiConfiger().configUploadEnv(zoneText.getText(), bucketChoiceCombo.getValue());
+            SdkConfigurer.configUploadEnv(zoneText.getText(), bucketChoiceCombo.getValue());
         }
     }
 

@@ -1,4 +1,4 @@
-package org.code4everything.qiniu.config;
+package org.code4everything.qiniu.model;
 
 import cn.hutool.core.collection.CollectionUtil;
 import lombok.AllArgsConstructor;

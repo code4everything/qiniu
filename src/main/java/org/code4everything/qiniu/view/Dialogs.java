@@ -15,7 +15,7 @@ import javafx.util.Pair;
 import org.apache.log4j.Logger;
 import org.code4everything.qiniu.QiniuApplication;
 import org.code4everything.qiniu.api.QiManager;
-import org.code4everything.qiniu.config.ConfigBean;
+import org.code4everything.qiniu.model.ConfigBean;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.controller.MainWindowController;
 import org.code4everything.qiniu.util.ConfigUtils;

@@ -6,6 +6,7 @@ package org.code4everything.qiniu.downloader;
 import com.zhazhapan.modules.constant.ValueConsts;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.ThreadPool;
+import com.zhazhapan.util.Utils;
 import javafx.application.Platform;
 import org.apache.log4j.Logger;
 import org.code4everything.qiniu.QiniuApplication;
@@ -43,7 +44,7 @@ public class Downloader {
         }
         if (!checkDownloadPath()) {
             String storagePath = Dialogs.showInputDialog(null, QiniuValueConsts.CONFIG_DOWNLOAD_PATH,
-                    QiniuValueConsts.USER_HOME);
+                    Utils.getCurrentWorkDir());
             QiniuApplication.getConfigBean().setStoragePath(storagePath);
             if (!checkDownloadPath()) {
                 return;

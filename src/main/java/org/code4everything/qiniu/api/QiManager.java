@@ -17,11 +17,12 @@ import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import org.apache.log4j.Logger;
 import org.code4everything.qiniu.QiniuApplication;
-import org.code4everything.qiniu.config.QiConfiger;
+import org.code4everything.qiniu.api.config.SdkConfigurer;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.controller.MainWindowController;
 import org.code4everything.qiniu.downloader.Downloader;
 import org.code4everything.qiniu.model.FileInfo;
+import org.code4everything.qiniu.util.QiniuUtils;
 import org.code4everything.qiniu.view.Dialogs;
 
 import java.io.UnsupportedEncodingException;
@@ -62,7 +63,7 @@ public class QiManager {
     public Series<String, Long> getBucketBandwidth(String[] domains, String fromDate, String toDate, String countUnit) {
         CdnResult.BandwidthResult bandwidthResult = null;
         try {
-            bandwidthResult = QiniuApplication.cdnManager.getBandwidthData(domains, fromDate, toDate, "day");
+            bandwidthResult = SdkConfigurer.getCdnManager().getBandwidthData(domains, fromDate, toDate, "day");
         } catch (QiniuException e) {
             logger.error("get bucket bandwidth error, message: " + e.getMessage());
             Platform.runLater(() -> Dialogs.showException(QiniuValueConsts.BUCKET_BAND_ERROR, e));
@@ -122,7 +123,7 @@ public class QiManager {
     public Series<String, Long> getBucketFlux(String[] domains, String fromDate, String toDate, String countUnit) {
         CdnResult.FluxResult fluxResult = null;
         try {
-            fluxResult = QiniuApplication.cdnManager.getFluxData(domains, fromDate, toDate, "day");
+            fluxResult = SdkConfigurer.getCdnManager().getFluxData(domains, fromDate, toDate, "day");
         } catch (QiniuException e) {
             logger.error("get bucket flux error, message: " + e.getMessage());
             Platform.runLater(() -> Dialogs.showException(QiniuValueConsts.BUCKET_FLUX_ERROR, e));
@@ -166,7 +167,7 @@ public class QiManager {
                 domains[i] = QiniuApplication.getConfigBean().getBuckets().get(i).getUrl();
             }
             try {
-                CdnResult.LogListResult logRes = QiniuApplication.cdnManager.getCdnLogList(domains, logDate);
+                CdnResult.LogListResult logRes = SdkConfigurer.getCdnManager().getCdnLogList(domains, logDate);
                 Downloader downloader = new Downloader();
                 for (Map.Entry<String, LogData[]> logs : logRes.data.entrySet()) {
                     for (LogData log : logs.getValue()) {
@@ -200,7 +201,7 @@ public class QiManager {
     private void refreshFile(String[] files) {
         try {
             // 单次方法调用刷新的链接不可以超过100个
-            QiniuApplication.cdnManager.refreshUrls(files);
+            SdkConfigurer.getCdnManager().refreshUrls(files);
             logger.info("refresh files success");
         } catch (QiniuException e) {
             logger.error("refresh files error, message: " + e.getMessage());
@@ -219,7 +220,7 @@ public class QiManager {
         // 自定义链接过期时间（小时）
         long expireInSeconds = 24;
         String publicURL = getPublicURL(fileName, domain);
-        downloader.downloadFromNet(QiniuApplication.auth.privateDownloadUrl(publicURL, expireInSeconds));
+        downloader.downloadFromNet(SdkConfigurer.getAuth().privateDownloadUrl(publicURL, expireInSeconds));
     }
 
     public void publicDownload(String fileName, String domain) {
@@ -253,7 +254,7 @@ public class QiManager {
     public void updateFile(String bucket, String key) {
         String log = "update file '" + key + "' on bucket '" + bucket;
         try {
-            QiniuApplication.bucketManager.prefetch(bucket, key);
+            SdkConfigurer.getBucketManager().prefetch(bucket, key);
             logger.info(log + "' success");
         } catch (QiniuException e) {
             logger.error(log + "' error, message: " + e.getMessage());
@@ -267,7 +268,7 @@ public class QiManager {
     public void setFileLife(String bucket, String key, int days) {
         String log = "set file of '" + key + "' life to " + days + " day(s) ";
         try {
-            QiniuApplication.bucketManager.deleteAfterDays(bucket, key, days);
+            SdkConfigurer.getBucketManager().deleteAfterDays(bucket, key, days);
             logger.info(log + "success");
         } catch (QiniuException e) {
             logger.error(log + "error, message: " + e.getMessage());
@@ -293,15 +294,15 @@ public class QiManager {
      * 移动或复制文件
      */
     public boolean moveOrCopyFile(String fromBucket, String fromKey, String toBucket, String toKey, FileAction action) {
-        if (new QiConfiger().checkNet()) {
+        if (QiniuUtils.checkNet()) {
             String log = "move file '" + fromKey + "' from bucket '" + fromBucket + "' to bucket '" + toBucket + "', "
                     + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "and rename file '" + toKey + "'";
             try {
                 if (action == FileAction.COPY) {
                     log = log.replaceAll("^move", "copy");
-                    QiniuApplication.bucketManager.copy(fromBucket, fromKey, toBucket, toKey, true);
+                    SdkConfigurer.getBucketManager().copy(fromBucket, fromKey, toBucket, toKey, true);
                 } else {
-                    QiniuApplication.bucketManager.move(fromBucket, fromKey, toBucket, toKey, true);
+                    SdkConfigurer.getBucketManager().move(fromBucket, fromKey, toBucket, toKey, true);
                 }
                 logger.info(log + " success");
                 return true;
@@ -318,10 +319,10 @@ public class QiManager {
      * 修改文件类型
      */
     public boolean changeType(String fileName, String newType, String bucket) {
-        if (new QiConfiger().checkNet()) {
+        if (QiniuUtils.checkNet()) {
             String log = "change file '" + fileName + "' type '" + newType + "' on bucket '" + bucket;
             try {
-                QiniuApplication.bucketManager.changeMime(bucket, fileName, newType);
+                SdkConfigurer.getBucketManager().changeMime(bucket, fileName, newType);
                 logger.info(log + "' success");
                 return true;
             } catch (QiniuException e) {
@@ -337,7 +338,7 @@ public class QiManager {
      * 批量删除文件，单次批量请求的文件数量不得超过1000
      */
     public void deleteFiles(ObservableList<FileInfo> fileInfos, String bucket) {
-        if (Checker.isNotEmpty(fileInfos) && new QiConfiger().checkNet()) {
+        if (Checker.isNotEmpty(fileInfos) && QiniuUtils.checkNet()) {
             // 生成待删除的文件列表
             String[] files = new String[fileInfos.size()];
             ArrayList<FileInfo> seletecFileInfos = new ArrayList<>();
@@ -349,7 +350,7 @@ public class QiManager {
             try {
                 BucketManager.BatchOperations batchOperations = new BucketManager.BatchOperations();
                 batchOperations.addDeleteOp(bucket, files);
-                Response response = QiniuApplication.bucketManager.batch(batchOperations);
+                Response response = SdkConfigurer.getBucketManager().batch(batchOperations);
                 BatchStatus[] batchStatusList = response.jsonToObject(BatchStatus[].class);
                 MainWindowController main = MainWindowController.getInstance();
                 // 文件列表是否为搜索后结果
@@ -385,7 +386,7 @@ public class QiManager {
         MainWindowController main = MainWindowController.getInstance();
         // 列举空间文件列表
         String bucket = main.bucketChoiceCombo.getValue();
-        BucketManager.FileListIterator iterator = QiniuApplication.bucketManager.createFileListIterator(bucket, "",
+        BucketManager.FileListIterator iterator = SdkConfigurer.getBucketManager().createFileListIterator(bucket, "",
                 QiniuValueConsts.BUCKET_LIST_LIMIT_SIZE, "");
         ArrayList<FileInfo> files = new ArrayList<>();
         logger.info("get file list of bucket: " + bucket);
