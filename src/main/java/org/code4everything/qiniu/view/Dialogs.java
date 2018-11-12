@@ -1,10 +1,5 @@
 package org.code4everything.qiniu.view;
 
-import org.code4everything.qiniu.QiniuApplication;
-import org.code4everything.qiniu.util.QiniuUtils;
-import org.code4everything.qiniu.config.ConfigLoader;
-import org.code4everything.qiniu.controller.MainWindowController;
-import org.code4everything.qiniu.constant.QiniuValueConsts;
 import com.zhazhapan.util.Checker;
 import javafx.application.Platform;
 import javafx.scene.Node;
@@ -18,7 +13,13 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import javafx.util.Pair;
 import org.apache.log4j.Logger;
+import org.code4everything.qiniu.QiniuApplication;
 import org.code4everything.qiniu.api.QiManager;
+import org.code4everything.qiniu.config.ConfigBean;
+import org.code4everything.qiniu.constant.QiniuValueConsts;
+import org.code4everything.qiniu.controller.MainWindowController;
+import org.code4everything.qiniu.util.ConfigUtils;
+import org.code4everything.qiniu.util.QiniuUtils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -133,8 +134,8 @@ public class Dialogs {
         return getAlert(header, content, alertType, Modality.APPLICATION_MODAL, null, StageStyle.DECORATED);
     }
 
-    public static Alert getAlert(String header, String content, AlertType alertType, Modality modality, Window
-            window, StageStyle style) {
+    public static Alert getAlert(String header, String content, AlertType alertType, Modality modality, Window window
+            , StageStyle style) {
         Alert alert = new Alert(alertType);
 
         alert.setTitle(QiniuValueConsts.MAIN_TITLE);
@@ -185,7 +186,8 @@ public class Dialogs {
         if (result.isPresent()) {
             bucket = bucketCombo.getValue();
             key = keyTextField.getText();
-            QiManager.FileAction action = copyasCheckBox.isSelected() ? QiManager.FileAction.COPY : QiManager.FileAction.MOVE;
+            QiManager.FileAction action = copyasCheckBox.isSelected() ? QiManager.FileAction.COPY :
+                    QiManager.FileAction.MOVE;
             return new Pair<>(action, new String[]{bucket, key});
         } else {
             return null;
@@ -234,7 +236,9 @@ public class Dialogs {
 
         Optional<String[]> result = dialog.showAndWait();
         if (result.isPresent() && Checker.isNotEmpty(ak.getText()) && Checker.isNotEmpty(sk.getText())) {
-            ConfigLoader.writeKey(ak.getText(), sk.getText());
+            QiniuApplication.getConfigBean().setAccesskey(ak.getText());
+            QiniuApplication.getConfigBean().setSecretkey(sk.getText());
+            ConfigUtils.writeConfig();
             return true;
         }
         return false;
@@ -248,8 +252,7 @@ public class Dialogs {
         bucket.setPromptText(QiniuValueConsts.BUCKET_NAME);
         TextField url = new TextField();
         url.setPromptText(QiniuValueConsts.BUCKET_URL);
-        // TextField zone = new TextField();
-        ComboBox<String> zone = new ComboBox<String>();
+        ComboBox<String> zone = new ComboBox<>();
         zone.getItems().addAll(QiniuValueConsts.BUCKET_NAME_ARRAY);
         zone.setValue(QiniuValueConsts.BUCKET_NAME_ARRAY[0]);
 
@@ -276,25 +279,20 @@ public class Dialogs {
 
         Platform.runLater(bucket::requestFocus);
 
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == ok) {
-                return new String[]{bucket.getText(), zone.getValue() + " " + (Checker.isHyperLink(url.getText()) ?
-                        url.getText() : "example.com")};
-            }
-            return null;
-        });
-
         Optional<String[]> result = dialog.showAndWait();
         result.ifPresent(res -> {
-            logger.info("bucket name: " + res[0] + ", zone name: " + res[1]);
-            Platform.runLater(() -> MainWindowController.getInstance().addItem(res[0]));
-            QiniuApplication.buckets.put(res[0], res[1]);
-            ConfigLoader.writeConfig();
+            Platform.runLater(() -> MainWindowController.getInstance().addItem(bucket.getText()));
+            ConfigBean.BucketBean bucketBean = new ConfigBean().new BucketBean();
+            bucketBean.setBucket(bucket.getText());
+            bucketBean.setUrl(url.getText());
+            bucketBean.setZone(zone.getValue());
+            QiniuApplication.getConfigBean().getBuckets().add(bucketBean);
+            ConfigUtils.writeConfig();
         });
     }
 
     public Dialog<String[]> getDialog(ButtonType ok) {
-        Dialog<String[]> dialog = new Dialog<String[]>();
+        Dialog<String[]> dialog = new Dialog<>();
         dialog.setTitle(QiniuValueConsts.MAIN_TITLE);
         dialog.setHeaderText(null);
 

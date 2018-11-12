@@ -6,11 +6,11 @@ import com.qiniu.storage.Configuration;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.persistent.FileRecorder;
 import com.qiniu.util.Auth;
+import javafx.application.Platform;
+import org.apache.log4j.Logger;
 import org.code4everything.qiniu.QiniuApplication;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.view.Dialogs;
-import javafx.application.Platform;
-import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +28,7 @@ public class QiConfiger {
     /**
      * 创建上传需要的Auth
      */
-    void createAuth(String ak, String sk) {
+    public void createAuth(String ak, String sk) {
         QiniuApplication.auth = Auth.create(ak, sk);
         QiniuApplication.cdnManager = new CdnManager(QiniuApplication.auth);
     }

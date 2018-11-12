@@ -6,23 +6,28 @@ import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.Configuration;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.util.Auth;
-import com.zhazhapan.modules.constant.ValueConsts;
-import org.code4everything.qiniu.config.ConfigLoader;
-import org.code4everything.qiniu.model.FileInfo;
-import org.code4everything.qiniu.model.Key;
-import org.code4everything.qiniu.constant.QiniuValueConsts;
-import org.code4everything.qiniu.view.MainWindow;
-import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.ThreadPool;
-import com.zhazhapan.util.Utils;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.apache.log4j.Logger;
+import org.code4everything.qiniu.config.ConfigBean;
+import org.code4everything.qiniu.constant.QiniuValueConsts;
+import org.code4everything.qiniu.controller.MainWindowController;
+import org.code4everything.qiniu.model.FileInfo;
+import org.code4everything.qiniu.util.ConfigUtils;
+import org.code4everything.qiniu.view.Dialogs;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -30,20 +35,11 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class QiniuApplication extends Application {
 
-    public static Key key = null;
+    private static final Logger LOGGER = Logger.getLogger(QiniuApplication.class);
 
     public static Map<String, Zone> zone = new HashMap<>();
 
-    /**
-     * Value包括存储空间和空间域名，用英文空格分隔
-     */
-    public static Map<String, String> buckets = new HashMap<>();
-
     public static Stage stage = null;
-
-    public static ArrayList<String> prefix = new ArrayList<>();
-
-    public static String workDir = null;
 
     public static Auth auth = null;
 
@@ -54,10 +50,6 @@ public class QiniuApplication extends Application {
     public static BucketManager bucketManager = null;
 
     public static ObservableList<FileInfo> data = null;
-
-    public static StringBuilder deleteLog = new StringBuilder();
-
-    public static String downloadPath = null;
 
     public static CdnManager cdnManager = null;
 
@@ -71,56 +63,85 @@ public class QiniuApplication extends Application {
      */
     public static long totalSize = 0;
 
-    private static MainWindow mainWindow = null;
+    private static ConfigBean configBean;
 
-    private static Logger logger = Logger.getLogger(QiniuApplication.class);
+    public static ConfigBean getConfigBean() {
+        return configBean;
+    }
+
+    public static void setConfigBean(ConfigBean configBean) {
+        QiniuApplication.configBean = configBean;
+    }
 
     /**
      * 主程序入口
      */
     public static void main(String[] args) {
-        logger.info("start to run application");
         // 设置线程池大小
         ThreadPool.setMaximumPoolSize(10);
-        // 设置排队大小
+        // 设置线程池最大排队大小
         ThreadPool.setWorkQueue(new LinkedBlockingQueue<>(1024));
         ThreadPool.init();
-        initLoad(ValueConsts.FALSE);
+        initApplication();
+        // 启动 JavaFX 应用
         launch(args);
     }
 
     /**
-     * 是否外部调用
-     *
-     * @param isExternalCall {@link Boolean}
+     * 初始化应用
      */
-    public static void initLoad(boolean isExternalCall) {
-        logger.info("current operation system: " + Utils.getCurrentOS());
-        if (Checker.isWindows()) {
-            workDir = QiniuValueConsts.APP_PATH_OF_WINDOWS;
-        } else {
-            workDir = QiniuValueConsts.APP_PATH_OF_UNIX;
-        }
-        ConfigLoader.configPath = workDir + QiniuValueConsts.SEPARATOR + QiniuValueConsts.CONFIG_PATH;
-        logger.info("current work director: " + workDir + ", config file: " + ConfigLoader.configPath);
-        mainWindow = new MainWindow();
-        initZone();
-        if (isExternalCall) {
-            ConfigLoader.loadConfig(ValueConsts.TRUE);
-        }
-    }
-
-    private static void initZone() {
+    public static void initApplication() {
+        // 加载空间区域
         zone.put(QiniuValueConsts.BUCKET_NAME_ARRAY[0], Zone.zone0());
         zone.put(QiniuValueConsts.BUCKET_NAME_ARRAY[1], Zone.zone1());
         zone.put(QiniuValueConsts.BUCKET_NAME_ARRAY[2], Zone.zone2());
         zone.put(QiniuValueConsts.BUCKET_NAME_ARRAY[3], Zone.zoneNa0());
+        // 加载配置文件
+        ConfigUtils.loadConfig();
     }
 
+    /**
+     * 窗口关闭事件
+     *
+     * @param event 事件
+     * @param isExternalCall 是否是第三方应用调用
+     */
+    public static void setOnClosed(Event event, boolean isExternalCall) {
+        // 判断是否有文件在上传下载
+        MainWindowController main = MainWindowController.getInstance();
+        if (main.downloadProgress.isVisible() || main.uploadProgress.isVisible()) {
+            Optional<ButtonType> result = Dialogs.showConfirmation(QiniuValueConsts.UPLOADING_OR_DOWNLOADING);
+            if (result.isPresent() && result.get() != ButtonType.OK) {
+                // 取消退出事件
+                event.consume();
+                return;
+            }
+        }
+        if (!isExternalCall) {
+            // 退出程序
+            ThreadPool.executor.shutdown();
+            System.exit(0);
+        }
+    }
+
+    /**
+     * 由 JavaFX 调用
+     */
     @Override
     public void start(Stage stage) {
-        ConfigLoader.loadConfig(ValueConsts.FALSE);
-        mainWindow.init(stage);
-        mainWindow.show();
+        try {
+            // 加载视图页面
+            VBox root = FXMLLoader.load(getClass().getResource(QiniuValueConsts.QINIU_VIEW_URL));
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+        } catch (Exception e) {
+            LOGGER.error("init stage error: " + e.getMessage());
+            Dialogs.showFatalError(QiniuValueConsts.INIT_APP_ERROR_HEADER, e);
+        }
+        // 设置图标
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/image/qiniu.png")));
+        stage.setTitle(QiniuValueConsts.MAIN_TITLE);
+        // 设置关闭窗口事件
+        stage.setOnCloseRequest((WindowEvent event) -> setOnClosed(event, false));
     }
 }

@@ -1,13 +1,13 @@
 package org.code4everything.qiniu.constant;
 
-import java.io.File;
-
 /**
  * 常量类
  *
  * @author pantao
  */
 public class QiniuValueConsts {
+
+    public static final String QINIU_VIEW_URL = "/view/MainWindow.fxml";
 
     public static final String QINIU_KEY_URL = "https://portal.qiniu.com/user/key";
 
@@ -16,14 +16,6 @@ public class QiniuValueConsts {
     public static final String MAIN_TITLE = "七牛云管理工具";
 
     public static final String INIT_APP_ERROR_HEADER = "初始化错误，无法继续运行";
-
-    public static final String APP_PATH_OF_WINDOWS = "C:\\ProgramData\\QiniuTool";
-
-    public static final String APP_PATH_OF_UNIX = USER_HOME + "/qntool";
-
-    public static final String SEPARATOR = File.separator;
-
-    public static final String CONFIG_PATH = "config.json";
 
     public static final String FORMAT_JSON_ERROR = "将字符串格式化为JSON失败";
 

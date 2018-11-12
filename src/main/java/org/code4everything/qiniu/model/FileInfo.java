@@ -1,8 +1,17 @@
 package org.code4everything.qiniu.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
+ * 文件信息
+ *
  * @author pantao
  */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class FileInfo {
 
     private String name;
@@ -12,47 +21,4 @@ public class FileInfo {
     private String size;
 
     private String time;
-
-    public FileInfo() {
-
-    }
-
-    public FileInfo(String name, String type, String size, String time) {
-        this.name = name;
-        this.type = type;
-        this.size = size;
-        this.time = time;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
 }
