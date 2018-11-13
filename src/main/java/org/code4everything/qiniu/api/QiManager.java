@@ -20,7 +20,7 @@ import org.code4everything.qiniu.QiniuApplication;
 import org.code4everything.qiniu.api.config.SdkConfigurer;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.controller.MainWindowController;
-import org.code4everything.qiniu.model.FileInfo;
+import org.code4everything.qiniu.model.FileBean;
 import org.code4everything.qiniu.util.QiniuUtils;
 import org.code4everything.qiniu.util.DialogUtils;
 
@@ -182,11 +182,11 @@ public class QiManager {
     /**
      * 刷新文件，cdn相关
      */
-    public void refreshFile(ObservableList<FileInfo> fileInfos, String domain) {
+    public void refreshFile(ObservableList<FileBean> fileInfos, String domain) {
         if (Checker.isNotEmpty(fileInfos)) {
             String[] files = new String[fileInfos.size()];
             int i = 0;
-            for (FileInfo fileInfo : fileInfos) {
+            for (FileBean fileInfo : fileInfos) {
                 files[i++] = getPublicURL(fileInfo.getName(), domain);
             }
             refreshFile(files);
@@ -327,13 +327,13 @@ public class QiManager {
     /**
      * 批量删除文件，单次批量请求的文件数量不得超过1000
      */
-    public void deleteFiles(ObservableList<FileInfo> fileInfos, String bucket) {
+    public void deleteFiles(ObservableList<FileBean> fileInfos, String bucket) {
         if (Checker.isNotEmpty(fileInfos) && QiniuUtils.checkNet()) {
             // 生成待删除的文件列表
             String[] files = new String[fileInfos.size()];
-            ArrayList<FileInfo> seletecFileInfos = new ArrayList<>();
+            ArrayList<FileBean> seletecFileInfos = new ArrayList<>();
             int i = 0;
-            for (FileInfo fileInfo : fileInfos) {
+            for (FileBean fileInfo : fileInfos) {
                 files[i++] = fileInfo.getName();
                 seletecFileInfos.add(fileInfo);
             }
@@ -345,7 +345,7 @@ public class QiManager {
                 MainWindowController main = MainWindowController.getInstance();
                 // 文件列表是否为搜索后结果
                 boolean sear = Checker.isNotEmpty(main.searchTextField.getText());
-                ObservableList<FileInfo> currentRes = main.resTable.getItems();
+                ObservableList<FileBean> currentRes = main.resTable.getItems();
                 for (i = 0; i < files.length; i++) {
                     BatchStatus status = batchStatusList[i];
                     String file = files[i];
@@ -378,7 +378,7 @@ public class QiManager {
         String bucket = main.bucketChoiceCombo.getValue();
         BucketManager.FileListIterator iterator = SdkConfigurer.getBucketManager().createFileListIterator(bucket, "",
                 QiniuValueConsts.BUCKET_LIST_LIMIT_SIZE, "");
-        ArrayList<FileInfo> files = new ArrayList<>();
+        ArrayList<FileBean> files = new ArrayList<>();
         logger.info("get file list of bucket: " + bucket);
         QiniuApplication.totalLength = 0;
         QiniuApplication.totalSize = 0;
@@ -391,7 +391,7 @@ public class QiManager {
                 // 将七牛的时间单位（100纳秒）转换成毫秒，然后转换成时间
                 String time = Formatter.timeStampToString(item.putTime / 10000);
                 String size = Formatter.formatSize(item.fsize);
-                FileInfo file = new FileInfo(item.key, item.mimeType, size, time);
+                FileBean file = new FileBean(item.key, item.mimeType, size, time);
                 files.add(file);
                 logger.info("file name: " + item.key + ", file type: " + item.mimeType + ", file size: " + size + ", "
                         + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "file time: " + time);

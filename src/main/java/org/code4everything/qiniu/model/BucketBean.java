@@ -4,21 +4,22 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
- * 文件信息
+ * 桶信息
  *
  * @author pantao
+ * @since 2018/11/13
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FileInfo {
+public class BucketBean implements Serializable {
 
-    private String name;
+    private String bucket;
 
-    private String type;
+    private String zone;
 
-    private String size;
-
-    private String time;
+    private String url;
 }

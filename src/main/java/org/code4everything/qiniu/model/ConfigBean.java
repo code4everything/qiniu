@@ -55,16 +55,4 @@ public class ConfigBean implements Serializable {
         }
         return null;
     }
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public class BucketBean implements Serializable {
-
-        private String bucket;
-
-        private String zone;
-
-        private String url;
-    }
 }

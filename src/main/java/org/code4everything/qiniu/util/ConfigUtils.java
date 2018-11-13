@@ -10,6 +10,7 @@ import org.code4everything.qiniu.QiniuApplication;
 import org.code4everything.qiniu.api.config.SdkConfigurer;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.controller.MainWindowController;
+import org.code4everything.qiniu.model.BucketBean;
 import org.code4everything.qiniu.model.ConfigBean;
 
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class ConfigUtils {
                         // 添加桶
                         config.getBuckets().forEach(bucket -> controller.addItem(bucket.getBucket()));
                         // 选中第一个桶
-                        ConfigBean.BucketBean bucket = config.getBuckets().get(0);
+                        BucketBean bucket = config.getBuckets().get(0);
                         controller.bucketChoiceCombo.setValue(bucket.getBucket());
                         controller.zoneText.setText(bucket.getZone());
                     });

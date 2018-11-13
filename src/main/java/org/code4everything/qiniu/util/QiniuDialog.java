@@ -12,7 +12,7 @@ import org.code4everything.qiniu.QiniuApplication;
 import org.code4everything.qiniu.api.QiManager;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.controller.MainWindowController;
-import org.code4everything.qiniu.model.ConfigBean;
+import org.code4everything.qiniu.model.BucketBean;
 
 import java.util.Optional;
 
@@ -162,10 +162,7 @@ public class QiniuDialog {
         result.ifPresent(res -> {
             // 处理结果
             Platform.runLater(() -> MainWindowController.getInstance().addItem(res[0]));
-            ConfigBean.BucketBean bucketBean = new ConfigBean().new BucketBean();
-            bucketBean.setBucket(res[0]);
-            bucketBean.setUrl(res[2]);
-            bucketBean.setZone(res[1]);
+            BucketBean bucketBean = new BucketBean(res[0], res[1], res[2]);
             QiniuApplication.getConfigBean().getBuckets().add(bucketBean);
             ConfigUtils.writeConfig();
         });

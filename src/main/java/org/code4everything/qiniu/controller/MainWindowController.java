@@ -26,7 +26,7 @@ import org.code4everything.qiniu.QiniuApplication;
 import org.code4everything.qiniu.api.QiManager;
 import org.code4everything.qiniu.api.config.SdkConfigurer;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
-import org.code4everything.qiniu.model.FileInfo;
+import org.code4everything.qiniu.model.FileBean;
 import org.code4everything.qiniu.util.ConfigUtils;
 import org.code4everything.qiniu.util.DialogUtils;
 import org.code4everything.qiniu.util.QiniuDialog;
@@ -62,7 +62,7 @@ public class MainWindowController {
     public ComboBox<String> filePrefixCombo;
 
     @FXML
-    public TableView<FileInfo> resTable;
+    public TableView<FileBean> resTable;
 
     @FXML
     public TextField searchTextField;
@@ -88,16 +88,16 @@ public class MainWindowController {
     private TextField bucketDomainTextField;
 
     @FXML
-    private TableColumn<FileInfo, String> nameCol;
+    private TableColumn<FileBean, String> nameCol;
 
     @FXML
-    private TableColumn<FileInfo, String> typeCol;
+    private TableColumn<FileBean, String> typeCol;
 
     @FXML
-    private TableColumn<FileInfo, String> sizeCol;
+    private TableColumn<FileBean, String> sizeCol;
 
     @FXML
-    private TableColumn<FileInfo, String> timeCol;
+    private TableColumn<FileBean, String> timeCol;
 
     @FXML
     private Hyperlink toCsdnBlog;
@@ -162,7 +162,7 @@ public class MainWindowController {
         nameCol.setCellFactory(TextFieldTableCell.forTableColumn());
         nameCol.setOnEditCommit(v -> {
             String name;
-            FileInfo fileInfo = v.getTableView().getItems().get(v.getTablePosition().getRow());
+            FileBean fileInfo = v.getTableView().getItems().get(v.getTablePosition().getRow());
             if (new QiManager().renameFile(bucketChoiceCombo.getValue(), v.getOldValue(), v.getNewValue())) {
                 name = v.getNewValue();
             } else {
@@ -177,7 +177,7 @@ public class MainWindowController {
         // 设置文件类型可编辑
         typeCol.setCellFactory(TextFieldTableCell.forTableColumn());
         typeCol.setOnEditCommit(v -> {
-            FileInfo fileInfo = v.getTableView().getItems().get(v.getTablePosition().getRow());
+            FileBean fileInfo = v.getTableView().getItems().get(v.getTablePosition().getRow());
             String type;
             if (new QiManager().changeType(fileInfo.getName(), v.getNewValue(), bucketChoiceCombo.getValue())) {
                 type = v.getNewValue();
@@ -384,7 +384,7 @@ public class MainWindowController {
      * 用浏览器打开文件
      */
     public void openFile() {
-        ObservableList<FileInfo> selectedItems = resTable.getSelectionModel().getSelectedItems();
+        ObservableList<FileBean> selectedItems = resTable.getSelectionModel().getSelectedItems();
         if (Checker.isNotEmpty(selectedItems)) {
             String filename = selectedItems.get(0).getName();
             String url = "http://" + new QiManager().getPublicURL(filename, bucketDomainTextField.getText());
@@ -400,18 +400,18 @@ public class MainWindowController {
     }
 
     private void download(DownloadWay way) {
-        ObservableList<FileInfo> selectedItems = resTable.getSelectionModel().getSelectedItems();
+        ObservableList<FileBean> selectedItems = resTable.getSelectionModel().getSelectedItems();
         if (Checker.isNotEmpty(selectedItems)) {
             QiManager manager = new QiManager();
             String domain = "http://" + bucketDomainTextField.getText();
             if (way == DownloadWay.PUBLIC) {
                 logger.debug("start to public download");
-                for (FileInfo fileInfo : selectedItems) {
+                for (FileBean fileInfo : selectedItems) {
                     manager.publicDownload(fileInfo.getName(), domain);
                 }
             } else {
                 logger.debug("start to private download");
-                for (FileInfo fileInfo : selectedItems) {
+                for (FileBean fileInfo : selectedItems) {
                     manager.privateDownload(fileInfo.getName(), domain);
                 }
             }
@@ -429,10 +429,10 @@ public class MainWindowController {
      * 更新镜像源
      */
     public void updateFile() {
-        ObservableList<FileInfo> selectedItems = resTable.getSelectionModel().getSelectedItems();
+        ObservableList<FileBean> selectedItems = resTable.getSelectionModel().getSelectedItems();
         if (Checker.isNotEmpty(selectedItems)) {
             QiManager manager = new QiManager();
-            for (FileInfo fileInfo : selectedItems) {
+            for (FileBean fileInfo : selectedItems) {
                 manager.updateFile(bucketChoiceCombo.getValue(), fileInfo.getName());
             }
         }
@@ -442,14 +442,14 @@ public class MainWindowController {
      * 设置文件生存时间
      */
     public void setLife() {
-        ObservableList<FileInfo> selectedItems = resTable.getSelectionModel().getSelectedItems();
+        ObservableList<FileBean> selectedItems = resTable.getSelectionModel().getSelectedItems();
         if (Checker.isNotEmpty(selectedItems)) {
             String lifeStr = DialogUtils.showInputDialog(null, QiniuValueConsts.FILE_LIFE,
                     QiniuValueConsts.DEFAULT_FILE_LIFE);
             if (Checker.isNumber(lifeStr)) {
                 int life = Formatter.stringToInt(lifeStr);
                 QiManager manager = new QiManager();
-                for (FileInfo fileInfo : selectedItems) {
+                for (FileBean fileInfo : selectedItems) {
                     manager.setFileLife(bucketChoiceCombo.getValue(), fileInfo.getName(), life);
                 }
             }
@@ -460,7 +460,7 @@ public class MainWindowController {
      * 显示移动或复制文件的窗口
      */
     public void showFileMovableDialog() {
-        ObservableList<FileInfo> selectedItems = resTable.getSelectionModel().getSelectedItems();
+        ObservableList<FileBean> selectedItems = resTable.getSelectionModel().getSelectedItems();
         Pair<QiManager.FileAction, String[]> pair;
         String bucket = bucketChoiceCombo.getValue();
         if (Checker.isEmpty(selectedItems)) {
@@ -473,9 +473,9 @@ public class MainWindowController {
         }
         if (Checker.isNotNull(pair)) {
             boolean useNewKey = Checker.isNotEmpty(pair.getValue()[1]);
-            ObservableList<FileInfo> resData = resTable.getItems();
+            ObservableList<FileBean> resData = resTable.getItems();
             QiManager manager = new QiManager();
-            for (FileInfo fileInfo : selectedItems) {
+            for (FileBean fileInfo : selectedItems) {
                 String fb = bucketChoiceCombo.getValue();
                 String tb = pair.getValue()[0];
                 String name = useNewKey ? pair.getValue()[1] : fileInfo.getName();
@@ -507,7 +507,7 @@ public class MainWindowController {
      * 删除文件
      */
     public void deleteFiles() {
-        ObservableList<FileInfo> fileInfos = resTable.getSelectionModel().getSelectedItems();
+        ObservableList<FileBean> fileInfos = resTable.getSelectionModel().getSelectedItems();
         new QiManager().deleteFiles(fileInfos, bucketChoiceCombo.getValue());
     }
 
@@ -515,7 +515,7 @@ public class MainWindowController {
      * 复制链接
      */
     public void copyLink() {
-        ObservableList<FileInfo> fileInfos = resTable.getSelectionModel().getSelectedItems();
+        ObservableList<FileBean> fileInfos = resTable.getSelectionModel().getSelectedItems();
         if (Checker.isNotEmpty(fileInfos)) {
             // 只复制选中的第一个文件的链接
             String link = "http://" + new QiManager().getPublicURL(fileInfos.get(0).getName(),
@@ -529,7 +529,7 @@ public class MainWindowController {
      * 搜索资源文件，忽略大小写
      */
     public void searchFile() {
-        ArrayList<FileInfo> files = new ArrayList<>();
+        ArrayList<FileBean> files = new ArrayList<>();
         String search = Checker.checkNull(searchTextField.getText());
         logger.info("search file: " + search);
         QiniuApplication.totalLength = 0;
@@ -537,7 +537,7 @@ public class MainWindowController {
         try {
             // 正则匹配查询
             Pattern pattern = Pattern.compile(search, Pattern.CASE_INSENSITIVE);
-            for (FileInfo file : QiniuApplication.data) {
+            for (FileBean file : QiniuApplication.data) {
                 if (pattern.matcher(file.getName()).find()) {
                     files.add(file);
                     QiniuApplication.totalLength++;

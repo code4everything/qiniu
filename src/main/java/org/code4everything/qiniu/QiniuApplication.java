@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.controller.MainWindowController;
 import org.code4everything.qiniu.model.ConfigBean;
-import org.code4everything.qiniu.model.FileInfo;
+import org.code4everything.qiniu.model.FileBean;
 import org.code4everything.qiniu.util.ConfigUtils;
 import org.code4everything.qiniu.util.DialogUtils;
 
@@ -27,7 +27,7 @@ public class QiniuApplication extends Application {
 
     private static final Logger LOGGER = Logger.getLogger(QiniuApplication.class);
 
-    public static ObservableList<FileInfo> data = null;
+    public static ObservableList<FileBean> data = null;
 
     /**
      * 空间总文件数
