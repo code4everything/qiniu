@@ -9,7 +9,7 @@ import com.zhazhapan.util.Utils;
 import com.zhazhapan.util.dialog.Alerts;
 import org.apache.log4j.Logger;
 import org.code4everything.qiniu.QiniuApplication;
-import org.code4everything.qiniu.api.config.SdkConfigurer;
+import org.code4everything.qiniu.api.SdkConfigurer;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
 
 import java.io.File;

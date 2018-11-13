@@ -1,4 +1,4 @@
-package org.code4everything.qiniu.api.config;
+package org.code4everything.qiniu.api;
 
 import com.qiniu.cdn.CdnManager;
 import com.qiniu.common.Zone;
@@ -11,8 +11,8 @@ import com.zhazhapan.util.Utils;
 import javafx.application.Platform;
 import org.apache.log4j.Logger;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
-import org.code4everything.qiniu.util.QiniuUtils;
 import org.code4everything.qiniu.util.DialogUtils;
+import org.code4everything.qiniu.util.QiniuUtils;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -22,7 +22,6 @@ import java.util.Map;
 /**
  * @author pantao
  */
-
 public class SdkConfigurer {
 
     private static final Map<String, Zone> ZONE = new HashMap<>();

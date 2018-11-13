@@ -7,7 +7,7 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import javafx.application.Platform;
 import org.code4everything.qiniu.QiniuApplication;
-import org.code4everything.qiniu.api.config.SdkConfigurer;
+import org.code4everything.qiniu.api.SdkConfigurer;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.controller.MainWindowController;
 import org.code4everything.qiniu.model.BucketBean;

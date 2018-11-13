@@ -1,8 +1,6 @@
 package org.code4everything.qiniu.api;
 
 import com.qiniu.cdn.CdnResult;
-import com.qiniu.cdn.CdnResult.BandwidthData;
-import com.qiniu.cdn.CdnResult.FluxData;
 import com.qiniu.cdn.CdnResult.LogData;
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
@@ -10,19 +8,15 @@ import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.model.BatchStatus;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.Formatter;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.chart.XYChart.Data;
-import javafx.scene.chart.XYChart.Series;
 import org.apache.log4j.Logger;
 import org.code4everything.qiniu.QiniuApplication;
-import org.code4everything.qiniu.api.config.SdkConfigurer;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.controller.MainWindowController;
 import org.code4everything.qiniu.model.FileBean;
-import org.code4everything.qiniu.util.QiniuUtils;
 import org.code4everything.qiniu.util.DialogUtils;
+import org.code4everything.qiniu.util.QiniuUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -32,128 +26,22 @@ import java.util.Map;
 /**
  * @author pantao
  */
-public class QiManager {
+public class SdkManager {
 
-    private Logger logger = Logger.getLogger(QiManager.class);
+    private static final Logger LOGGER = Logger.getLogger(SdkManager.class);
 
     /**
-     * 获取空间带宽统计，使用默认的KB单位
-     *
-     * @param domains domains
-     * @param fromDate fromDate
-     * @param toDate toDate
-     *
-     * @return {@link Series}
+     * 获取空间带宽统计
      */
-    public Series<String, Long> getBucketBandwidth(String[] domains, String fromDate, String toDate) {
-        return getBucketBandwidth(domains, fromDate, toDate, "KB");
+    public CdnResult.BandwidthResult getBucketBandwidth(String[] domains, String startDate, String endDate) throws QiniuException {
+        return SdkConfigurer.getCdnManager().getBandwidthData(domains, startDate, endDate, "day");
     }
 
     /**
-     * 获取空间带宽统计，使用自定义单位
-     *
-     * @param domains domains
-     * @param fromDate from Date
-     * @param toDate toDate
-     * @param countUnit countUnit
-     *
-     * @return {@link Series}
+     * 获取空间的流量统计
      */
-    public Series<String, Long> getBucketBandwidth(String[] domains, String fromDate, String toDate, String countUnit) {
-        CdnResult.BandwidthResult bandwidthResult = null;
-        try {
-            bandwidthResult = SdkConfigurer.getCdnManager().getBandwidthData(domains, fromDate, toDate, "day");
-        } catch (QiniuException e) {
-            logger.error("get bucket bandwidth error, message: " + e.getMessage());
-            Platform.runLater(() -> DialogUtils.showException(QiniuValueConsts.BUCKET_BAND_ERROR, e));
-        }
-        Series<String, Long> bandSer = new Series<>();
-        bandSer.setName(QiniuValueConsts.BUCKET_BANDWIDTH_COUNT.replaceAll("[A-Z]+", countUnit));
-        // 获取带宽统计
-        if (Checker.isNotNull(bandwidthResult) && Checker.isNotEmpty(bandwidthResult.data)) {
-            for (Map.Entry<String, BandwidthData> bandwidth : bandwidthResult.data.entrySet()) {
-                String[] times = bandwidthResult.time;
-                BandwidthData bandwidthData = bandwidth.getValue();
-                int i = 0;
-                for (String time : times) {
-                    long size = 0;
-                    if (Checker.isNotNull(bandwidthData)) {
-                        if (Checker.isNotNull(bandwidthData.china)) {
-                            size += bandwidthData.china[i];
-                        }
-                        if (Checker.isNotNull(bandwidthData.oversea)) {
-                            size += bandwidthData.oversea[i];
-                        }
-                    }
-                    long unit = Formatter.sizeToLong("1 " + countUnit);
-                    bandSer.getData().add(new Data<>(time.substring(5, 10), size / unit));
-                    i++;
-                }
-            }
-        } else {
-            logger.info("bandwidth is empty of this domain");
-        }
-        return bandSer;
-    }
-
-    /**
-     * 获取空间的流量统计，使用默认的KB单位
-     *
-     * @param domains domains
-     * @param fromDate fromDate
-     * @param toDate toDate
-     *
-     * @return {@link Series}
-     */
-    public Series<String, Long> getBucketFlux(String[] domains, String fromDate, String toDate) {
-        return getBucketFlux(domains, fromDate, toDate, "KB");
-    }
-
-    /**
-     * 获取空间的流量统计，自定义统计单位
-     *
-     * @param domains domains
-     * @param fromDate fromDate
-     * @param toDate toDate
-     * @param countUnit countUnit
-     *
-     * @return {@link Series}
-     */
-    public Series<String, Long> getBucketFlux(String[] domains, String fromDate, String toDate, String countUnit) {
-        CdnResult.FluxResult fluxResult = null;
-        try {
-            fluxResult = SdkConfigurer.getCdnManager().getFluxData(domains, fromDate, toDate, "day");
-        } catch (QiniuException e) {
-            logger.error("get bucket flux error, message: " + e.getMessage());
-            Platform.runLater(() -> DialogUtils.showException(QiniuValueConsts.BUCKET_FLUX_ERROR, e));
-        }
-        Series<String, Long> fluxSer = new Series<>();
-        fluxSer.setName(QiniuValueConsts.BUCKET_FLUX_COUNT.replaceAll("[A-Z]+", countUnit));
-        // 获取流量统计
-        if (Checker.isNotNull(fluxResult) && Checker.isNotEmpty(fluxResult.data)) {
-            for (Map.Entry<String, FluxData> flux : fluxResult.data.entrySet()) {
-                String[] times = fluxResult.time;
-                FluxData fluxData = flux.getValue();
-                int i = 0;
-                for (String time : times) {
-                    long size = 0;
-                    if (Checker.isNotNull(fluxData)) {
-                        if (Checker.isNotNull(fluxData.china)) {
-                            size += fluxData.china[i];
-                        }
-                        if (Checker.isNotNull(fluxData.oversea)) {
-                            size += fluxData.oversea[i];
-                        }
-                    }
-                    long unit = Formatter.sizeToLong("1 " + countUnit);
-                    fluxSer.getData().add(new Data<>(time.substring(5, 10), size / unit));
-                    i++;
-                }
-            }
-        } else {
-            logger.info("flux is empty of this domain");
-        }
-        return fluxSer;
+    public CdnResult.FluxResult getBucketFlux(String[] domains, String startDate, String endDate) throws QiniuException {
+        return SdkConfigurer.getCdnManager().getFluxData(domains, startDate, endDate, "day");
     }
 
     /**
@@ -173,7 +61,7 @@ public class QiManager {
                     }
                 }
             } catch (QiniuException e) {
-                logger.error("get cdn log url error, message: " + e.getMessage());
+                LOGGER.error("get cdn log url error, message: " + e.getMessage());
                 DialogUtils.showException(e);
             }
         }
@@ -200,9 +88,9 @@ public class QiManager {
         try {
             // 单次方法调用刷新的链接不可以超过100个
             SdkConfigurer.getCdnManager().refreshUrls(files);
-            logger.info("refresh files success");
+            LOGGER.info("refresh files success");
         } catch (QiniuException e) {
-            logger.error("refresh files error, message: " + e.getMessage());
+            LOGGER.error("refresh files error, message: " + e.getMessage());
             DialogUtils.showException(e);
         }
     }
@@ -245,9 +133,9 @@ public class QiManager {
         String log = "update file '" + key + "' on bucket '" + bucket;
         try {
             SdkConfigurer.getBucketManager().prefetch(bucket, key);
-            logger.info(log + "' success");
+            LOGGER.info(log + "' success");
         } catch (QiniuException e) {
-            logger.error(log + "' error, message: " + e.getMessage());
+            LOGGER.error(log + "' error, message: " + e.getMessage());
             DialogUtils.showException(QiniuValueConsts.UPDATE_ERROR, e);
         }
     }
@@ -259,9 +147,9 @@ public class QiManager {
         String log = "set file of '" + key + "' life to " + days + " day(s) ";
         try {
             SdkConfigurer.getBucketManager().deleteAfterDays(bucket, key, days);
-            logger.info(log + "success");
+            LOGGER.info(log + "success");
         } catch (QiniuException e) {
-            logger.error(log + "error, message: " + e.getMessage());
+            LOGGER.error(log + "error, message: " + e.getMessage());
             DialogUtils.showException(QiniuValueConsts.MOVE_OR_RENAME_ERROR, e);
         }
     }
@@ -294,10 +182,10 @@ public class QiManager {
                 } else {
                     SdkConfigurer.getBucketManager().move(fromBucket, fromKey, toBucket, toKey, true);
                 }
-                logger.info(log + " success");
+                LOGGER.info(log + " success");
                 return true;
             } catch (QiniuException e) {
-                logger.error(log + " failed, message: " + e.getMessage());
+                LOGGER.error(log + " failed, message: " + e.getMessage());
                 DialogUtils.showException(QiniuValueConsts.MOVE_OR_RENAME_ERROR, e);
                 return false;
             }
@@ -313,10 +201,10 @@ public class QiManager {
             String log = "change file '" + fileName + "' type '" + newType + "' on bucket '" + bucket;
             try {
                 SdkConfigurer.getBucketManager().changeMime(bucket, fileName, newType);
-                logger.info(log + "' success");
+                LOGGER.info(log + "' success");
                 return true;
             } catch (QiniuException e) {
-                logger.error(log + "' failed, message: " + e.getMessage());
+                LOGGER.error(log + "' failed, message: " + e.getMessage());
                 DialogUtils.showException(QiniuValueConsts.CHANGE_FILE_TYPE_ERROR, e);
                 return false;
             }
@@ -350,7 +238,7 @@ public class QiManager {
                     BatchStatus status = batchStatusList[i];
                     String file = files[i];
                     if (status.code == 200) {
-                        logger.info("delete file '" + file + "' success");
+                        LOGGER.info("delete file '" + file + "' success");
                         QiniuApplication.data.remove(seletecFileInfos.get(i));
                         QiniuApplication.totalLength--;
                         QiniuApplication.totalSize -= Formatter.sizeToLong(seletecFileInfos.get(i).getSize());
@@ -358,7 +246,7 @@ public class QiManager {
                             currentRes.remove(seletecFileInfos.get(i));
                         }
                     } else {
-                        logger.error("delete file '" + file + "' failed, message: " + status.data.error);
+                        LOGGER.error("delete file '" + file + "' failed, message: " + status.data.error);
                         DialogUtils.showError("删除文件：" + file + " 失败");
                     }
                 }
@@ -379,7 +267,7 @@ public class QiManager {
         BucketManager.FileListIterator iterator = SdkConfigurer.getBucketManager().createFileListIterator(bucket, "",
                 QiniuValueConsts.BUCKET_LIST_LIMIT_SIZE, "");
         ArrayList<FileBean> files = new ArrayList<>();
-        logger.info("get file list of bucket: " + bucket);
+        LOGGER.info("get file list of bucket: " + bucket);
         QiniuApplication.totalLength = 0;
         QiniuApplication.totalSize = 0;
         // 处理获取的file list结果
@@ -393,7 +281,7 @@ public class QiManager {
                 String size = Formatter.formatSize(item.fsize);
                 FileBean file = new FileBean(item.key, item.mimeType, size, time);
                 files.add(file);
-                logger.info("file name: " + item.key + ", file type: " + item.mimeType + ", file size: " + size + ", "
+                LOGGER.info("file name: " + item.key + ", file type: " + item.mimeType + ", file size: " + size + ", "
                         + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "" + "file time: " + time);
             }
         }
@@ -401,7 +289,7 @@ public class QiManager {
     }
 
     private void urlError(Exception e) {
-        logger.error("generate url error: " + e.getMessage());
+        LOGGER.error("generate url error: " + e.getMessage());
         DialogUtils.showException(QiniuValueConsts.GENERATE_URL_ERROR, e);
     }
 

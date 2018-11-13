@@ -9,7 +9,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.util.Pair;
 import org.code4everything.qiniu.QiniuApplication;
-import org.code4everything.qiniu.api.QiManager;
+import org.code4everything.qiniu.api.SdkManager;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.controller.MainWindowController;
 import org.code4everything.qiniu.model.BucketBean;
@@ -27,7 +27,7 @@ public class QiniuDialog {
     /**
      * 显示移动文件的弹窗
      */
-    public Pair<QiManager.FileAction, String[]> showFileMovableDialog(String bucket, String key, boolean setKey) {
+    public Pair<SdkManager.FileAction, String[]> showFileMovableDialog(String bucket, String key, boolean setKey) {
         MainWindowController main = MainWindowController.getInstance();
         ButtonType ok = new ButtonType(QiniuValueConsts.OK, ButtonBar.ButtonData.OK_DONE);
         Dialog<String[]> dialog = getDialog(ok);
@@ -67,8 +67,8 @@ public class QiniuDialog {
         if (result.isPresent()) {
             bucket = bucketCombo.getValue();
             key = keyTextField.getText();
-            QiManager.FileAction action = copyAsCheckBox.isSelected() ? QiManager.FileAction.COPY :
-                    QiManager.FileAction.MOVE;
+            SdkManager.FileAction action = copyAsCheckBox.isSelected() ? SdkManager.FileAction.COPY :
+                    SdkManager.FileAction.MOVE;
             return new Pair<>(action, new String[]{bucket, key});
         } else {
             return null;

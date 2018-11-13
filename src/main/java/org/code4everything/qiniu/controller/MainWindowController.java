@@ -23,10 +23,11 @@ import javafx.stage.FileChooser;
 import javafx.util.Pair;
 import org.apache.log4j.Logger;
 import org.code4everything.qiniu.QiniuApplication;
-import org.code4everything.qiniu.api.QiManager;
-import org.code4everything.qiniu.api.config.SdkConfigurer;
+import org.code4everything.qiniu.api.SdkConfigurer;
+import org.code4everything.qiniu.api.SdkManager;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.model.FileBean;
+import org.code4everything.qiniu.service.QiniuService;
 import org.code4everything.qiniu.util.ConfigUtils;
 import org.code4everything.qiniu.util.DialogUtils;
 import org.code4everything.qiniu.util.QiniuDialog;
@@ -48,6 +49,8 @@ import java.util.regex.Pattern;
 public class MainWindowController {
 
     private static MainWindowController mainWindowController = null;
+
+    private final QiniuService service = new QiniuService();
 
     @FXML
     public ComboBox<String> bucketChoiceCombo;
@@ -163,7 +166,7 @@ public class MainWindowController {
         nameCol.setOnEditCommit(v -> {
             String name;
             FileBean fileInfo = v.getTableView().getItems().get(v.getTablePosition().getRow());
-            if (new QiManager().renameFile(bucketChoiceCombo.getValue(), v.getOldValue(), v.getNewValue())) {
+            if (new SdkManager().renameFile(bucketChoiceCombo.getValue(), v.getOldValue(), v.getNewValue())) {
                 name = v.getNewValue();
             } else {
                 name = v.getOldValue();
@@ -179,7 +182,7 @@ public class MainWindowController {
         typeCol.setOnEditCommit(v -> {
             FileBean fileInfo = v.getTableView().getItems().get(v.getTablePosition().getRow());
             String type;
-            if (new QiManager().changeType(fileInfo.getName(), v.getNewValue(), bucketChoiceCombo.getValue())) {
+            if (new SdkManager().changeType(fileInfo.getName(), v.getNewValue(), bucketChoiceCombo.getValue())) {
                 type = v.getNewValue();
             } else {
                 type = v.getOldValue();
@@ -336,17 +339,17 @@ public class MainWindowController {
             String[] domains = {domain};
             logger.info("start to get flux of domain: " + domain);
             ThreadPool.executor.submit(() -> {
-                QiManager manager = new QiManager();
+                SdkManager manager = new SdkManager();
                 Platform.runLater(() -> {
                     if (fluxUnitChange) {
                         String fluxUnit = fluxCountUnit.getValue();
                         bucketFluxChart.getData().clear();
-                        bucketFluxChart.getData().add(manager.getBucketFlux(domains, fromDate, toDate, fluxUnit));
+                        bucketFluxChart.getData().add(service.getBucketFlux(domains, fromDate, toDate, fluxUnit));
                     }
                     if (bandUnitChange) {
                         String bandUnit = bandCountUnit.getValue();
                         bucketBandChart.getData().clear();
-                        bucketBandChart.getData().add(manager.getBucketBandwidth(domains, fromDate, toDate, bandUnit));
+                        bucketBandChart.getData().add(service.getBucketBandwidth(domains, fromDate, toDate, bandUnit));
                     }
                 });
             });
@@ -361,14 +364,14 @@ public class MainWindowController {
     public void downloadCdnLog() {
         String date = DialogUtils.showInputDialog(null, QiniuValueConsts.INPUT_LOG_DATE,
                 Formatter.dateToString(new Date()));
-        new QiManager().downloadCdnLog(date);
+        new SdkManager().downloadCdnLog(date);
     }
 
     /**
      * 文件刷新，cdn相关
      */
     public void refreshFile() {
-        new QiManager().refreshFile(resTable.getSelectionModel().getSelectedItems(),
+        new SdkManager().refreshFile(resTable.getSelectionModel().getSelectedItems(),
                 "http://" + bucketDomainTextField.getText());
     }
 
@@ -387,7 +390,7 @@ public class MainWindowController {
         ObservableList<FileBean> selectedItems = resTable.getSelectionModel().getSelectedItems();
         if (Checker.isNotEmpty(selectedItems)) {
             String filename = selectedItems.get(0).getName();
-            String url = "http://" + new QiManager().getPublicURL(filename, bucketDomainTextField.getText());
+            String url = "http://" + new SdkManager().getPublicURL(filename, bucketDomainTextField.getText());
             QiniuUtils.openLink(url);
         }
     }
@@ -402,7 +405,7 @@ public class MainWindowController {
     private void download(DownloadWay way) {
         ObservableList<FileBean> selectedItems = resTable.getSelectionModel().getSelectedItems();
         if (Checker.isNotEmpty(selectedItems)) {
-            QiManager manager = new QiManager();
+            SdkManager manager = new SdkManager();
             String domain = "http://" + bucketDomainTextField.getText();
             if (way == DownloadWay.PUBLIC) {
                 logger.debug("start to public download");
@@ -431,7 +434,7 @@ public class MainWindowController {
     public void updateFile() {
         ObservableList<FileBean> selectedItems = resTable.getSelectionModel().getSelectedItems();
         if (Checker.isNotEmpty(selectedItems)) {
-            QiManager manager = new QiManager();
+            SdkManager manager = new SdkManager();
             for (FileBean fileInfo : selectedItems) {
                 manager.updateFile(bucketChoiceCombo.getValue(), fileInfo.getName());
             }
@@ -448,7 +451,7 @@ public class MainWindowController {
                     QiniuValueConsts.DEFAULT_FILE_LIFE);
             if (Checker.isNumber(lifeStr)) {
                 int life = Formatter.stringToInt(lifeStr);
-                QiManager manager = new QiManager();
+                SdkManager manager = new SdkManager();
                 for (FileBean fileInfo : selectedItems) {
                     manager.setFileLife(bucketChoiceCombo.getValue(), fileInfo.getName(), life);
                 }
@@ -461,7 +464,7 @@ public class MainWindowController {
      */
     public void showFileMovableDialog() {
         ObservableList<FileBean> selectedItems = resTable.getSelectionModel().getSelectedItems();
-        Pair<QiManager.FileAction, String[]> pair;
+        Pair<SdkManager.FileAction, String[]> pair;
         String bucket = bucketChoiceCombo.getValue();
         if (Checker.isEmpty(selectedItems)) {
             // 没有选择文件，结束方法
@@ -474,13 +477,13 @@ public class MainWindowController {
         if (Checker.isNotNull(pair)) {
             boolean useNewKey = Checker.isNotEmpty(pair.getValue()[1]);
             ObservableList<FileBean> resData = resTable.getItems();
-            QiManager manager = new QiManager();
+            SdkManager manager = new SdkManager();
             for (FileBean fileInfo : selectedItems) {
                 String fb = bucketChoiceCombo.getValue();
                 String tb = pair.getValue()[0];
                 String name = useNewKey ? pair.getValue()[1] : fileInfo.getName();
                 boolean move = manager.moveOrCopyFile(fb, fileInfo.getName(), tb, name, pair.getKey());
-                if (pair.getKey() == QiManager.FileAction.MOVE && move) {
+                if (pair.getKey() == SdkManager.FileAction.MOVE && move) {
                     boolean sear = Checker.isNotEmpty(searchTextField.getText());
                     if (fb.equals(tb)) {
                         // 删除数据源
@@ -508,7 +511,7 @@ public class MainWindowController {
      */
     public void deleteFiles() {
         ObservableList<FileBean> fileInfos = resTable.getSelectionModel().getSelectedItems();
-        new QiManager().deleteFiles(fileInfos, bucketChoiceCombo.getValue());
+        new SdkManager().deleteFiles(fileInfos, bucketChoiceCombo.getValue());
     }
 
     /**
@@ -518,7 +521,7 @@ public class MainWindowController {
         ObservableList<FileBean> fileInfos = resTable.getSelectionModel().getSelectedItems();
         if (Checker.isNotEmpty(fileInfos)) {
             // 只复制选中的第一个文件的链接
-            String link = "http://" + new QiManager().getPublicURL(fileInfos.get(0).getName(),
+            String link = "http://" + new SdkManager().getPublicURL(fileInfos.get(0).getName(),
                     bucketDomainTextField.getText());
             Utils.copyToClipboard(link);
             logger.info("copy link: " + link);
@@ -576,7 +579,7 @@ public class MainWindowController {
      */
     private void setResTableData() {
         ThreadPool.executor.submit(() -> {
-            new QiManager().listFileOfBucket();
+            new SdkManager().listFileOfBucket();
             Platform.runLater(() -> {
                 resTable.setItems(QiniuApplication.data);
                 setBucketCount();
