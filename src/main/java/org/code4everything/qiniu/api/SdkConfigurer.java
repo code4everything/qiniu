@@ -8,11 +8,7 @@ import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.persistent.FileRecorder;
 import com.qiniu.util.Auth;
 import com.zhazhapan.util.Utils;
-import javafx.application.Platform;
 import org.apache.log4j.Logger;
-import org.code4everything.qiniu.constant.QiniuValueConsts;
-import org.code4everything.qiniu.util.DialogUtils;
-import org.code4everything.qiniu.util.QiniuUtils;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -23,6 +19,8 @@ import java.util.Map;
  * @author pantao
  */
 public class SdkConfigurer {
+
+    private static final String[] BUCKET_NAME_ARRAY = {"华东", "华北", "华南", "北美"};
 
     private static final Map<String, Zone> ZONE = new HashMap<>();
 
@@ -38,10 +36,10 @@ public class SdkConfigurer {
 
     static {
         // 加载空间区域
-        ZONE.put(QiniuValueConsts.BUCKET_NAME_ARRAY[0], Zone.zone0());
-        ZONE.put(QiniuValueConsts.BUCKET_NAME_ARRAY[1], Zone.zone1());
-        ZONE.put(QiniuValueConsts.BUCKET_NAME_ARRAY[2], Zone.zone2());
-        ZONE.put(QiniuValueConsts.BUCKET_NAME_ARRAY[3], Zone.zoneNa0());
+        ZONE.put(BUCKET_NAME_ARRAY[0], Zone.zone0());
+        ZONE.put(BUCKET_NAME_ARRAY[1], Zone.zone1());
+        ZONE.put(BUCKET_NAME_ARRAY[2], Zone.zone2());
+        ZONE.put(BUCKET_NAME_ARRAY[3], Zone.zoneNa0());
     }
 
     private SdkConfigurer() {}
@@ -71,17 +69,9 @@ public class SdkConfigurer {
     }
 
     /**
-     * 配置文件上传环境
+     * 配置文件上传环境，不再做网络检查，请执行保证网络通畅
      */
     public static boolean configUploadEnv(String zone, String bucket) {
-        if (!QiniuUtils.checkNet()) {
-            Platform.runLater(() -> {
-                DialogUtils.showError(QiniuValueConsts.NET_ERROR);
-                System.exit(0);
-            });
-            return false;
-        }
-        LOGGER.info("config file upload environment");
         // 构造一个带指定Zone对象的配置类
         Configuration configuration = new Configuration(SdkConfigurer.ZONE.get(zone));
         // 生成上传凭证，然后准备上传
