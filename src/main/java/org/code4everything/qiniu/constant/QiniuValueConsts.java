@@ -49,8 +49,6 @@ public class QiniuValueConsts {
 
     public static final String DOMAIN_CONFIG_ERROR = "您还没有正确地配置空间域名";
 
-    public static final int BUCKET_LIST_LIMIT_SIZE = 1000;
-
     public static final String REFRESH_SUCCESS = "刷新资源列表成功";
 
     public static final String NET_ERROR = "没有连接到网络，无法运行程序";
@@ -69,13 +67,9 @@ public class QiniuValueConsts {
 
     public static final String UPDATE_ERROR = "更新镜像源失败";
 
-    public static final String GENERATE_URL_ERROR = "生成下载链接失败";
-
     public static final String DEFAULT_FILE_LIFE = "365";
 
     public static final String CONFIG_DOWNLOAD_PATH = "配置文件下载路径";
-
-    public static final String DOWNLOAD_FILE_ERROR = "下载文件错误";
 
     public static final String DOWNLOAD_URL = "下载链接";
 

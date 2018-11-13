@@ -6,7 +6,6 @@ import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;
 import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.model.BatchStatus;
-import org.apache.log4j.Logger;
 
 import java.util.Map;
 
@@ -14,8 +13,6 @@ import java.util.Map;
  * @author pantao
  */
 public class SdkManager {
-
-    private static final Logger LOGGER = Logger.getLogger(SdkManager.class);
 
     /**
      * 自定义私有链接过期时间
