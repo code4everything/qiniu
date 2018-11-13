@@ -166,7 +166,7 @@ public class MainWindowController {
         nameCol.setOnEditCommit(v -> {
             String name;
             FileBean fileInfo = v.getTableView().getItems().get(v.getTablePosition().getRow());
-            if (new SdkManager().renameFile(bucketChoiceCombo.getValue(), v.getOldValue(), v.getNewValue())) {
+            if (service.renameFile(bucketChoiceCombo.getValue(), v.getOldValue(), v.getNewValue())) {
                 name = v.getNewValue();
             } else {
                 name = v.getOldValue();
@@ -182,7 +182,7 @@ public class MainWindowController {
         typeCol.setOnEditCommit(v -> {
             FileBean fileInfo = v.getTableView().getItems().get(v.getTablePosition().getRow());
             String type;
-            if (new SdkManager().changeType(fileInfo.getName(), v.getNewValue(), bucketChoiceCombo.getValue())) {
+            if (service.changeType(fileInfo.getName(), v.getNewValue(), bucketChoiceCombo.getValue())) {
                 type = v.getNewValue();
             } else {
                 type = v.getOldValue();
@@ -371,7 +371,7 @@ public class MainWindowController {
      * 文件刷新，cdn相关
      */
     public void refreshFile() {
-        service.refreshFile(resTable.getSelectionModel().getSelectedItems(), bucketDomainTextField.getText());
+        service.refreshFiles(resTable.getSelectionModel().getSelectedItems(), bucketDomainTextField.getText());
     }
 
     /**
@@ -411,7 +411,7 @@ public class MainWindowController {
             } else {
                 logger.debug("start to private download");
                 for (FileBean fileInfo : selectedItems) {
-                    service.publicDownload(fileInfo.getName(), bucketDomainTextField.getText());
+                    service.privateDownload(fileInfo.getName(), bucketDomainTextField.getText());
                 }
             }
         }
@@ -430,9 +430,8 @@ public class MainWindowController {
     public void updateFile() {
         ObservableList<FileBean> selectedItems = resTable.getSelectionModel().getSelectedItems();
         if (Checker.isNotEmpty(selectedItems)) {
-            SdkManager manager = new SdkManager();
             for (FileBean fileInfo : selectedItems) {
-                manager.updateFile(bucketChoiceCombo.getValue(), fileInfo.getName());
+                service.updateFiles(bucketChoiceCombo.getValue(), fileInfo.getName());
             }
         }
     }
@@ -447,9 +446,8 @@ public class MainWindowController {
                     QiniuValueConsts.DEFAULT_FILE_LIFE);
             if (Checker.isNumber(lifeStr)) {
                 int life = Formatter.stringToInt(lifeStr);
-                SdkManager manager = new SdkManager();
                 for (FileBean fileInfo : selectedItems) {
-                    manager.setFileLife(bucketChoiceCombo.getValue(), fileInfo.getName(), life);
+                    service.setFilesLife(bucketChoiceCombo.getValue(), fileInfo.getName(), life);
                 }
             }
         }
@@ -473,12 +471,11 @@ public class MainWindowController {
         if (Checker.isNotNull(pair)) {
             boolean useNewKey = Checker.isNotEmpty(pair.getValue()[1]);
             ObservableList<FileBean> resData = resTable.getItems();
-            SdkManager manager = new SdkManager();
             for (FileBean fileInfo : selectedItems) {
                 String fb = bucketChoiceCombo.getValue();
                 String tb = pair.getValue()[0];
                 String name = useNewKey ? pair.getValue()[1] : fileInfo.getName();
-                boolean move = manager.moveOrCopyFile(fb, fileInfo.getName(), tb, name, pair.getKey());
+                boolean move = service.moveOrCopyFile(fb, fileInfo.getName(), tb, name, pair.getKey());
                 if (pair.getKey() == SdkManager.FileAction.MOVE && move) {
                     boolean sear = Checker.isNotEmpty(searchTextField.getText());
                     if (fb.equals(tb)) {
@@ -506,8 +503,7 @@ public class MainWindowController {
      * 删除文件
      */
     public void deleteFiles() {
-        ObservableList<FileBean> fileInfos = resTable.getSelectionModel().getSelectedItems();
-        new SdkManager().deleteFiles(fileInfos, bucketChoiceCombo.getValue());
+        service.deleteFiles(resTable.getSelectionModel().getSelectedItems(), bucketChoiceCombo.getValue());
     }
 
     /**
@@ -572,7 +568,7 @@ public class MainWindowController {
      */
     private void setResTableData() {
         ThreadPool.executor.submit(() -> {
-            new SdkManager().listFileOfBucket();
+            service.listFile();
             Platform.runLater(() -> {
                 resTable.setItems(QiniuApplication.data);
                 setBucketCount();
