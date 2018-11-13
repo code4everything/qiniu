@@ -364,15 +364,14 @@ public class MainWindowController {
     public void downloadCdnLog() {
         String date = DialogUtils.showInputDialog(null, QiniuValueConsts.INPUT_LOG_DATE,
                 Formatter.dateToString(new Date()));
-        new SdkManager().downloadCdnLog(date);
+        service.downloadCdnLog(date);
     }
 
     /**
      * 文件刷新，cdn相关
      */
     public void refreshFile() {
-        new SdkManager().refreshFile(resTable.getSelectionModel().getSelectedItems(),
-                "http://" + bucketDomainTextField.getText());
+        service.refreshFile(resTable.getSelectionModel().getSelectedItems(), bucketDomainTextField.getText());
     }
 
     /**
@@ -390,8 +389,7 @@ public class MainWindowController {
         ObservableList<FileBean> selectedItems = resTable.getSelectionModel().getSelectedItems();
         if (Checker.isNotEmpty(selectedItems)) {
             String filename = selectedItems.get(0).getName();
-            String url = "http://" + new SdkManager().getPublicURL(filename, bucketDomainTextField.getText());
-            QiniuUtils.openLink(url);
+            QiniuUtils.openLink(QiniuUtils.joinUrl(filename, bucketDomainTextField.getText()));
         }
     }
 
@@ -405,17 +403,15 @@ public class MainWindowController {
     private void download(DownloadWay way) {
         ObservableList<FileBean> selectedItems = resTable.getSelectionModel().getSelectedItems();
         if (Checker.isNotEmpty(selectedItems)) {
-            SdkManager manager = new SdkManager();
-            String domain = "http://" + bucketDomainTextField.getText();
             if (way == DownloadWay.PUBLIC) {
                 logger.debug("start to public download");
                 for (FileBean fileInfo : selectedItems) {
-                    manager.publicDownload(fileInfo.getName(), domain);
+                    service.publicDownload(fileInfo.getName(), bucketDomainTextField.getText());
                 }
             } else {
                 logger.debug("start to private download");
                 for (FileBean fileInfo : selectedItems) {
-                    manager.privateDownload(fileInfo.getName(), domain);
+                    service.publicDownload(fileInfo.getName(), bucketDomainTextField.getText());
                 }
             }
         }
@@ -521,10 +517,7 @@ public class MainWindowController {
         ObservableList<FileBean> fileInfos = resTable.getSelectionModel().getSelectedItems();
         if (Checker.isNotEmpty(fileInfos)) {
             // 只复制选中的第一个文件的链接
-            String link = "http://" + new SdkManager().getPublicURL(fileInfos.get(0).getName(),
-                    bucketDomainTextField.getText());
-            Utils.copyToClipboard(link);
-            logger.info("copy link: " + link);
+            Utils.copyToClipboard(QiniuUtils.joinUrl(fileInfos.get(0).getName(), bucketDomainTextField.getText()));
         }
     }
 

@@ -9,7 +9,6 @@ import com.zhazhapan.util.Utils;
 import com.zhazhapan.util.dialog.Alerts;
 import org.apache.log4j.Logger;
 import org.code4everything.qiniu.QiniuApplication;
-import org.code4everything.qiniu.api.SdkConfigurer;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
 
 import java.io.File;
@@ -17,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 /**
  * @author pantao
@@ -24,7 +24,9 @@ import java.net.URL;
  */
 public class QiniuUtils {
 
-    private static final Logger LOGGER = Logger.getLogger(SdkConfigurer.class);
+    private static final Logger LOGGER = Logger.getLogger(QiniuUtils.class);
+
+    private static final String HTTP = "http";
 
     private QiniuUtils() {}
 
@@ -93,6 +95,24 @@ public class QiniuUtils {
         try {
             return Formatter.getFileName(string);
         } catch (UnsupportedEncodingException e) {
+            LOGGER.error("get file name of url failed, message -> " + e.getMessage());
+            return "";
+        }
+    }
+
+    /**
+     * 拼接链接
+     */
+    public static String joinUrl(String fileName, String domain) {
+        if (!domain.startsWith(HTTP)) {
+            domain = HTTP + "://" + domain;
+        }
+        fileName = fileName.replaceAll(" ", "qn_code_per_20").replaceAll("/", "qn_code_per_2F");
+        try {
+            fileName = URLEncoder.encode(fileName, "utf-8").replaceAll("qn_code_per_2F", "/");
+            return String.format("%s/%s", domain, fileName.replaceAll("qn_code_per_20", "%20"));
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.error("encode url failed, message -> " + e.getMessage());
             return "";
         }
     }

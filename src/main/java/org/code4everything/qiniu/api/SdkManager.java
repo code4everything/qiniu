@@ -18,8 +18,6 @@ import org.code4everything.qiniu.model.FileBean;
 import org.code4everything.qiniu.util.DialogUtils;
 import org.code4everything.qiniu.util.QiniuUtils;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -29,6 +27,12 @@ import java.util.Map;
 public class SdkManager {
 
     private static final Logger LOGGER = Logger.getLogger(SdkManager.class);
+
+    /**
+     * 自定义私有链接过期时间
+     */
+    private static final long EXPIRE_IN_SECONDS = 24 * 60 * 60;
+
 
     /**
      * 获取空间带宽统计
@@ -45,85 +49,25 @@ public class SdkManager {
     }
 
     /**
-     * 日志下载，cdn相关
+     * 日志下载，CDN 相关
      */
-    public void downloadCdnLog(String logDate) {
-        if (Checker.isNotEmpty(QiniuApplication.getConfigBean().getBuckets()) && Checker.isDate(logDate)) {
-            String[] domains = new String[QiniuApplication.getConfigBean().getBuckets().size()];
-            for (int i = 0; i < QiniuApplication.getConfigBean().getBuckets().size(); i++) {
-                domains[i] = QiniuApplication.getConfigBean().getBuckets().get(i).getUrl();
-            }
-            try {
-                CdnResult.LogListResult logRes = SdkConfigurer.getCdnManager().getCdnLogList(domains, logDate);
-                for (Map.Entry<String, LogData[]> logs : logRes.data.entrySet()) {
-                    for (LogData log : logs.getValue()) {
-                        QiniuUtils.download(log.url);
-                    }
-                }
-            } catch (QiniuException e) {
-                LOGGER.error("get cdn log url error, message: " + e.getMessage());
-                DialogUtils.showException(e);
-            }
-        }
+    public Map<String, LogData[]> listCdnLog(String[] domains, String logDate) throws QiniuException {
+        return SdkConfigurer.getCdnManager().getCdnLogList(domains, logDate).data;
     }
 
     /**
-     * 刷新文件，cdn相关
+     * 刷新文件，CDN 相关
      */
-    public void refreshFile(ObservableList<FileBean> fileInfos, String domain) {
-        if (Checker.isNotEmpty(fileInfos)) {
-            String[] files = new String[fileInfos.size()];
-            int i = 0;
-            for (FileBean fileInfo : fileInfos) {
-                files[i++] = getPublicURL(fileInfo.getName(), domain);
-            }
-            refreshFile(files);
-        }
-    }
-
-    /**
-     * 刷新文件，cdn相关
-     */
-    private void refreshFile(String[] files) {
-        try {
-            // 单次方法调用刷新的链接不可以超过100个
-            SdkConfigurer.getCdnManager().refreshUrls(files);
-            LOGGER.info("refresh files success");
-        } catch (QiniuException e) {
-            LOGGER.error("refresh files error, message: " + e.getMessage());
-            DialogUtils.showException(e);
-        }
+    public void refreshFiles(String[] files) throws QiniuException {
+        // 单次方法调用刷新的链接不可以超过100个
+        SdkConfigurer.getCdnManager().refreshUrls(files);
     }
 
     /**
      * 私有下载
      */
-    public void privateDownload(String fileName, String domain) {
-        // 自定义链接过期时间（小时）
-        long expireInSeconds = 24;
-        String publicURL = getPublicURL(fileName, domain);
-        QiniuUtils.download(SdkConfigurer.getAuth().privateDownloadUrl(publicURL, expireInSeconds));
-    }
-
-    /**
-     * 公有下载
-     */
-    public void publicDownload(String fileName, String domain) {
-        String url = getPublicURL(fileName, domain);
-        if (Checker.isNotEmpty(url)) {
-            QiniuUtils.download(url);
-        }
-    }
-
-    public String getPublicURL(String fileName, String domain) {
-        fileName = fileName.replaceAll(" ", "qn_code_per_20").replaceAll("/", "qn_code_per_2F");
-        try {
-            fileName = URLEncoder.encode(fileName, "utf-8").replaceAll("qn_code_per_2F", "/");
-            return String.format("%s/%s", domain, fileName.replaceAll("qn_code_per_20", "%20"));
-        } catch (UnsupportedEncodingException e) {
-            urlError(e);
-            return null;
-        }
+    public String getPrivateUrl(String publicUrl) {
+        return SdkConfigurer.getAuth().privateDownloadUrl(publicUrl, EXPIRE_IN_SECONDS);
     }
 
     /**

@@ -5,11 +5,15 @@ import com.qiniu.common.QiniuException;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.Formatter;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
 import org.apache.log4j.Logger;
+import org.code4everything.qiniu.QiniuApplication;
 import org.code4everything.qiniu.api.SdkManager;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
+import org.code4everything.qiniu.model.FileBean;
 import org.code4everything.qiniu.util.DialogUtils;
+import org.code4everything.qiniu.util.QiniuUtils;
 
 import java.util.Map;
 
@@ -26,6 +30,70 @@ public class QiniuService {
     private static final Logger LOGGER = Logger.getLogger(QiniuService.class);
 
     private final SdkManager sdkManager = new SdkManager();
+
+    /**
+     * 公有下载
+     */
+    public void publicDownload(String fileName, String domain) {
+        QiniuUtils.download(QiniuUtils.joinUrl(fileName, domain));
+    }
+
+    /**
+     * 私有下载
+     */
+    public void privateDownload(String fileName, String domain) {
+        QiniuUtils.download(sdkManager.getPrivateUrl(QiniuUtils.joinUrl(fileName, domain)));
+    }
+
+    /**
+     * 刷新文件
+     */
+    public void refreshFile(ObservableList<FileBean> fileBeans, String domain) {
+        if (Checker.isNotEmpty(fileBeans)) {
+            String[] files = new String[fileBeans.size()];
+            int i = 0;
+            // 获取公有链接
+            for (FileBean fileBean : fileBeans) {
+                files[i++] = QiniuUtils.joinUrl(fileBean.getName(), domain);
+            }
+            try {
+                // 属性文件
+                sdkManager.refreshFiles(files);
+                LOGGER.info("refresh files success");
+            } catch (QiniuException e) {
+                LOGGER.error("refresh files error, message -> " + e.getMessage());
+                DialogUtils.showException(e);
+            }
+        }
+    }
+
+    /**
+     * 日志下载
+     */
+    public void downloadCdnLog(String logDate) {
+        if (Checker.isNotEmpty(QiniuApplication.getConfigBean().getBuckets()) && Checker.isDate(logDate)) {
+            // 转换域名成数组格式
+            String[] domains = new String[QiniuApplication.getConfigBean().getBuckets().size()];
+            for (int i = 0; i < QiniuApplication.getConfigBean().getBuckets().size(); i++) {
+                domains[i] = QiniuApplication.getConfigBean().getBuckets().get(i).getUrl();
+            }
+            Map<String, CdnResult.LogData[]> cdnLog = null;
+            try {
+                cdnLog = sdkManager.listCdnLog(domains, logDate);
+            } catch (QiniuException e) {
+                DialogUtils.showException(e);
+            }
+            if (Checker.isNotEmpty(cdnLog)) {
+                // 下载日志
+                for (Map.Entry<String, CdnResult.LogData[]> logs : cdnLog.entrySet()) {
+                    for (CdnResult.LogData log : logs.getValue()) {
+                        QiniuUtils.download(log.url);
+                    }
+                }
+            }
+        }
+    }
+
 
     /**
      * 获取空间带宽统计，使用自定义单位
