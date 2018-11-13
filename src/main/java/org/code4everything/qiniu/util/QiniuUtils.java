@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 import org.code4everything.qiniu.QiniuApplication;
 import org.code4everything.qiniu.api.config.SdkConfigurer;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
-import org.code4everything.qiniu.view.Dialogs;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +37,7 @@ public class QiniuUtils {
         // 验证存储路径
         if (Validator.isEmpty(QiniuApplication.getConfigBean().getStoragePath())) {
             // 显示存储路径输入框
-            String storagePath = Dialogs.showInputDialog(null, QiniuValueConsts.CONFIG_DOWNLOAD_PATH,
+            String storagePath = DialogUtils.showInputDialog(null, QiniuValueConsts.CONFIG_DOWNLOAD_PATH,
                     Utils.getCurrentWorkDir());
             if (Validator.isEmpty(storagePath)) {
                 return;

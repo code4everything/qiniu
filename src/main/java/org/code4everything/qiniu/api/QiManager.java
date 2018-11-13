@@ -22,7 +22,7 @@ import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.controller.MainWindowController;
 import org.code4everything.qiniu.model.FileInfo;
 import org.code4everything.qiniu.util.QiniuUtils;
-import org.code4everything.qiniu.view.Dialogs;
+import org.code4everything.qiniu.util.DialogUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -65,7 +65,7 @@ public class QiManager {
             bandwidthResult = SdkConfigurer.getCdnManager().getBandwidthData(domains, fromDate, toDate, "day");
         } catch (QiniuException e) {
             logger.error("get bucket bandwidth error, message: " + e.getMessage());
-            Platform.runLater(() -> Dialogs.showException(QiniuValueConsts.BUCKET_BAND_ERROR, e));
+            Platform.runLater(() -> DialogUtils.showException(QiniuValueConsts.BUCKET_BAND_ERROR, e));
         }
         Series<String, Long> bandSer = new Series<>();
         bandSer.setName(QiniuValueConsts.BUCKET_BANDWIDTH_COUNT.replaceAll("[A-Z]+", countUnit));
@@ -125,7 +125,7 @@ public class QiManager {
             fluxResult = SdkConfigurer.getCdnManager().getFluxData(domains, fromDate, toDate, "day");
         } catch (QiniuException e) {
             logger.error("get bucket flux error, message: " + e.getMessage());
-            Platform.runLater(() -> Dialogs.showException(QiniuValueConsts.BUCKET_FLUX_ERROR, e));
+            Platform.runLater(() -> DialogUtils.showException(QiniuValueConsts.BUCKET_FLUX_ERROR, e));
         }
         Series<String, Long> fluxSer = new Series<>();
         fluxSer.setName(QiniuValueConsts.BUCKET_FLUX_COUNT.replaceAll("[A-Z]+", countUnit));
@@ -174,7 +174,7 @@ public class QiManager {
                 }
             } catch (QiniuException e) {
                 logger.error("get cdn log url error, message: " + e.getMessage());
-                Dialogs.showException(e);
+                DialogUtils.showException(e);
             }
         }
     }
@@ -203,7 +203,7 @@ public class QiManager {
             logger.info("refresh files success");
         } catch (QiniuException e) {
             logger.error("refresh files error, message: " + e.getMessage());
-            Dialogs.showException(e);
+            DialogUtils.showException(e);
         }
     }
 
@@ -248,7 +248,7 @@ public class QiManager {
             logger.info(log + "' success");
         } catch (QiniuException e) {
             logger.error(log + "' error, message: " + e.getMessage());
-            Dialogs.showException(QiniuValueConsts.UPDATE_ERROR, e);
+            DialogUtils.showException(QiniuValueConsts.UPDATE_ERROR, e);
         }
     }
 
@@ -262,7 +262,7 @@ public class QiManager {
             logger.info(log + "success");
         } catch (QiniuException e) {
             logger.error(log + "error, message: " + e.getMessage());
-            Dialogs.showException(QiniuValueConsts.MOVE_OR_RENAME_ERROR, e);
+            DialogUtils.showException(QiniuValueConsts.MOVE_OR_RENAME_ERROR, e);
         }
     }
 
@@ -298,7 +298,7 @@ public class QiManager {
                 return true;
             } catch (QiniuException e) {
                 logger.error(log + " failed, message: " + e.getMessage());
-                Dialogs.showException(QiniuValueConsts.MOVE_OR_RENAME_ERROR, e);
+                DialogUtils.showException(QiniuValueConsts.MOVE_OR_RENAME_ERROR, e);
                 return false;
             }
         }
@@ -317,7 +317,7 @@ public class QiManager {
                 return true;
             } catch (QiniuException e) {
                 logger.error(log + "' failed, message: " + e.getMessage());
-                Dialogs.showException(QiniuValueConsts.CHANGE_FILE_TYPE_ERROR, e);
+                DialogUtils.showException(QiniuValueConsts.CHANGE_FILE_TYPE_ERROR, e);
                 return false;
             }
         }
@@ -359,11 +359,11 @@ public class QiManager {
                         }
                     } else {
                         logger.error("delete file '" + file + "' failed, message: " + status.data.error);
-                        Dialogs.showError("删除文件：" + file + " 失败");
+                        DialogUtils.showError("删除文件：" + file + " 失败");
                     }
                 }
             } catch (QiniuException e) {
-                Dialogs.showException(QiniuValueConsts.DELETE_ERROR, e);
+                DialogUtils.showException(QiniuValueConsts.DELETE_ERROR, e);
             }
             MainWindowController.getInstance().setBucketCount();
         }
@@ -402,7 +402,7 @@ public class QiManager {
 
     private void urlError(Exception e) {
         logger.error("generate url error: " + e.getMessage());
-        Dialogs.showException(QiniuValueConsts.GENERATE_URL_ERROR, e);
+        DialogUtils.showException(QiniuValueConsts.GENERATE_URL_ERROR, e);
     }
 
     public enum FileAction {

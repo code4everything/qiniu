@@ -70,6 +70,9 @@ public class ConfigUtils {
         QiniuApplication.setConfigBean(configBean);
     }
 
+    /**
+     * 写配置文件
+     */
     public static void writeConfig() {
         FileUtil.writeUtf8String(JSONObject.toJSONString(QiniuApplication.getConfigBean(), true), CONFIG_PATH);
     }

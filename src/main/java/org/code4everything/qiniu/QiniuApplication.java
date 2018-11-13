@@ -15,7 +15,7 @@ import org.code4everything.qiniu.controller.MainWindowController;
 import org.code4everything.qiniu.model.ConfigBean;
 import org.code4everything.qiniu.model.FileInfo;
 import org.code4everything.qiniu.util.ConfigUtils;
-import org.code4everything.qiniu.view.Dialogs;
+import org.code4everything.qiniu.util.DialogUtils;
 
 import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -80,7 +80,7 @@ public class QiniuApplication extends Application {
             stage.setScene(scene);
         } catch (Exception e) {
             LOGGER.error("init stage error: " + e.getMessage());
-            Dialogs.showFatalError(QiniuValueConsts.INIT_APP_ERROR_HEADER, e);
+            DialogUtils.showFatalError(QiniuValueConsts.INIT_APP_ERROR_HEADER, e);
         }
         // 设置图标
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/image/qiniu.png")));
@@ -90,7 +90,7 @@ public class QiniuApplication extends Application {
             // 判断是否有文件在上传下载
             MainWindowController main = MainWindowController.getInstance();
             if (main.downloadProgress.isVisible() || main.uploadProgress.isVisible()) {
-                Optional<ButtonType> result = Dialogs.showConfirmation(QiniuValueConsts.UPLOADING_OR_DOWNLOADING);
+                Optional<ButtonType> result = DialogUtils.showConfirmation(QiniuValueConsts.UPLOADING_OR_DOWNLOADING);
                 if (result.isPresent() && result.get() != ButtonType.OK) {
                     // 取消退出事件
                     event.consume();

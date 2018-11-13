@@ -12,7 +12,7 @@ import javafx.application.Platform;
 import org.apache.log4j.Logger;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.util.QiniuUtils;
-import org.code4everything.qiniu.view.Dialogs;
+import org.code4everything.qiniu.util.DialogUtils;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -77,7 +77,7 @@ public class SdkConfigurer {
     public static boolean configUploadEnv(String zone, String bucket) {
         if (!QiniuUtils.checkNet()) {
             Platform.runLater(() -> {
-                Dialogs.showError(QiniuValueConsts.NET_ERROR);
+                DialogUtils.showError(QiniuValueConsts.NET_ERROR);
                 System.exit(0);
             });
             return false;

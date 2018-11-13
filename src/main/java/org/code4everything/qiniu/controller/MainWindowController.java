@@ -28,8 +28,9 @@ import org.code4everything.qiniu.api.config.SdkConfigurer;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.model.FileInfo;
 import org.code4everything.qiniu.util.ConfigUtils;
+import org.code4everything.qiniu.util.DialogUtils;
+import org.code4everything.qiniu.util.QiniuDialog;
 import org.code4everything.qiniu.util.QiniuUtils;
-import org.code4everything.qiniu.view.Dialogs;
 
 import java.awt.*;
 import java.io.File;
@@ -358,7 +359,7 @@ public class MainWindowController {
      * 日志下载，cdn相关
      */
     public void downloadCdnLog() {
-        String date = Dialogs.showInputDialog(null, QiniuValueConsts.INPUT_LOG_DATE,
+        String date = DialogUtils.showInputDialog(null, QiniuValueConsts.INPUT_LOG_DATE,
                 Formatter.dateToString(new Date()));
         new QiManager().downloadCdnLog(date);
     }
@@ -375,7 +376,7 @@ public class MainWindowController {
      * 通过链接下载其他的网络文件
      */
     public void downloadFromURL() {
-        String url = Dialogs.showInputDialog(null, QiniuValueConsts.DOWNLOAD_URL, "http://example.com");
+        String url = DialogUtils.showInputDialog(null, QiniuValueConsts.DOWNLOAD_URL, "http://example.com");
         QiniuUtils.download(url);
     }
 
@@ -443,7 +444,7 @@ public class MainWindowController {
     public void setLife() {
         ObservableList<FileInfo> selectedItems = resTable.getSelectionModel().getSelectedItems();
         if (Checker.isNotEmpty(selectedItems)) {
-            String lifeStr = Dialogs.showInputDialog(null, QiniuValueConsts.FILE_LIFE,
+            String lifeStr = DialogUtils.showInputDialog(null, QiniuValueConsts.FILE_LIFE,
                     QiniuValueConsts.DEFAULT_FILE_LIFE);
             if (Checker.isNumber(lifeStr)) {
                 int life = Formatter.stringToInt(lifeStr);
@@ -466,9 +467,9 @@ public class MainWindowController {
             // 没有选择文件，结束方法
             return;
         } else if (selectedItems.size() > 1) {
-            pair = new Dialogs().showFileMovableDialog(bucket, "", false);
+            pair = new QiniuDialog().showFileMovableDialog(bucket, "", false);
         } else {
-            pair = new Dialogs().showFileMovableDialog(bucket, selectedItems.get(0).getName(), true);
+            pair = new QiniuDialog().showFileMovableDialog(bucket, selectedItems.get(0).getName(), true);
         }
         if (Checker.isNotNull(pair)) {
             boolean useNewKey = Checker.isNotEmpty(pair.getValue()[1]);
@@ -563,11 +564,11 @@ public class MainWindowController {
      */
     public void refreshResTable() {
         if (!QiniuUtils.checkNet()) {
-            Dialogs.showWarning(QiniuValueConsts.NET_ERROR);
+            DialogUtils.showWarning(QiniuValueConsts.NET_ERROR);
             return;
         }
         setResTableData();
-        Dialogs.showInformation(QiniuValueConsts.REFRESH_SUCCESS);
+        DialogUtils.showInformation(QiniuValueConsts.REFRESH_SUCCESS);
     }
 
     /**
@@ -666,7 +667,7 @@ public class MainWindowController {
     public void uploadFile() {
         if (Checker.isEmpty(zoneText.getText()) || Checker.isEmpty(selectedFileTextArea.getText())) {
             // 没有选择存储空间或文件，不能上传文件
-            Dialogs.showWarning(QiniuValueConsts.NEED_CHOOSE_BUCKET_OR_FILE);
+            DialogUtils.showWarning(QiniuValueConsts.NEED_CHOOSE_BUCKET_OR_FILE);
             return;
         }
         // 新建一个上传文件的线程
@@ -732,7 +733,7 @@ public class MainWindowController {
                     } catch (QiniuException e) {
                         status = Formatter.datetimeToString(new Date()) + "\terror\t" + path;
                         logger.error("upload error, message: " + e.getMessage());
-                        Platform.runLater(() -> Dialogs.showException(QiniuValueConsts.UPLOAD_ERROR, e));
+                        Platform.runLater(() -> DialogUtils.showException(QiniuValueConsts.UPLOAD_ERROR, e));
                     }
                     Platform.runLater(() -> {
                         uploadStatusTextArea.deleteText(0, end);
@@ -777,7 +778,7 @@ public class MainWindowController {
     public void openConfigFile() {
         try {
             Desktop.getDesktop().open(new File(QiniuValueConsts.CONFIG_PATH));
-            Optional<ButtonType> result = Dialogs.showConfirmation(QiniuValueConsts.RELOAD_CONFIG);
+            Optional<ButtonType> result = DialogUtils.showConfirmation(QiniuValueConsts.RELOAD_CONFIG);
             if (result.isPresent() && result.get() == ButtonType.OK) {
                 // 重新载入配置文件
                 bucketChoiceCombo.getItems().clear();
@@ -786,10 +787,10 @@ public class MainWindowController {
             }
         } catch (IOException e) {
             logger.error("open config file error, message -> " + e.getMessage());
-            Dialogs.showException(QiniuValueConsts.OPEN_FILE_ERROR, e);
+            DialogUtils.showException(QiniuValueConsts.OPEN_FILE_ERROR, e);
         } catch (Exception e) {
             logger.error("can't open config file, message -> " + e.getMessage());
-            Dialogs.showException(QiniuValueConsts.OPEN_FILE_ERROR, e);
+            DialogUtils.showException(QiniuValueConsts.OPEN_FILE_ERROR, e);
         }
     }
 
@@ -797,7 +798,7 @@ public class MainWindowController {
      * 重置Key
      */
     public void resetKey() {
-        boolean ok = new Dialogs().showInputKeyDialog();
+        boolean ok = new QiniuDialog().showInputKeyDialog();
         if (ok && Checker.isNotEmpty(zoneText.getText())) {
             SdkConfigurer.configUploadEnv(zoneText.getText(), bucketChoiceCombo.getValue());
         }
@@ -808,7 +809,7 @@ public class MainWindowController {
      */
     public void showBucketAddableDialog() {
         logger.info("show bucket addable dialog");
-        new Dialogs().showBucketAddableDialog();
+        new QiniuDialog().showBucketAddableDialog();
     }
 
     public enum DownloadWay {
