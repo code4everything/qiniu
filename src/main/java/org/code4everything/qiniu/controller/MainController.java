@@ -86,12 +86,6 @@ public class MainController {
     public TextField searchTextField;
 
     @FXML
-    public ProgressBar uploadProgress;
-
-    @FXML
-    public ProgressBar downloadProgress;
-
-    @FXML
     public CheckBox folderRecursive;
 
     @FXML
@@ -116,21 +110,6 @@ public class MainController {
 
     @FXML
     private TableColumn<FileBean, String> timeColumn;
-
-    @FXML
-    private Hyperlink toCsdnBlog;
-
-    @FXML
-    private Hyperlink toHexoBlog;
-
-    @FXML
-    private Hyperlink toGithubSource;
-
-    @FXML
-    private Hyperlink toIntro;
-
-    @FXML
-    private Hyperlink toIntro1;
 
     @FXML
     private Label totalSizeLabel;
@@ -279,19 +258,21 @@ public class MainController {
         // 获取开始日期和结束日期的时间差
         long timeSpan = localEndDate.getTime() - localStartDate.getTime();
         if (Checker.isNotEmpty(domainTextField.getText()) && timeSpan >= 0 && timeSpan <= QiniuValueConsts.DATE_SPAN_OF_THIRTY_ONE) {
-            String[] domains = {domainTextField.getText()};
-            if (isFluxUnitChange) {
-                // 获取流量数据
-                String fluxUnit = fluxCountUnit.getValue();
-                bucketFluxChart.getData().clear();
-                bucketFluxChart.getData().add(service.getBucketFlux(domains, fromDate, toDate, fluxUnit));
-            }
-            if (isBandwidthUnitChange) {
-                // 获取带宽数据
-                String bandUnit = bandCountUnit.getValue();
-                bucketBandChart.getData().clear();
-                bucketBandChart.getData().add(service.getBucketBandwidth(domains, fromDate, toDate, bandUnit));
-            }
+            Platform.runLater(() -> {
+                String[] domains = {domainTextField.getText()};
+                if (isFluxUnitChange) {
+                    // 获取流量数据
+                    String fluxUnit = fluxCountUnit.getValue();
+                    bucketFluxChart.getData().clear();
+                    bucketFluxChart.getData().add(service.getBucketFlux(domains, fromDate, toDate, fluxUnit));
+                }
+                if (isBandwidthUnitChange) {
+                    // 获取带宽数据
+                    String bandUnit = bandCountUnit.getValue();
+                    bucketBandChart.getData().clear();
+                    bucketBandChart.getData().add(service.getBucketBandwidth(domains, fromDate, toDate, bandUnit));
+                }
+            });
         }
     }
 
@@ -582,11 +563,7 @@ public class MainController {
         }
         // 新建一个上传文件的线程
         ThreadPool.executor.submit(() -> {
-            Platform.runLater(() -> {
-                uploadProgress.setVisible(true);
-                uploadProgress.setProgress(0);
-                uploadStatusTextArea.insertText(0, QiniuValueConsts.CONFIG_UPLOAD_ENVIRONMENT);
-            });
+            Platform.runLater(() -> uploadStatusTextArea.insertText(0, QiniuValueConsts.CONFIG_UPLOAD_ENVIRONMENT));
             String bucket = bucketChoiceCombo.getValue();
             // 默认不指定key的情况下，以文件内容的hash值作为文件名
             String key = Checker.checkNull(filePrefixCombo.getValue());
@@ -648,8 +625,6 @@ public class MainController {
                     Platform.runLater(() -> {
                         uploadStatusTextArea.deleteText(0, end);
                         uploadStatusTextArea.insertText(0, status);
-                        // 设置上传的进度
-                        uploadProgress.setProgress(++upProgress / total);
                     });
                 }
                 Platform.runLater(() -> selectedFileTextArea.deleteText(0, path.length() + (paths.length > 1 ? 1 : 0)));
@@ -660,8 +635,6 @@ public class MainController {
                 uploadStatusTextArea.positionCaret(0);
                 // 清空待上传的文件列表
                 selectedFileTextArea.clear();
-                // 上传完成时，设置上传进度度不可见
-                uploadProgress.setVisible(false);
             });
             mapResourceData();
             // 添加文件前缀到配置文件

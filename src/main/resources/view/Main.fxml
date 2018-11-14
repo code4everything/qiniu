@@ -285,10 +285,10 @@
                 <BorderPane.margin>
                     <Insets/>
                 </BorderPane.margin>
-                <ProgressBar fx:id="uploadProgress" maxHeight="-Infinity" maxWidth="1.7976931348623157E308"
-                             minHeight="10.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="10.0" prefWidth="500.0"
-                             progress="0.0" style="-fx-border-color: transparent;" visible="false" VBox.vgrow="NEVER"/>
                 <HBox VBox.vgrow="NEVER">
+                    <padding>
+                        <Insets top="10" bottom="10"/>
+                    </padding>
                     <ComboBox fx:id="bucketChoiceCombo" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0"
                               prefWidth="205.0" promptText="还没有选择存储空间" HBox.hgrow="NEVER">
                         <HBox.margin>
@@ -317,9 +317,6 @@
                         </HBox.margin>
                     </Button>
                 </HBox>
-                <ProgressBar fx:id="downloadProgress" maxHeight="-Infinity" maxWidth="1.7976931348623157E308"
-                             minHeight="10.0" prefHeight="10.0" prefWidth="500.0" progress="0.0"
-                             style="-fx-border-color: transparent;" visible="false" VBox.vgrow="NEVER"/>
             </VBox>
         </top>
     </BorderPane>

@@ -10,7 +10,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.log4j.Logger;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
-import org.code4everything.qiniu.controller.MainController;
 import org.code4everything.qiniu.model.ConfigBean;
 import org.code4everything.qiniu.util.ConfigUtils;
 import org.code4everything.qiniu.util.DialogUtils;
@@ -73,15 +72,11 @@ public class QiniuApplication extends Application {
         stage.setTitle(QiniuValueConsts.MAIN_TITLE);
         // 设置关闭窗口事件
         stage.setOnCloseRequest(event -> {
-            // 判断是否有文件在上传下载
-            MainController main = MainController.getInstance();
-            if (main.downloadProgress.isVisible() || main.uploadProgress.isVisible()) {
-                Optional<ButtonType> result = DialogUtils.showConfirmation(QiniuValueConsts.UPLOADING_OR_DOWNLOADING);
-                if (result.isPresent() && result.get() != ButtonType.OK) {
-                    // 取消退出事件
-                    event.consume();
-                    return;
-                }
+            Optional<ButtonType> result = DialogUtils.showConfirmation(QiniuValueConsts.CONFIRM_EXIT);
+            if (result.isPresent() && result.get() != ButtonType.OK) {
+                // 取消退出事件
+                event.consume();
+                return;
             }
             // 退出程序
             ThreadPool.executor.shutdown();
