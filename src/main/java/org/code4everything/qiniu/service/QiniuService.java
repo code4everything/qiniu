@@ -12,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.chart.XYChart;
 import org.apache.log4j.Logger;
 import org.code4everything.qiniu.QiniuApplication;
+import org.code4everything.qiniu.api.SdkConfigurer;
 import org.code4everything.qiniu.api.SdkManager;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.controller.MainController;
@@ -35,6 +36,14 @@ public class QiniuService {
     private static final Logger LOGGER = Logger.getLogger(QiniuService.class);
 
     private final SdkManager sdkManager = new SdkManager();
+
+    /**
+     * 上传文件
+     */
+    public void uploadFile(String bucket, String key, String filename) throws QiniuException {
+        String upToken = SdkConfigurer.getAuth().uploadToken(bucket, filename);
+        SdkConfigurer.getUploadManager().put(key, filename, upToken);
+    }
 
     /**
      * 获取空间文件列表
@@ -200,9 +209,8 @@ public class QiniuService {
                 files[i++] = QiniuUtils.buildUrl(fileBean.getName(), domain);
             }
             try {
-                // 属性文件
+                // 刷新文件
                 sdkManager.refreshFile(files);
-                LOGGER.info("refresh files success");
             } catch (QiniuException e) {
                 LOGGER.error("refresh files error, message -> " + e.getMessage());
                 DialogUtils.showException(e);

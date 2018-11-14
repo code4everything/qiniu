@@ -1,7 +1,8 @@
 package org.code4everything.qiniu.controller;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.qiniu.common.QiniuException;
-import com.zhazhapan.modules.constant.ValueConsts;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.Formatter;
 import com.zhazhapan.util.ThreadPool;
@@ -48,6 +49,8 @@ import java.util.regex.Pattern;
  * @author pantao
  */
 public class MainController {
+
+    private static final String UPLOAD_STATUS_TEMPLATE = "{}\tsuccess\t{}{}\t{}";
 
     public static ObservableList<FileBean> data = null;
 
@@ -358,44 +361,45 @@ public class MainController {
     }
 
     /**
-     * 显示移动或复制文件的窗口
+     * 显示移动或复制文件的弹窗
      */
     public void showFileMovableDialog() {
-        // TODO: 2018/11/14 待重构
         ObservableList<FileBean> selectedItems = resTable.getSelectionModel().getSelectedItems();
-        Pair<SdkManager.FileAction, String[]> pair;
-        String bucket = bucketChoiceCombo.getValue();
         if (Checker.isEmpty(selectedItems)) {
             // 没有选择文件，结束方法
             return;
-        } else if (selectedItems.size() > 1) {
-            pair = dialog.showFileMovableDialog(bucket, "", false);
-        } else {
-            pair = dialog.showFileMovableDialog(bucket, selectedItems.get(0).getName(), true);
         }
-        if (Checker.isNotNull(pair)) {
-            boolean useNewKey = Checker.isNotEmpty(pair.getValue()[1]);
+        Pair<SdkManager.FileAction, String[]> resultPair;
+        String bucket = bucketChoiceCombo.getValue();
+        if (selectedItems.size() > 1) {
+            resultPair = dialog.showFileDialog(bucket, "", false);
+        } else {
+            resultPair = dialog.showFileDialog(bucket, selectedItems.get(0).getName(), true);
+        }
+        if (Checker.isNotNull(resultPair)) {
+            boolean useNewKey = Checker.isNotEmpty(resultPair.getValue()[1]);
             ObservableList<FileBean> resData = resTable.getItems();
-            for (FileBean fileInfo : selectedItems) {
-                String fb = bucketChoiceCombo.getValue();
-                String tb = pair.getValue()[0];
-                String name = useNewKey ? pair.getValue()[1] : fileInfo.getName();
-                boolean move = service.moveOrCopyFile(fb, fileInfo.getName(), tb, name, pair.getKey());
-                if (pair.getKey() == SdkManager.FileAction.MOVE && move) {
-                    boolean sear = Checker.isNotEmpty(searchTextField.getText());
-                    if (fb.equals(tb)) {
-                        // 删除数据源
-                        MainController.data.remove(fileInfo);
-                        MainController.totalLength--;
-                        MainController.totalSize -= Formatter.sizeToLong(fileInfo.getSize());
-                        if (sear) {
-                            resData.remove(fileInfo);
+            for (FileBean fileBean : selectedItems) {
+                String fromBucket = bucketChoiceCombo.getValue();
+                String toBucket = resultPair.getValue()[0];
+                String name = useNewKey ? resultPair.getValue()[1] : fileBean.getName();
+                boolean isSuccess = service.moveOrCopyFile(fromBucket, fileBean.getName(), toBucket, name,
+                        resultPair.getKey());
+                if (resultPair.getKey() == SdkManager.FileAction.MOVE && isSuccess) {
+                    boolean isInSearch = Checker.isNotEmpty(searchTextField.getText());
+                    if (fromBucket.equals(toBucket)) {
+                        // 更新文件名
+                        fileBean.setName(name);
+                        if (isInSearch) {
+                            MainController.data.get(MainController.data.indexOf(fileBean)).setName(name);
                         }
                     } else {
-                        // 更新文件名
-                        fileInfo.setName(name);
-                        if (sear) {
-                            MainController.data.get(MainController.data.indexOf(fileInfo)).setName(name);
+                        // 删除数据源
+                        MainController.data.remove(fileBean);
+                        MainController.totalLength--;
+                        MainController.totalSize -= Formatter.sizeToLong(fileBean.getSize());
+                        if (isInSearch) {
+                            resData.remove(fileBean);
                         }
                     }
                 }
@@ -555,43 +559,38 @@ public class MainController {
      * 上传选择的文件
      */
     public void uploadFile() {
-        // TODO: 2018/11/14 待重构
         if (Checker.isEmpty(zoneText.getText()) || Checker.isEmpty(selectedFileTextArea.getText())) {
             // 没有选择存储空间或文件，不能上传文件
             DialogUtils.showWarning(QiniuValueConsts.NEED_CHOOSE_BUCKET_OR_FILE);
             return;
         }
-        // 新建一个上传文件的线程
+        // 新建一个线程上传文件的线程
         ThreadPool.executor.submit(() -> {
             Platform.runLater(() -> uploadStatusTextArea.insertText(0, QiniuValueConsts.CONFIG_UPLOAD_ENVIRONMENT));
             String bucket = bucketChoiceCombo.getValue();
-            // 默认不指定key的情况下，以文件内容的hash值作为文件名
+            // 默认不指定KEY的情况下，以文件内容的哈希值作为文件名
             String key = Checker.checkNull(filePrefixCombo.getValue());
             String[] paths = selectedFileTextArea.getText().split("\n");
             // 去掉\r\n的长度
-            int end = QiniuValueConsts.UPLOADING.length() - 2;
+            int endIndex = QiniuValueConsts.UPLOADING.length() - 2;
             Platform.runLater(() -> uploadStatusTextArea.deleteText(0,
                     QiniuValueConsts.CONFIG_UPLOAD_ENVIRONMENT.length() - 1));
             // 总文件数
-            double total = paths.length;
-            upProgress = 0;
             for (String path : paths) {
                 if (Checker.isNotEmpty(path)) {
                     Platform.runLater(() -> uploadStatusTextArea.insertText(0, QiniuValueConsts.UPLOADING));
-                    logger.info("start to upload file: " + path);
-                    String filename = null;
+                    String filename = "";
                     String url = "http://" + QiniuApplication.getConfigBean().getUrl(bucket) + "/";
                     File file = new File(path);
                     try {
                         // 判断文件是否存在
                         if (file.exists()) {
-                            String ap = file.getAbsolutePath();
                             // 保持文件相对父文件夹的路径
                             if (keepPath.isSelected() && Checker.isNotEmpty(rootPath)) {
-                                for (String rp : rootPath) {
-                                    if (ap.startsWith(rp)) {
-                                        filename =
-                                                key + rp.substring(rp.lastIndexOf(ValueConsts.SEPARATOR) + 1) + ap.substring(rp.length());
+                                for (String root : rootPath) {
+                                    if (file.getAbsolutePath().startsWith(root)) {
+                                        String postKey = root.substring(root.lastIndexOf(File.separator) + 1);
+                                        filename = key + postKey + file.getAbsolutePath().substring(root.length());
                                         break;
                                     }
                                 }
@@ -599,31 +598,25 @@ public class MainController {
                             if (Checker.isEmpty(filename)) {
                                 filename = key + file.getName();
                             }
-                            String upToken = SdkConfigurer.getAuth().uploadToken(bucket, filename);
-                            SdkConfigurer.getUploadManager().put(path, filename, upToken);
-                            status =
-                                    Formatter.datetimeToString(new Date()) + "\tsuccess\t" + url + filename + "\t" + path;
-                            logger.info("upload file '" + path + "' to bucket '" + bucket + "' success");
+                            service.uploadFile(bucket, path, filename);
+                            String now = DateUtil.formatDate(new Date());
+                            status = StrUtil.format(UPLOAD_STATUS_TEMPLATE, now, url, filename, path);
                         } else if (Checker.isHyperLink(path)) {
                             // 抓取网络文件到空间中
-                            logger.info(path + " is a hyper link");
                             filename = key + QiniuUtils.getFileName(path);
                             SdkConfigurer.getBucketManager().fetch(path, bucket, filename);
-                            status =
-                                    Formatter.datetimeToString(new Date()) + "\tsuccess\t" + url + filename + "\t" + path;
-                            logger.info("fetch remote file '" + path + "' to bucket '" + bucket + "' success");
+                            String now = DateUtil.formatDate(new Date());
+                            status = StrUtil.format(UPLOAD_STATUS_TEMPLATE, now, url, filename, path);
                         } else {
                             // 文件不存在
-                            logger.info("file '" + path + "' not exists");
-                            status = Formatter.datetimeToString(new Date()) + "\tfailed\t" + path;
+                            status = DateUtil.formatDate(new Date()) + "\tfailed\t" + path;
                         }
                     } catch (QiniuException e) {
-                        status = Formatter.datetimeToString(new Date()) + "\terror\t" + path;
-                        logger.error("upload error, message: " + e.getMessage());
+                        status = DateUtil.formatDate(new Date()) + "\terror\t" + path;
                         Platform.runLater(() -> DialogUtils.showException(QiniuValueConsts.UPLOAD_ERROR, e));
                     }
                     Platform.runLater(() -> {
-                        uploadStatusTextArea.deleteText(0, end);
+                        uploadStatusTextArea.deleteText(0, endIndex);
                         uploadStatusTextArea.insertText(0, status);
                     });
                 }

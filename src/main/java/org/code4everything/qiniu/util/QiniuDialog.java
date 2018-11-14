@@ -27,7 +27,7 @@ public class QiniuDialog {
     /**
      * 显示移动文件的弹窗
      */
-    public Pair<SdkManager.FileAction, String[]> showFileMovableDialog(String bucket, String key, boolean setKey) {
+    public Pair<SdkManager.FileAction, String[]> showFileDialog(String bucket, String key, boolean setKey) {
         MainController main = MainController.getInstance();
         ButtonType ok = new ButtonType(QiniuValueConsts.OK, ButtonBar.ButtonData.OK_DONE);
         Dialog<String[]> dialog = getDialog(ok);
