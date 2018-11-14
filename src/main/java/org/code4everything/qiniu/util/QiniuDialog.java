@@ -80,7 +80,7 @@ public class QiniuDialog {
      *
      * @return 返回用户是否点击确定按钮
      */
-    public boolean showInputKeyDialog() {
+    public boolean showKeyDialog() {
         ButtonType ok = new ButtonType(QiniuValueConsts.OK, ButtonBar.ButtonData.OK_DONE);
         Dialog<String[]> dialog = getDialog(ok);
         // 文本框
@@ -121,7 +121,7 @@ public class QiniuDialog {
     /**
      * 显示添加桶的弹窗
      */
-    public void showBucketAddableDialog() {
+    public void showBucketDialog() {
         ButtonType ok = new ButtonType(QiniuValueConsts.OK, ButtonBar.ButtonData.OK_DONE);
         Dialog<String[]> dialog = getDialog(ok);
         // 桶名称输入框
@@ -161,7 +161,7 @@ public class QiniuDialog {
         Optional<String[]> result = dialog.showAndWait();
         result.ifPresent(res -> {
             // 处理结果
-            Platform.runLater(() -> MainController.getInstance().addItem(res[0]));
+            Platform.runLater(() -> MainController.getInstance().appendBucket(res[0]));
             BucketBean bucketBean = new BucketBean(res[0], res[1], res[2]);
             QiniuApplication.getConfigBean().getBuckets().add(bucketBean);
             ConfigUtils.writeConfig();

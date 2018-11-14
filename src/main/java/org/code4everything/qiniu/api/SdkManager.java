@@ -49,7 +49,7 @@ public class SdkManager {
     /**
      * 刷新文件，CDN 相关
      */
-    public void refreshFiles(String[] files) throws QiniuException {
+    public void refreshFile(String[] files) throws QiniuException {
         // 单次方法调用刷新的链接不可以超过100个
         SdkConfigurer.getCdnManager().refreshUrls(files);
     }

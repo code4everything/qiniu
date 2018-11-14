@@ -65,7 +65,7 @@ public class QiniuService {
     /**
      * 批量删除文件，单次批量请求的文件数量不得超过1000
      */
-    public void deleteFiles(ObservableList<FileBean> fileBeans, String bucket) {
+    public void deleteFile(ObservableList<FileBean> fileBeans, String bucket) {
         if (Checker.isNotEmpty(fileBeans) && QiniuUtils.checkNet()) {
             // 生成待删除的文件列表
             String[] files = new String[fileBeans.size()];
@@ -100,7 +100,7 @@ public class QiniuService {
             } catch (QiniuException e) {
                 DialogUtils.showException(QiniuValueConsts.DELETE_ERROR, e);
             }
-            MainController.getInstance().setBucketCount();
+            MainController.getInstance().countBucket();
         }
     }
 
@@ -151,7 +151,7 @@ public class QiniuService {
     /**
      * 设置文件生存时间
      */
-    public void setFilesLife(String bucket, String key, int days) {
+    public void setFileLife(String bucket, String key, int days) {
         try {
             sdkManager.deleteAfterDays(bucket, key, days);
             LOGGER.info("set file life success");
@@ -164,7 +164,7 @@ public class QiniuService {
     /**
      * 更新镜像源
      */
-    public void updateFiles(String bucket, String key) {
+    public void updateFile(String bucket, String key) {
         try {
             sdkManager.prefetch(bucket, key);
             LOGGER.info("prefetch files success");
@@ -191,7 +191,7 @@ public class QiniuService {
     /**
      * 刷新文件
      */
-    public void refreshFiles(ObservableList<FileBean> fileBeans, String domain) {
+    public void refreshFile(ObservableList<FileBean> fileBeans, String domain) {
         if (Checker.isNotEmpty(fileBeans)) {
             String[] files = new String[fileBeans.size()];
             int i = 0;
@@ -201,7 +201,7 @@ public class QiniuService {
             }
             try {
                 // 属性文件
-                sdkManager.refreshFiles(files);
+                sdkManager.refreshFile(files);
                 LOGGER.info("refresh files success");
             } catch (QiniuException e) {
                 LOGGER.error("refresh files error, message -> " + e.getMessage());

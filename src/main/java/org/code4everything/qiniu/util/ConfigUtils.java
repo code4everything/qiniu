@@ -47,7 +47,7 @@ public class ConfigUtils {
                 } else {
                     Platform.runLater(() -> {
                         // 添加桶
-                        config.getBuckets().forEach(bucket -> controller.addItem(bucket.getBucket()));
+                        config.getBuckets().forEach(bucket -> controller.appendBucket(bucket.getBucket()));
                         // 选中第一个桶
                         BucketBean bucket = config.getBuckets().get(0);
                         controller.bucketChoiceCombo.setValue(bucket.getBucket());

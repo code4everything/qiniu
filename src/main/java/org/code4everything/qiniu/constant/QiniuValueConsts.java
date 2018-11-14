@@ -51,8 +51,6 @@ public class QiniuValueConsts {
 
     public static final String REFRESH_SUCCESS = "刷新资源列表成功";
 
-    public static final String NET_ERROR = "没有连接到网络，无法运行程序";
-
     public static final String DELETE_ERROR = "删除文件时发生异常";
 
     public static final String CHANGE_FILE_TYPE_ERROR = "删除文件发生异常";
@@ -70,8 +68,6 @@ public class QiniuValueConsts {
     public static final String DEFAULT_FILE_LIFE = "365";
 
     public static final String CONFIG_DOWNLOAD_PATH = "配置文件下载路径";
-
-    public static final String DOWNLOAD_URL = "下载链接";
 
     public static final String INPUT_LOG_DATE = "请输入日志的日期";
 
