@@ -103,7 +103,7 @@ public class QiniuUtils {
     /**
      * 拼接链接
      */
-    public static String joinUrl(String fileName, String domain) {
+    public static String buildUrl(String fileName, String domain) {
         if (!domain.startsWith(HTTP)) {
             domain = HTTP + "://" + domain;
         }

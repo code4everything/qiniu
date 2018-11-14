@@ -44,11 +44,25 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 /**
+ * 界面控制类
+ *
  * @author pantao
  */
-public class MainWindowController {
+public class MainController {
 
-    private static MainWindowController mainWindowController = null;
+    public static ObservableList<FileBean> data = null;
+
+    /**
+     * 空间总文件数
+     */
+    public static int totalLength = 0;
+
+    /**
+     * 空间使用总大小
+     */
+    public static long totalSize = 0;
+
+    private static MainController mainController = null;
 
     private final QiniuService service = new QiniuService();
 
@@ -82,7 +96,7 @@ public class MainWindowController {
     @FXML
     public CheckBox keepPath;
 
-    private Logger logger = Logger.getLogger(MainWindowController.class);
+    private Logger logger = Logger.getLogger(MainController.class);
 
     @FXML
     private TextArea selectedFileTextArea;
@@ -150,8 +164,8 @@ public class MainWindowController {
      */
     private List<String> rootPath = new ArrayList<>();
 
-    public static MainWindowController getInstance() {
-        return mainWindowController;
+    public static MainController getInstance() {
+        return mainController;
     }
 
     /**
@@ -159,7 +173,7 @@ public class MainWindowController {
      */
     @FXML
     private void initialize() {
-        mainWindowController = this;
+        mainController = this;
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         // 设置文件名可编辑
         nameCol.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -172,7 +186,7 @@ public class MainWindowController {
                 name = v.getOldValue();
             }
             if (Checker.isNotEmpty(searchTextField.getText())) {
-                QiniuApplication.data.get(QiniuApplication.data.indexOf(fileInfo)).setName(name);
+                MainController.data.get(MainController.data.indexOf(fileInfo)).setName(name);
             }
             fileInfo.setName(name);
         });
@@ -188,7 +202,7 @@ public class MainWindowController {
                 type = v.getOldValue();
             }
             if (Checker.isNotEmpty(searchTextField.getText())) {
-                QiniuApplication.data.get(QiniuApplication.data.indexOf(fileInfo)).setType(type);
+                MainController.data.get(MainController.data.indexOf(fileInfo)).setType(type);
             }
             fileInfo.setType(type);
         });
@@ -389,7 +403,7 @@ public class MainWindowController {
         ObservableList<FileBean> selectedItems = resTable.getSelectionModel().getSelectedItems();
         if (Checker.isNotEmpty(selectedItems)) {
             String filename = selectedItems.get(0).getName();
-            QiniuUtils.openLink(QiniuUtils.joinUrl(filename, bucketDomainTextField.getText()));
+            QiniuUtils.openLink(QiniuUtils.buildUrl(filename, bucketDomainTextField.getText()));
         }
     }
 
@@ -480,9 +494,9 @@ public class MainWindowController {
                     boolean sear = Checker.isNotEmpty(searchTextField.getText());
                     if (fb.equals(tb)) {
                         // 删除数据源
-                        QiniuApplication.data.remove(fileInfo);
-                        QiniuApplication.totalLength--;
-                        QiniuApplication.totalSize -= Formatter.sizeToLong(fileInfo.getSize());
+                        MainController.data.remove(fileInfo);
+                        MainController.totalLength--;
+                        MainController.totalSize -= Formatter.sizeToLong(fileInfo.getSize());
                         if (sear) {
                             resData.remove(fileInfo);
                         }
@@ -490,7 +504,7 @@ public class MainWindowController {
                         // 更新文件名
                         fileInfo.setName(name);
                         if (sear) {
-                            QiniuApplication.data.get(QiniuApplication.data.indexOf(fileInfo)).setName(name);
+                            MainController.data.get(MainController.data.indexOf(fileInfo)).setName(name);
                         }
                     }
                 }
@@ -513,7 +527,7 @@ public class MainWindowController {
         ObservableList<FileBean> fileInfos = resTable.getSelectionModel().getSelectedItems();
         if (Checker.isNotEmpty(fileInfos)) {
             // 只复制选中的第一个文件的链接
-            Utils.copyToClipboard(QiniuUtils.joinUrl(fileInfos.get(0).getName(), bucketDomainTextField.getText()));
+            Utils.copyToClipboard(QiniuUtils.buildUrl(fileInfos.get(0).getName(), bucketDomainTextField.getText()));
         }
     }
 
@@ -524,16 +538,16 @@ public class MainWindowController {
         ArrayList<FileBean> files = new ArrayList<>();
         String search = Checker.checkNull(searchTextField.getText());
         logger.info("search file: " + search);
-        QiniuApplication.totalLength = 0;
-        QiniuApplication.totalSize = 0;
+        MainController.totalLength = 0;
+        MainController.totalSize = 0;
         try {
             // 正则匹配查询
             Pattern pattern = Pattern.compile(search, Pattern.CASE_INSENSITIVE);
-            for (FileBean file : QiniuApplication.data) {
+            for (FileBean file : MainController.data) {
                 if (pattern.matcher(file.getName()).find()) {
                     files.add(file);
-                    QiniuApplication.totalLength++;
-                    QiniuApplication.totalSize += Formatter.sizeToLong(file.getSize());
+                    MainController.totalLength++;
+                    MainController.totalSize += Formatter.sizeToLong(file.getSize());
                 }
             }
         } catch (Exception e) {
@@ -547,8 +561,8 @@ public class MainWindowController {
      * 统计空间文件的数量以及大小
      */
     public void setBucketCount() {
-        totalLengthLabel.setText(Formatter.customFormatDecimal(QiniuApplication.totalLength, ",###") + " 个文件");
-        totalSizeLabel.setText(Formatter.formatSize(QiniuApplication.totalSize));
+        totalLengthLabel.setText(Formatter.customFormatDecimal(MainController.totalLength, ",###") + " 个文件");
+        totalSizeLabel.setText(Formatter.formatSize(MainController.totalSize));
     }
 
     /**
@@ -570,7 +584,7 @@ public class MainWindowController {
         ThreadPool.executor.submit(() -> {
             service.listFile();
             Platform.runLater(() -> {
-                resTable.setItems(QiniuApplication.data);
+                resTable.setItems(MainController.data);
                 setBucketCount();
             });
         });

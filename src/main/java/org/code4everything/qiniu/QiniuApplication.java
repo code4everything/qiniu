@@ -2,7 +2,6 @@ package org.code4everything.qiniu;
 
 import com.zhazhapan.util.ThreadPool;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
@@ -11,9 +10,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.log4j.Logger;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
-import org.code4everything.qiniu.controller.MainWindowController;
+import org.code4everything.qiniu.controller.MainController;
 import org.code4everything.qiniu.model.ConfigBean;
-import org.code4everything.qiniu.model.FileBean;
 import org.code4everything.qiniu.util.ConfigUtils;
 import org.code4everything.qiniu.util.DialogUtils;
 
@@ -26,18 +24,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class QiniuApplication extends Application {
 
     private static final Logger LOGGER = Logger.getLogger(QiniuApplication.class);
-
-    public static ObservableList<FileBean> data = null;
-
-    /**
-     * 空间总文件数
-     */
-    public static int totalLength = 0;
-
-    /**
-     * 空间使用总大小
-     */
-    public static long totalSize = 0;
 
     private static Stage stage = null;
 
@@ -88,7 +74,7 @@ public class QiniuApplication extends Application {
         // 设置关闭窗口事件
         stage.setOnCloseRequest(event -> {
             // 判断是否有文件在上传下载
-            MainWindowController main = MainWindowController.getInstance();
+            MainController main = MainController.getInstance();
             if (main.downloadProgress.isVisible() || main.uploadProgress.isVisible()) {
                 Optional<ButtonType> result = DialogUtils.showConfirmation(QiniuValueConsts.UPLOADING_OR_DOWNLOADING);
                 if (result.isPresent() && result.get() != ButtonType.OK) {

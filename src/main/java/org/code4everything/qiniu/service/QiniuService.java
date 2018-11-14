@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 import org.code4everything.qiniu.QiniuApplication;
 import org.code4everything.qiniu.api.SdkManager;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
-import org.code4everything.qiniu.controller.MainWindowController;
+import org.code4everything.qiniu.controller.MainController;
 import org.code4everything.qiniu.model.FileBean;
 import org.code4everything.qiniu.util.DialogUtils;
 import org.code4everything.qiniu.util.QiniuUtils;
@@ -40,18 +40,18 @@ public class QiniuService {
      * 获取空间文件列表
      */
     public void listFile() {
-        MainWindowController main = MainWindowController.getInstance();
+        MainController main = MainController.getInstance();
         // 列举空间文件列表
         BucketManager.FileListIterator iterator = sdkManager.getFileListIterator(main.bucketChoiceCombo.getValue());
         ArrayList<FileBean> files = new ArrayList<>();
-        QiniuApplication.totalLength = 0;
-        QiniuApplication.totalSize = 0;
+        MainController.totalLength = 0;
+        MainController.totalSize = 0;
         // 处理获取的file list结果
         while (iterator.hasNext()) {
             com.qiniu.storage.model.FileInfo[] items = iterator.next();
             for (com.qiniu.storage.model.FileInfo item : items) {
-                QiniuApplication.totalLength++;
-                QiniuApplication.totalSize += item.fsize;
+                MainController.totalLength++;
+                MainController.totalSize += item.fsize;
                 // 将七牛的时间单位（100纳秒）转换成毫秒，然后转换成时间
                 String time = Formatter.timeStampToString(item.putTime / 10000);
                 String size = Formatter.formatSize(item.fsize);
@@ -59,7 +59,7 @@ public class QiniuService {
                 files.add(file);
             }
         }
-        QiniuApplication.data = FXCollections.observableArrayList(files);
+        MainController.data = FXCollections.observableArrayList(files);
     }
 
     /**
@@ -77,7 +77,7 @@ public class QiniuService {
             }
             try {
                 BatchStatus[] batchStatusList = sdkManager.batchDelete(bucket, files);
-                MainWindowController main = MainWindowController.getInstance();
+                MainController main = MainController.getInstance();
                 // 文件列表是否为搜索后结果
                 boolean isInSearch = Checker.isNotEmpty(main.searchTextField.getText());
                 ObservableList<FileBean> currentRes = main.resTable.getItems();
@@ -86,9 +86,9 @@ public class QiniuService {
                     BatchStatus status = batchStatusList[i];
                     String file = files[i];
                     if (status.code == 200) {
-                        QiniuApplication.data.remove(selectedFiles.get(i));
-                        QiniuApplication.totalLength--;
-                        QiniuApplication.totalSize -= Formatter.sizeToLong(selectedFiles.get(i).getSize());
+                        MainController.data.remove(selectedFiles.get(i));
+                        MainController.totalLength--;
+                        MainController.totalSize -= Formatter.sizeToLong(selectedFiles.get(i).getSize());
                         if (isInSearch) {
                             currentRes.remove(selectedFiles.get(i));
                         }
@@ -100,7 +100,7 @@ public class QiniuService {
             } catch (QiniuException e) {
                 DialogUtils.showException(QiniuValueConsts.DELETE_ERROR, e);
             }
-            MainWindowController.getInstance().setBucketCount();
+            MainController.getInstance().setBucketCount();
         }
     }
 
@@ -178,14 +178,14 @@ public class QiniuService {
      * 公有下载
      */
     public void publicDownload(String fileName, String domain) {
-        QiniuUtils.download(QiniuUtils.joinUrl(fileName, domain));
+        QiniuUtils.download(QiniuUtils.buildUrl(fileName, domain));
     }
 
     /**
      * 私有下载
      */
     public void privateDownload(String fileName, String domain) {
-        QiniuUtils.download(sdkManager.getPrivateUrl(QiniuUtils.joinUrl(fileName, domain)));
+        QiniuUtils.download(sdkManager.getPrivateUrl(QiniuUtils.buildUrl(fileName, domain)));
     }
 
     /**
@@ -197,7 +197,7 @@ public class QiniuService {
             int i = 0;
             // 获取公有链接
             for (FileBean fileBean : fileBeans) {
-                files[i++] = QiniuUtils.joinUrl(fileBean.getName(), domain);
+                files[i++] = QiniuUtils.buildUrl(fileBean.getName(), domain);
             }
             try {
                 // 属性文件

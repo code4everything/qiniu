@@ -11,7 +11,7 @@ import javafx.util.Pair;
 import org.code4everything.qiniu.QiniuApplication;
 import org.code4everything.qiniu.api.SdkManager;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
-import org.code4everything.qiniu.controller.MainWindowController;
+import org.code4everything.qiniu.controller.MainController;
 import org.code4everything.qiniu.model.BucketBean;
 
 import java.util.Optional;
@@ -28,7 +28,7 @@ public class QiniuDialog {
      * 显示移动文件的弹窗
      */
     public Pair<SdkManager.FileAction, String[]> showFileMovableDialog(String bucket, String key, boolean setKey) {
-        MainWindowController main = MainWindowController.getInstance();
+        MainController main = MainController.getInstance();
         ButtonType ok = new ButtonType(QiniuValueConsts.OK, ButtonBar.ButtonData.OK_DONE);
         Dialog<String[]> dialog = getDialog(ok);
         // 文件名输入框
@@ -161,7 +161,7 @@ public class QiniuDialog {
         Optional<String[]> result = dialog.showAndWait();
         result.ifPresent(res -> {
             // 处理结果
-            Platform.runLater(() -> MainWindowController.getInstance().addItem(res[0]));
+            Platform.runLater(() -> MainController.getInstance().addItem(res[0]));
             BucketBean bucketBean = new BucketBean(res[0], res[1], res[2]);
             QiniuApplication.getConfigBean().getBuckets().add(bucketBean);
             ConfigUtils.writeConfig();

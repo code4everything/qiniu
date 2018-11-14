@@ -9,7 +9,7 @@ import javafx.application.Platform;
 import org.code4everything.qiniu.QiniuApplication;
 import org.code4everything.qiniu.api.SdkConfigurer;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
-import org.code4everything.qiniu.controller.MainWindowController;
+import org.code4everything.qiniu.controller.MainController;
 import org.code4everything.qiniu.model.BucketBean;
 import org.code4everything.qiniu.model.ConfigBean;
 
@@ -40,7 +40,7 @@ public class ConfigUtils {
                     // 创建上传权限
                     SdkConfigurer.createAuth(config.getAccessKey(), config.getSecretKey());
                 }
-                MainWindowController controller = MainWindowController.getInstance();
+                MainController controller = MainController.getInstance();
                 if (CollectionUtil.isEmpty(config.getBuckets())) {
                     // 设置一个空的桶列表，防止出现空指针
                     config.setBuckets(new ArrayList<>());
