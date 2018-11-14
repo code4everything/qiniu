@@ -4,6 +4,7 @@ import com.qiniu.cdn.CdnResult;
 import com.qiniu.common.QiniuException;
 import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.model.BatchStatus;
+import com.qiniu.storage.model.FileInfo;
 import com.zhazhapan.util.Checker;
 import com.zhazhapan.util.Formatter;
 import javafx.application.Platform;
@@ -31,8 +32,6 @@ import java.util.Map;
  */
 public class QiniuService {
 
-    // TODO: 2018/11/13 服务类是否需要弹出错误框？
-
     private static final Logger LOGGER = Logger.getLogger(QiniuService.class);
 
     private final SdkManager sdkManager = new SdkManager();
@@ -53,14 +52,14 @@ public class QiniuService {
         // 列举空间文件列表
         BucketManager.FileListIterator iterator = sdkManager.getFileListIterator(main.bucketCB.getValue());
         ArrayList<FileBean> files = new ArrayList<>();
-        MainController.totalLength = 0;
-        MainController.totalSize = 0;
-        // 处理获取的file list结果
+        main.setDataLength(0);
+        main.setDataSize(0);
+        // 处理结果
         while (iterator.hasNext()) {
-            com.qiniu.storage.model.FileInfo[] items = iterator.next();
-            for (com.qiniu.storage.model.FileInfo item : items) {
-                MainController.totalLength++;
-                MainController.totalSize += item.fsize;
+            FileInfo[] items = iterator.next();
+            for (FileInfo item : items) {
+                main.setDataLength(main.getDataLength() + 1);
+                main.setDataSize(main.getDataSize() + item.fsize);
                 // 将七牛的时间单位（100纳秒）转换成毫秒，然后转换成时间
                 String time = Formatter.timeStampToString(item.putTime / 10000);
                 String size = Formatter.formatSize(item.fsize);
@@ -68,7 +67,7 @@ public class QiniuService {
                 files.add(file);
             }
         }
-        MainController.data = FXCollections.observableArrayList(files);
+        main.setResData(FXCollections.observableArrayList(files));
     }
 
     /**
@@ -95,9 +94,9 @@ public class QiniuService {
                     BatchStatus status = batchStatusList[i];
                     String file = files[i];
                     if (status.code == 200) {
-                        MainController.data.remove(selectedFiles.get(i));
-                        MainController.totalLength--;
-                        MainController.totalSize -= Formatter.sizeToLong(selectedFiles.get(i).getSize());
+                        main.getResData().remove(selectedFiles.get(i));
+                        main.setDataLength(main.getDataLength() - 1);
+                        main.setDataSize(main.getDataSize() - Formatter.sizeToLong(selectedFiles.get(i).getSize()));
                         if (isInSearch) {
                             currentRes.remove(selectedFiles.get(i));
                         }

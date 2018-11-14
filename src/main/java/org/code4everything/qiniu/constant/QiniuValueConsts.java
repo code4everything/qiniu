@@ -81,7 +81,7 @@ public class QiniuValueConsts {
 
     public static final long DATE_SPAN_OF_THIRTY_ONE = 31 * 24 * 60 * 60 * 1000L;
 
-    public static final String CONFIRM_EXIT = "有文件正在上传或下载中，是否确认退出？";
+    public static final String CONFIRM_EXIT = "确定退出？";
 
     private QiniuValueConsts() {}
 }

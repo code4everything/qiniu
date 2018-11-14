@@ -51,18 +51,6 @@ public class MainController {
 
     private static final String UPLOAD_STATUS_TEMPLATE = "{}\tsuccess\t{}{}\t{}";
 
-    public static ObservableList<FileBean> data = null;
-
-    /**
-     * 空间总文件数
-     */
-    public static int totalLength = 0;
-
-    /**
-     * 空间使用总大小
-     */
-    public static long totalSize = 0;
-
     private static MainController mainController = null;
 
     private final QiniuService service = new QiniuService();
@@ -92,6 +80,18 @@ public class MainController {
 
     @FXML
     public CheckBox keepPathCB;
+
+    private ObservableList<FileBean> resData = null;
+
+    /**
+     * 空间总文件数
+     */
+    private int dataLength = 0;
+
+    /**
+     * 空间使用总大小
+     */
+    private long dataSize = 0;
 
     @FXML
     private TextArea selectedFileTA;
@@ -146,6 +146,30 @@ public class MainController {
         return mainController;
     }
 
+    public ObservableList<FileBean> getResData() {
+        return resData;
+    }
+
+    public void setResData(ObservableList<FileBean> resData) {
+        this.resData = resData;
+    }
+
+    public int getDataLength() {
+        return dataLength;
+    }
+
+    public void setDataLength(int dataLength) {
+        this.dataLength = dataLength;
+    }
+
+    public long getDataSize() {
+        return dataSize;
+    }
+
+    public void setDataSize(long dataSize) {
+        this.dataSize = dataSize;
+    }
+
     /**
      * 初始化
      */
@@ -165,7 +189,7 @@ public class MainController {
                 name = value.getOldValue();
             }
             if (Checker.isNotEmpty(searchTF.getText())) {
-                MainController.data.get(MainController.data.indexOf(fileBean)).setName(name);
+                resData.get(resData.indexOf(fileBean)).setName(name);
             }
             fileBean.setName(name);
         });
@@ -182,7 +206,7 @@ public class MainController {
                 type = value.getOldValue();
             }
             if (Checker.isNotEmpty(searchTF.getText())) {
-                MainController.data.get(MainController.data.indexOf(fileBean)).setType(type);
+                resData.get(resData.indexOf(fileBean)).setType(type);
             }
             fileBean.setType(type);
         });
@@ -234,7 +258,7 @@ public class MainController {
      * 拖曳文件松开鼠标
      */
     public void dragFileDropped(DragEvent event) {
-        appendFiles(event.getDragboard().getFiles());
+        appendFile(event.getDragboard().getFiles());
     }
 
     /**
@@ -386,13 +410,13 @@ public class MainController {
                         // 更新文件名
                         fileBean.setName(name);
                         if (isInSearch) {
-                            MainController.data.get(MainController.data.indexOf(fileBean)).setName(name);
+                            resData.get(resData.indexOf(fileBean)).setName(name);
                         }
                     } else {
                         // 删除数据源
-                        MainController.data.remove(fileBean);
-                        MainController.totalLength--;
-                        MainController.totalSize -= Formatter.sizeToLong(fileBean.getSize());
+                        resData.remove(fileBean);
+                        dataLength--;
+                        dataSize -= Formatter.sizeToLong(fileBean.getSize());
                         if (isInSearch) {
                             resData.remove(fileBean);
                         }
@@ -406,7 +430,7 @@ public class MainController {
     /**
      * 删除文件
      */
-    public void deleteFiles() {
+    public void deleteFile() {
         service.deleteFile(resTV.getSelectionModel().getSelectedItems(), bucketCB.getValue());
     }
 
@@ -427,15 +451,15 @@ public class MainController {
     public void searchFile() {
         ArrayList<FileBean> files = new ArrayList<>();
         String search = Checker.checkNull(searchTF.getText());
-        MainController.totalLength = 0;
-        MainController.totalSize = 0;
+        dataLength = 0;
+        dataSize = 0;
         // 正则匹配查询
         Pattern pattern = Pattern.compile(search, Pattern.CASE_INSENSITIVE);
-        for (FileBean file : MainController.data) {
+        for (FileBean file : resData) {
             if (pattern.matcher(file.getName()).find()) {
                 files.add(file);
-                MainController.totalLength++;
-                MainController.totalSize += Formatter.sizeToLong(file.getSize());
+                dataLength++;
+                dataSize += Formatter.sizeToLong(file.getSize());
             }
         }
         countBucket();
@@ -446,8 +470,8 @@ public class MainController {
      * 统计空间文件的数量以及大小
      */
     public void countBucket() {
-        lengthLabel.setText(Formatter.customFormatDecimal(MainController.totalLength, ",###") + " 个文件");
-        sizeLabel.setText(Formatter.formatSize(MainController.totalSize));
+        lengthLabel.setText(Formatter.customFormatDecimal(dataLength, ",###") + " 个文件");
+        sizeLabel.setText(Formatter.formatSize(dataSize));
     }
 
     /**
@@ -466,7 +490,7 @@ public class MainController {
             // 列出资源文件
             service.listFile();
             Platform.runLater(() -> {
-                resTV.setItems(MainController.data);
+                resTV.setItems(resData);
                 countBucket();
             });
         });
@@ -514,34 +538,34 @@ public class MainController {
         FileChooser chooser = new FileChooser();
         chooser.setTitle(QiniuValueConsts.FILE_CHOOSER_TITLE);
         chooser.setInitialDirectory(new File(Utils.getCurrentWorkDir()));
-        appendFiles(chooser.showOpenMultipleDialog(QiniuApplication.getStage()));
+        appendFile(chooser.showOpenMultipleDialog(QiniuApplication.getStage()));
     }
 
     /**
      * 添加上传的文件，支持拖曳文件夹
      */
-    private void appendFiles(List<File> files) {
+    private void appendFile(List<File> files) {
         if (Checker.isNotEmpty(files)) {
             File[] fileArray = new File[files.size()];
-            appendFiles(files.toArray(fileArray), false);
+            appendFile(files.toArray(fileArray), false);
         }
     }
 
     /**
      * 添加上传的文件，支持拖曳文件夹
      */
-    private void appendFiles(File[] files, boolean isRecursive) {
+    private void appendFile(File[] files, boolean isRecursive) {
         if (Checker.isNotNull(files)) {
             for (File file : files) {
                 if (file.isDirectory()) {
                     if (isRecursive) {
                         // 递归添加文件
                         if (recursiveCB.isSelected()) {
-                            appendFiles(file.listFiles(), true);
+                            appendFile(file.listFiles(), true);
                         }
                     } else {
                         rootPath.add(file.getAbsolutePath());
-                        appendFiles(file.listFiles(), true);
+                        appendFile(file.listFiles(), true);
                     }
                 } else if (!selectedFileTA.getText().contains(file.getAbsolutePath())) {
                     selectedFileTA.insertText(0, file.getAbsolutePath() + "\r\n");

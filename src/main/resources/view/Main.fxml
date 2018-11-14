@@ -147,7 +147,7 @@
                                         <Insets top="10.0"/>
                                     </VBox.margin>
                                 </Button>
-                                <Button mnemonicParsing="false" onAction="#deleteFiles" text="删除文件" VBox.vgrow="NEVER">
+                                <Button mnemonicParsing="false" onAction="#deleteFile" text="删除文件" VBox.vgrow="NEVER">
                                     <VBox.margin>
                                         <Insets top="10.0"/>
                                     </VBox.margin>
