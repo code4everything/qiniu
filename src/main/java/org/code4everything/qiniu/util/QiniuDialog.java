@@ -38,7 +38,7 @@ public class QiniuDialog {
         keyTextField.setText(key);
         // 空间选择框
         ComboBox<String> bucketCombo = new ComboBox<>();
-        bucketCombo.getItems().addAll(main.bucketChoiceCombo.getItems());
+        bucketCombo.getItems().addAll(main.bucketCB.getItems());
         bucketCombo.setValue(bucket);
         // 保存文件副本复选框
         CheckBox copyAsCheckBox = new CheckBox(QiniuValueConsts.COPY_AS);

@@ -19,7 +19,7 @@
                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                             </padding>
                             <VBox>
-                                <TextArea fx:id="uploadStatusTextArea" editable="false"
+                                <TextArea fx:id="uploadStatusTA" editable="false"
                                           maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
                                           prefHeight="504.0" prefWidth="336.0" promptText="文件上传状态" VBox.vgrow="ALWAYS">
                                     <contextMenu>
@@ -40,7 +40,7 @@
                                 </TextArea>
                             </VBox>
                             <VBox prefHeight="500.0" prefWidth="171.0">
-                                <ComboBox fx:id="filePrefixCombo" editable="true" maxHeight="1.7976931348623157E308"
+                                <ComboBox fx:id="prefixCB" editable="true" maxHeight="1.7976931348623157E308"
                                           maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="277.0"
                                           promptText="文件前缀, 不设置则为空" VBox.vgrow="NEVER">
                                     <VBox.margin>
@@ -51,15 +51,15 @@
                                     <padding>
                                         <Insets left="10.0" right="10.0" top="10.0"/>
                                     </padding>
-                                    <CheckBox fx:id="folderRecursive" mnemonicParsing="false" text="文件夹递归"
+                                    <CheckBox fx:id="recursiveCB" mnemonicParsing="false" text="文件夹递归"
                                               selected="true"/>
-                                    <CheckBox fx:id="keepPath" mnemonicParsing="false" text="保持文件夹路径" selected="true">
+                                    <CheckBox fx:id="keepPathCB" mnemonicParsing="false" text="保持文件夹路径" selected="true">
                                         <HBox.margin>
                                             <Insets left="10.0"/>
                                         </HBox.margin>
                                     </CheckBox>
                                 </HBox>
-                                <TextArea fx:id="selectedFileTextArea" maxHeight="1.7976931348623157E308"
+                                <TextArea fx:id="selectedFileTA" maxHeight="1.7976931348623157E308"
                                           maxWidth="1.7976931348623157E308" onDragDropped="#dragFileDropped"
                                           onDragOver="#dragFileOver" prefHeight="800.0" prefWidth="332.0"
                                           promptText="文件路径, 一个文件一行, 支持拖曳文件, 支持抓取网络文件" VBox.vgrow="ALWAYS">
@@ -104,13 +104,13 @@
                                     <Font size="14.0"/>
                                 </font>
                             </Label>
-                            <TextField fx:id="domainTextField" editable="false" prefHeight="27.0"
+                            <TextField fx:id="domainTF" editable="false" prefHeight="27.0"
                                        prefWidth="245.0" promptText="空间域名" HBox.hgrow="NEVER">
                                 <HBox.margin>
                                     <Insets left="10.0"/>
                                 </HBox.margin>
                             </TextField>
-                            <TextField fx:id="searchTextField" onKeyReleased="#searchFile" prefHeight="27.0"
+                            <TextField fx:id="searchTF" onKeyReleased="#searchFile" prefHeight="27.0"
                                        prefWidth="275.0" promptText="搜索文件, 支持正则表达式" HBox.hgrow="NEVER">
                                 <HBox.margin>
                                     <Insets left="10.0"/>
@@ -123,17 +123,17 @@
                                 <padding>
                                     <Insets right="15.0"/>
                                 </padding>
-                                <Label fx:id="totalLengthLabel"/>
+                                <Label fx:id="lengthLabel"/>
                             </HBox>
                         </HBox>
                         <HBox VBox.vgrow="ALWAYS">
-                            <TableView fx:id="resTable" editable="true" prefHeight="479.0" prefWidth="602.0"
+                            <TableView fx:id="resTV" editable="true" prefHeight="479.0" prefWidth="602.0"
                                        HBox.hgrow="ALWAYS">
                                 <columns>
-                                    <TableColumn fx:id="nameColumn" prefWidth="278.0" text="文件名"/>
-                                    <TableColumn fx:id="typeColumn" minWidth="5.0" prefWidth="81.0" text="文件类型"/>
-                                    <TableColumn fx:id="sizeColumn" prefWidth="90.0" text="文件大小"/>
-                                    <TableColumn fx:id="timeColumn" prefWidth="152.0" text="最后更新时间"/>
+                                    <TableColumn fx:id="nameTC" prefWidth="278.0" text="文件名"/>
+                                    <TableColumn fx:id="typeTC" minWidth="5.0" prefWidth="81.0" text="文件类型"/>
+                                    <TableColumn fx:id="sizeTC" prefWidth="90.0" text="文件大小"/>
+                                    <TableColumn fx:id="timeTC" prefWidth="152.0" text="最后更新时间"/>
                                 </columns>
                                 <HBox.margin>
                                     <Insets bottom="10.0" left="10.0"/>
@@ -203,7 +203,7 @@
                                     <padding>
                                         <Insets bottom="10.0"/>
                                     </padding>
-                                    <Label fx:id="totalSizeLabel"/>
+                                    <Label fx:id="sizeLabel"/>
                                 </VBox>
                             </VBox>
                         </HBox>
@@ -221,7 +221,7 @@
                                     <Insets/>
                                 </HBox.margin>
                             </Label>
-                            <DatePicker fx:id="startDate" onAction="#dateChange" prefWidth="125.0" promptText="开始日期"
+                            <DatePicker fx:id="startDP" onAction="#dateChange" prefWidth="125.0" promptText="开始日期"
                                         HBox.hgrow="NEVER">
                                 <HBox.margin>
                                     <Insets left="10.0"/>
@@ -235,18 +235,18 @@
                                     <Insets left="10.0"/>
                                 </HBox.margin>
                             </Label>
-                            <DatePicker fx:id="endDate" onAction="#dateChange" prefWidth="125.0" promptText="结束日期"
+                            <DatePicker fx:id="endDP" onAction="#dateChange" prefWidth="125.0" promptText="结束日期"
                                         HBox.hgrow="NEVER">
                                 <HBox.margin>
                                     <Insets left="10.0"/>
                                 </HBox.margin>
                             </DatePicker>
-                            <ComboBox fx:id="fluxCountUnit" prefWidth="70.0" promptText="统计单位" HBox.hgrow="NEVER">
+                            <ComboBox fx:id="fluxUnitCB" prefWidth="70.0" promptText="统计单位" HBox.hgrow="NEVER">
                                 <HBox.margin>
                                     <Insets left="10.0"/>
                                 </HBox.margin>
                             </ComboBox>
-                            <ComboBox fx:id="bandCountUnit" prefWidth="70.0" promptText="统计单位">
+                            <ComboBox fx:id="bandwidthUnitCB" prefWidth="70.0" promptText="统计单位">
                                 <HBox.margin>
                                     <Insets left="10.0"/>
                                 </HBox.margin>
@@ -260,7 +260,7 @@
                                 </HBox.margin>
                             </Label>
                         </HBox>
-                        <AreaChart fx:id="bucketFluxChart" VBox.vgrow="ALWAYS">
+                        <AreaChart fx:id="fluxAC" VBox.vgrow="ALWAYS">
                             <xAxis>
                                 <CategoryAxis side="BOTTOM"/>
                             </xAxis>
@@ -268,7 +268,7 @@
                                 <NumberAxis side="LEFT"/>
                             </yAxis>
                         </AreaChart>
-                        <AreaChart fx:id="bucketBandChart" VBox.vgrow="ALWAYS">
+                        <AreaChart fx:id="bandwidthAC" VBox.vgrow="ALWAYS">
                             <xAxis>
                                 <CategoryAxis side="BOTTOM"/>
                             </xAxis>
@@ -289,13 +289,13 @@
                     <padding>
                         <Insets top="10" bottom="10"/>
                     </padding>
-                    <ComboBox fx:id="bucketChoiceCombo" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0"
+                    <ComboBox fx:id="bucketCB" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0"
                               prefWidth="205.0" promptText="还没有选择存储空间" HBox.hgrow="NEVER">
                         <HBox.margin>
                             <Insets left="10.0"/>
                         </HBox.margin>
                     </ComboBox>
-                    <TextField fx:id="zoneText" editable="false" promptText="存储区域" HBox.hgrow="NEVER">
+                    <TextField fx:id="zoneTF" editable="false" promptText="存储区域" HBox.hgrow="NEVER">
                         <HBox.margin>
                             <Insets left="10.0"/>
                         </HBox.margin>

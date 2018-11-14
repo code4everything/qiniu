@@ -51,7 +51,7 @@ public class QiniuService {
     public void listFile() {
         MainController main = MainController.getInstance();
         // 列举空间文件列表
-        BucketManager.FileListIterator iterator = sdkManager.getFileListIterator(main.bucketChoiceCombo.getValue());
+        BucketManager.FileListIterator iterator = sdkManager.getFileListIterator(main.bucketCB.getValue());
         ArrayList<FileBean> files = new ArrayList<>();
         MainController.totalLength = 0;
         MainController.totalSize = 0;
@@ -88,8 +88,8 @@ public class QiniuService {
                 BatchStatus[] batchStatusList = sdkManager.batchDelete(bucket, files);
                 MainController main = MainController.getInstance();
                 // 文件列表是否为搜索后结果
-                boolean isInSearch = Checker.isNotEmpty(main.searchTextField.getText());
-                ObservableList<FileBean> currentRes = main.resTable.getItems();
+                boolean isInSearch = Checker.isNotEmpty(main.searchTF.getText());
+                ObservableList<FileBean> currentRes = main.resTV.getItems();
                 // 更新界面数据
                 for (i = 0; i < files.length; i++) {
                     BatchStatus status = batchStatusList[i];

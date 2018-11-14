@@ -50,8 +50,8 @@ public class ConfigUtils {
                         config.getBuckets().forEach(bucket -> controller.appendBucket(bucket.getBucket()));
                         // 选中第一个桶
                         BucketBean bucket = config.getBuckets().get(0);
-                        controller.bucketChoiceCombo.setValue(bucket.getBucket());
-                        controller.zoneText.setText(bucket.getZone());
+                        controller.bucketCB.setValue(bucket.getBucket());
+                        controller.zoneTF.setText(bucket.getZone());
                     });
                 }
                 if (CollectionUtil.isEmpty(config.getPrefixes())) {
@@ -59,7 +59,7 @@ public class ConfigUtils {
                     config.setPrefixes(new ArrayList<>());
                 } else {
                     // 添加前缀
-                    Platform.runLater(() -> config.getPrefixes().forEach(prefix -> controller.filePrefixCombo.getItems().add(prefix)));
+                    Platform.runLater(() -> config.getPrefixes().forEach(prefix -> controller.prefixCB.getItems().add(prefix)));
                 }
                 return;
             }
