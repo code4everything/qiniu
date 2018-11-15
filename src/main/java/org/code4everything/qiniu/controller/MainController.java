@@ -397,7 +397,7 @@ public class MainController {
         }
         if (Checker.isNotNull(resultPair)) {
             boolean useNewKey = Checker.isNotEmpty(resultPair.getValue()[1]);
-            ObservableList<FileBean> resData = resTV.getItems();
+            ObservableList<FileBean> fileBeans = resTV.getItems();
             for (FileBean fileBean : selectedItems) {
                 String fromBucket = bucketCB.getValue();
                 String toBucket = resultPair.getValue()[0];
@@ -410,15 +410,15 @@ public class MainController {
                         // 更新文件名
                         fileBean.setName(name);
                         if (isInSearch) {
-                            resData.get(resData.indexOf(fileBean)).setName(name);
+                            fileBeans.get(fileBeans.indexOf(fileBean)).setName(name);
                         }
                     } else {
                         // 删除数据源
-                        resData.remove(fileBean);
+                        fileBeans.remove(fileBean);
                         dataLength--;
                         dataSize -= Formatter.sizeToLong(fileBean.getSize());
                         if (isInSearch) {
-                            resData.remove(fileBean);
+                            fileBeans.remove(fileBean);
                         }
                     }
                 }

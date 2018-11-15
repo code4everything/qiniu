@@ -80,7 +80,7 @@ public class SdkConfigurer {
             FileRecorder fileRecorder = new FileRecorder(workDir);
             uploadManager = new UploadManager(configuration, fileRecorder);
         } catch (IOException e) {
-            LOGGER.error("load work directory failed, can't use file recorder");
+            LOGGER.warn("load work directory failed, can't use file recorder");
             uploadManager = new UploadManager(configuration);
         }
         bucketManager = new BucketManager(auth, configuration);
