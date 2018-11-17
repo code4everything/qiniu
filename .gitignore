@@ -1,5 +1,6 @@
 # Compiled class file
-*.class
+logs/*
+config.json
 
 # Log file
 *.log
