@@ -24,7 +24,6 @@ public class SdkManager {
      */
     private static final int LIST_SIZE = 1000;
 
-
     /**
      * 获取空间带宽统计
      */

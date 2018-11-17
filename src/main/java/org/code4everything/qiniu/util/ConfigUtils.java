@@ -69,6 +69,7 @@ public class ConfigUtils {
         configBean.setPrefixes(new ArrayList<>());
         configBean.setBuckets(new ArrayList<>());
         QiniuApplication.setConfigBean(configBean);
+        writeConfig();
     }
 
     /**

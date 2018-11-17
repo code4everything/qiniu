@@ -9,6 +9,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.util.Pair;
 import org.code4everything.qiniu.QiniuApplication;
+import org.code4everything.qiniu.api.SdkConfigurer;
 import org.code4everything.qiniu.api.SdkManager;
 import org.code4everything.qiniu.constant.QiniuValueConsts;
 import org.code4everything.qiniu.controller.MainController;
@@ -112,6 +113,7 @@ public class QiniuDialog {
         if (result.isPresent() && Checker.isNotEmpty(ak.getText()) && Checker.isNotEmpty(sk.getText())) {
             QiniuApplication.getConfigBean().setAccessKey(ak.getText());
             QiniuApplication.getConfigBean().setSecretKey(sk.getText());
+            SdkConfigurer.createAuth(ak.getText(), sk.getText());
             ConfigUtils.writeConfig();
             return true;
         }
